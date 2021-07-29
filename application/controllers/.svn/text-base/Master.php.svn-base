@@ -1,0 +1,366 @@
+<?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+
+class Master extends CI_Controller {
+
+	function __construct()
+	{
+		parent::__construct();
+		if (!$this->ion_auth->logged_in())
+                {
+                        redirect('dashboard', 'refresh');
+                }
+
+		$this->load->model('cabang_mdl');
+		$this->load->model('Master_mdl');
+		$this->kode_cabang = $this->session->userdata('kd_cabang');
+	}
+	
+	public function load_master_cabang($select="")
+	{
+      	$cabang		= $this->session->userdata('kd_cabang');
+		$hasil		= $this->Master_mdl->get_master_cabang();
+		$query 		= $hasil['query'];			
+		$selected	="";
+		$result ="";
+			foreach($query->result_array() as $row)	{
+				if($select=="select" || $select=="SELECT"){
+					$selected = ($row['KODE_CABANG']==$cabang)?"selected":"";
+				}
+				$result .= "<option value='".$row['KODE_CABANG']."' data-name='".$row['NAMA_CABANG']."' ".$selected." >".$row['NAMA_CABANG']."</option>";
+			}		
+		echo $result;
+		$query->free_result();
+
+    }	
+
+	function show_coa()
+	{
+		$this->template->set('title', 'Master COA');
+		$data['subtitle']	= "Master COA";
+		$data['activepage'] = "master_data";
+		$this->template->load('template', 'master/coa',$data);
+	}
+	
+	function show_supplier()
+	{
+		$this->template->set('title', 'Master Supplier');
+		$data['subtitle']	= "Master Supplier";
+		$data['activepage'] = "master_data";
+		$this->template->load('template', 'master/supplier',$data);
+	}
+	
+	function load_wpp()
+	{
+      	$result	= $this->Master_mdl->get_supplier();
+		echo json_encode($result);
+
+    }
+
+	function load_coa()
+	{
+      	$result	=$this->Master_mdl->get_coa();
+		echo json_encode($result);
+
+    }
+	
+	function save_supplier()
+	{
+		
+		if (isset($_POST) && !empty($_POST))
+		{
+			$this->form_validation->set_rules('edit_vendor_name', 'NAMA SUPPLIER', 'required');
+			$this->form_validation->set_rules('edit_npwp', 'NPWP', 'required');
+			$this->form_validation->set_rules('edit_alamat_vendor_satu', 'ALAMAT LINE 1', 'required');
+
+			if ($this->form_validation->run() === TRUE)
+			{	
+				$npwp  = $this->input->post('edit_npwp');
+				$og_id = get_og_id($this->kode_cabang);
+
+				$check_duplicate_npwp = $this->Master_mdl->check_duplicate_npwp($npwp, $og_id);
+
+
+				if($check_duplicate_npwp > 0){
+					echo '3';
+				}
+				else{
+					$data	= $this->Master_mdl->action_save_supplier();
+					if($data){
+						echo '1';
+					} else {
+						echo '0';
+					}
+				}
+			}else
+			{
+				echo validation_errors();
+			}
+		}
+	}
+	
+   function delete_wpp() 
+   {
+		$data	= $this->Master_mdl->action_delete();
+		if($data){
+			echo '1';
+		} else {
+			echo '1';
+		}
+		
+	}
+	
+	function tambah_wpp()
+	{
+		$data	= $this->Master_mdl->action_tambah();
+		if($data){
+			echo '1';
+		} else {
+			echo '1';
+		}
+		
+	}
+	
+	    /*==========================================================CUSTOMER===================================================================*/
+	
+	function show_customer()
+	{
+		$this->template->set('title', 'Master Customer');
+		$data['subtitle']	= "Master Customer";
+		$data['activepage'] = "master_data";
+		$this->template->load('template', 'master/customer',$data);
+	}
+	
+	function load_cs()
+	{
+      	$result	=$this->Master_mdl->get_customer();
+		echo json_encode($result);
+
+    }
+	function save_cs()
+	{
+		$data	= $this->Master_mdl->action_save_cs();
+		if($data){
+			echo '1';
+		} else {
+			echo '0';
+		}
+	}
+	
+   function delete_cs() 
+   {
+		$data	= $this->Master_mdl->action_delete_cs();
+		if($data){
+			echo '1';
+		} else {
+			echo '0';
+		}
+		
+	}
+		
+	function tambah_cs() 
+   {
+	 
+		if (isset($_POST) && !empty($_POST))
+		{
+			$this->form_validation->set_rules('customer_name', 'NAMA PELANGGAN', 'required');
+			$this->form_validation->set_rules('npwp', 'NPWP', 'required');
+			$this->form_validation->set_rules('address_line1', 'ALAMAT LINE1', 'required');
+			
+			if ($this->form_validation->run() === TRUE)
+			{
+				$data	= $this->Master_mdl->action_tambah_cs();
+				if($data){
+					echo '1';
+				} else {
+					echo '0';
+				}
+			}
+			else
+			{
+				echo validation_errors();
+			}		
+		}
+		
+
+	}
+	
+	 /*==========================================================KARYAWAN===================================================================*/
+	 
+	 function show_karyawan()
+	{
+		$this->template->set('title', 'Karyawan');
+		$data['subtitle']	= "Karyawan";
+		$this->template->load('template', 'master/karyawan',$data);
+	}
+	
+	function load_kw()
+	{
+      	$result	=$this->Master_mdl->get_karyawan();
+		echo json_encode($result);
+
+    }
+	function save_kw()
+	{
+		$data	= $this->Master_mdl->action_save_kw();
+		if($data){
+			echo '1';
+		} else {
+			echo '0';
+		}
+	}
+	
+   function delete_kw() 
+   {
+		$data	= $this->Master_mdl->action_delete_kw();
+		if($data){
+			echo '1';
+		} else {
+			echo '0';
+		}
+		
+	}
+		
+	function tambah_kw() 
+   {
+		$data	= $this->Master_mdl->action_tambah_kw();
+		if($data){
+			echo '1';
+		} else {
+			echo '0';
+		}
+	}
+
+   /*===============================================================TAX	=================================================================*/
+   
+   function show_tax()
+	{
+		$this->template->set('title', 'Master Tax');
+		$data['subtitle']	= "Master Tax";
+		$data['activepage'] = "master_data";
+		$this->template->load('template', 'master/tax',$data);
+	}
+	
+	function load_tx()
+	{
+      	$result	=$this->Master_mdl->get_tax();
+		echo json_encode($result);
+
+    }
+	function save_tx()
+	{
+		$data	= $this->Master_mdl->action_save_tx();
+		if($data){
+			echo '1';
+		} else {
+			echo '0';
+		}
+	}
+	
+   function delete_tx() 
+   {
+		$data	= $this->Master_mdl->action_delete_tx();
+		if($data){
+			echo '1';
+		} else {
+			echo '0';
+		}
+		
+	}
+		
+	function tambah_tx() 
+   {
+		$data = $this->Master_mdl->action_tambah_tx();
+		if($data){
+			echo '1';
+		} else {
+			echo '0';
+		}
+	}
+	/*===================================================PERIOD==================================================================*/
+	
+	  function show_period()
+	{
+		$this->template->set('title', 'Period');
+		$data['subtitle']	= "Period";
+		$this->template->load('template', 'master/period',$data);
+	}
+	
+	function load_pr()
+	{
+      	$result	=$this->Master_mdl->get_period();
+		echo json_encode($result);
+
+    }
+	function save_pr()
+	{
+		$data	= $this->Master_mdl->action_save_pr();
+		if($data){
+			echo '1';
+		} else {
+			echo '0';
+		}
+	}
+	
+   function delete_pr() 
+   {
+		$data	= $this->Master_mdl->action_delete_pr();
+		if($data){
+			echo '1';
+		} else {
+			echo '0';
+		}
+		
+	}
+		
+	function tambah_pr() 
+   {
+		$data = $this->Master_mdl->action_tambah_pr();
+		if($data){
+			echo '1';
+		} else {
+			echo '0';
+		}
+	}
+	
+	function add_tax(){
+	   $data['result'] = '';
+	   $this->load->view('master/frm_add_tax',$data);//bisa juga
+
+	}
+	
+	function load_master_tax()
+	{
+      	$hasil		= $this->Master_mdl->get_master_tax();
+		$query 		= $hasil['query'];			
+		$selected	="";
+		$result ="";
+			foreach($query->result_array() as $row)	{				
+				$result .= "<option value='".$row['JENIS_PAJAK']."' >".$row['JENIS_PAJAK']."</option>";
+			}		
+		echo $result;
+		$query->free_result();
+
+    }
+	
+	function load_operator_unit()
+	{
+      	$hasil		= $this->Master_mdl->get_operator_unit();
+		$query 		= $hasil['query'];	
+		$cabang		= $this->session->userdata('kd_cabang');		
+		$selected	="";
+		$result ="";
+			foreach($query->result_array() as $row)	{
+				if ($row['KODE_CABANG']==$cabang){
+					$selected	="selected";
+				} else {
+					$selected	="";
+				}
+				$result .= "<option value='".$row['NAMA_CABANG']."' ".$selected.">".$row['NAMA_CABANG']."</option>";
+			}		
+		echo $result;
+		$query->free_result();
+
+    }
+	
+}

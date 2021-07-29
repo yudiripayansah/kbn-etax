@@ -1,0 +1,1352 @@
+<?php  defined('BASEPATH') OR exit('No direct script access allowed');
+
+
+class Sync_data_ebs_mdl extends CI_Model {
+	
+    public function __construct()
+    {
+        parent::__construct();
+		    
+    }
+
+	function get_download_trx()
+	{
+		$bulan			= $this->input->post('srcBulan');
+		$tahun			= $this->input->post('srcTahun');	
+		$kode_cabang	= $this->input->post('srcKodeCabang');
+		$jenis_trx		= $this->input->post('scrJenis');
+		$perusahaan		= $this->input->post('scrPerusahaan');
+				
+		$DBEBS = $this->load->database('devnew',TRUE);
+		
+		$PARAMETER_1 = $bulan;
+		$PARAMETER_2 = $tahun;
+		$PARAMETER_3 = $kode_cabang;
+		$PARAMETER_4 = $perusahaan;
+		$PARAMETER_5 = $jenis_trx;
+		$OUT_MESSAGE = "";
+		$stid = oci_parse($DBEBS->conn_id, 'BEGIN :OUT_MESSAGE := SIMTAX_PAJAK_UTILITY_PKG.getPPh23(:PARAMETER_1,:PARAMETER_2,:PARAMETER_3, :PARAMETER_4,:PARAMETER_5); end;');
+
+		oci_bind_by_name($stid, ':PARAMETER_1',  $PARAMETER_1,200);
+		oci_bind_by_name($stid, ':PARAMETER_2',  $PARAMETER_2,200);
+		oci_bind_by_name($stid, ':PARAMETER_3',  $PARAMETER_3,200);
+		oci_bind_by_name($stid, ':PARAMETER_4',  $PARAMETER_4,200);
+		oci_bind_by_name($stid, ':PARAMETER_5',  $PARAMETER_5,200);
+		oci_bind_by_name($stid, ':OUT_MESSAGE',  $OUT_MESSAGE ,100, SQLT_CHR);
+
+		if(oci_execute($stid)){
+		  $results = $OUT_MESSAGE;
+		}
+		
+		oci_free_statement($stid);
+		oci_close($DBEBS->conn_id);
+
+		if ($results==0) {
+			return false;
+		}
+		else {			
+			//data lama dianggap tidak valid 
+			$sql2	="update simtax_getdata_history
+					   set REPLACE_BY_CONC_REQ_ID = '".$results."'
+						 , IMPORT_TO_SIMTAX_FLAG = 'Y' 
+					 where parameter1 = '".$bulan."'
+					   and parameter2 = '".$tahun."'
+					   and parameter3 = '".$kode_cabang."'
+					   and parameter4 = '".$perusahaan."'
+					   and parameter5 = '".$jenis_trx."'
+					   and IMPORT_TO_SIMTAX_FLAG = 'N'
+					";   			
+			$query2	= $this->db->query($sql2);	
+
+			//insert new data
+			$sql2	="insert into SIMTAX_GETDATA_HISTORY
+					  (GETDATA_ID,CONCURRENT_REQUEST_ID,REQUESTED_DATE,PARAMETER1,PARAMETER2,
+					   PARAMETER3,PARAMETER4,PARAMETER5,IMPORT_TO_SIMTAX_DATE,IMPORT_TO_SIMTAX_FLAG)
+					  values
+					  (SIMTAX_GETDATA_HISTORY_S.nextval,".$results.",sysdate,'".$bulan."','".$tahun."',
+					  '".$kode_cabang."','".$perusahaan."','".$jenis_trx."',null, 'N')
+					  ";
+			
+			$query2	= $this->db->query($sql2);			
+
+			return true;
+		}
+	}
+	
+	function get_download_ref()
+	{
+		$bulan			= $this->input->post('srcBulan');
+		$tahun			= $this->input->post('srcTahun');	
+		$jenis_trx		= $this->input->post('scrJenis');
+				
+		$DBEBS = $this->load->database('devnew',TRUE);
+		
+		$PARAMETER_1 = $bulan;
+		$PARAMETER_2 = $tahun;
+		$PARAMETER_3 = "";
+		$PARAMETER_4 = "";
+		$PARAMETER_5 = $jenis_trx;
+		$OUT_MESSAGE = "";
+		$stid = oci_parse($DBEBS->conn_id, 'BEGIN :OUT_MESSAGE := SIMTAX_PAJAK_UTILITY_PKG.getPPh23(:PARAMETER_1,:PARAMETER_2,:PARAMETER_3, :PARAMETER_4,:PARAMETER_5); end;');
+
+		oci_bind_by_name($stid, ':PARAMETER_1',  $PARAMETER_1,200);
+		oci_bind_by_name($stid, ':PARAMETER_2',  $PARAMETER_2,200);
+		oci_bind_by_name($stid, ':PARAMETER_3',  $PARAMETER_3,200);
+		oci_bind_by_name($stid, ':PARAMETER_4',  $PARAMETER_4,200);
+		oci_bind_by_name($stid, ':PARAMETER_5',  $PARAMETER_5,200);
+		oci_bind_by_name($stid, ':OUT_MESSAGE',  $OUT_MESSAGE ,100, SQLT_CHR);
+
+		if(oci_execute($stid)){
+		  $results = $OUT_MESSAGE;
+		}
+		
+		oci_free_statement($stid);
+		oci_close($DBEBS->conn_id);
+
+		if ($results==0) {
+			return false;
+		}
+		else {			
+			//data lama dianggap tidak valid 
+			$sql2	="update simtax_getdata_history
+					   set REPLACE_BY_CONC_REQ_ID = '".$results."'
+						 , IMPORT_TO_SIMTAX_FLAG = 'Y' 
+					 where parameter1 = '".$bulan."'
+					   and parameter2 = '".$tahun."'
+					   and parameter5 = '".$jenis_trx."'
+					   and IMPORT_TO_SIMTAX_FLAG = 'N'
+					";   			
+			$query2	= $this->db->query($sql2);	
+
+			//insert new data
+			$sql2	="insert into SIMTAX_GETDATA_HISTORY
+					  (GETDATA_ID,CONCURRENT_REQUEST_ID,REQUESTED_DATE,PARAMETER1,PARAMETER2,
+					   PARAMETER3,PARAMETER4,PARAMETER5,IMPORT_TO_SIMTAX_DATE,IMPORT_TO_SIMTAX_FLAG)
+					  values
+					  (SIMTAX_GETDATA_HISTORY_S.nextval,".$results.",sysdate,'".$bulan."','".$tahun."',
+					  NULL,NULL,'".$jenis_trx."',NULL, 'N')
+					  ";
+			
+			$query2	= $this->db->query($sql2);			
+
+			return true;
+		}
+	}
+
+	function get_download_tb()
+	{
+		set_time_limit(0);
+		$bulan			= $this->input->post('srcBulan');
+		$tahun			= $this->input->post('srcTahun');	
+		$kode_cabang	= $this->input->post('srcAkun');
+		$jenis_trx		= "TRIBAL";
+		$perusahaan		= $this->input->post('srcLedger');
+				
+		$DBEBS = $this->load->database('devnew',TRUE);
+		
+		$PARAMETER_1 = $bulan;
+		$PARAMETER_2 = $tahun;
+		$PARAMETER_3 = $kode_cabang;
+		$PARAMETER_4 = $perusahaan;
+		$PARAMETER_5 = $jenis_trx;
+		$OUT_MESSAGE = "";
+		$stid = oci_parse($DBEBS->conn_id, 'BEGIN :OUT_MESSAGE := SIMTAX_PAJAK_UTILITY_PKG.getPPh23(:PARAMETER_1,:PARAMETER_2,:PARAMETER_3, :PARAMETER_4,:PARAMETER_5); end;');
+
+		oci_bind_by_name($stid, ':PARAMETER_1',  $PARAMETER_1,200);
+		oci_bind_by_name($stid, ':PARAMETER_2',  $PARAMETER_2,200);
+		oci_bind_by_name($stid, ':PARAMETER_3',  $PARAMETER_3,200);
+		oci_bind_by_name($stid, ':PARAMETER_4',  $PARAMETER_4,200);
+		oci_bind_by_name($stid, ':PARAMETER_5',  $PARAMETER_5,200);
+		oci_bind_by_name($stid, ':OUT_MESSAGE',  $OUT_MESSAGE ,100, SQLT_CHR);
+
+		if(oci_execute($stid)){
+		  $results = $OUT_MESSAGE;
+		}
+		
+		oci_free_statement($stid);
+		oci_close($DBEBS->conn_id);
+
+		if ($results==0) {
+			return false;
+		}
+		else {			
+			//data lama dianggap tidak valid 
+			$sql2	="update simtax_getdata_history
+					   set REPLACE_BY_CONC_REQ_ID = '".$results."'
+						 , IMPORT_TO_SIMTAX_FLAG = 'Y' 
+					 where parameter1 = '".$bulan."'
+					   and parameter2 = '".$tahun."'
+					   and parameter3 = '".$kode_cabang."'
+					   and parameter4 = '".$perusahaan."'
+					   and parameter5 = '".$jenis_trx."'
+					   and IMPORT_TO_SIMTAX_FLAG = 'N'
+					";   			
+			$query2	= $this->db->query($sql2);	
+
+			//insert new data
+			$sql2	="insert into SIMTAX_GETDATA_HISTORY
+					  (GETDATA_ID,CONCURRENT_REQUEST_ID,REQUESTED_DATE,PARAMETER1,PARAMETER2,
+					   PARAMETER3,PARAMETER4,PARAMETER5,IMPORT_TO_SIMTAX_DATE,IMPORT_TO_SIMTAX_FLAG)
+					  values
+					  (SIMTAX_GETDATA_HISTORY_S.nextval,".$results.",sysdate,'".$bulan."','".$tahun."',
+					  '".$kode_cabang."','".$perusahaan."','".$jenis_trx."',null, 'N')
+					  ";
+			
+			$query2	= $this->db->query($sql2);			
+
+			return true;
+		}
+	}	
+
+    function do_process_trx($file_path,$ConcReqId) {
+		
+		$row = 0;
+		$handle = fopen($file_path, "r");
+		
+		$dataCsv  = array();
+		while (($data = fgetcsv($handle, 1000, ";","'","\\")) !== FALSE) {
+
+			if($row >= 0){
+						 
+				$sql	="insert into SIMTAX_STAGING_PAJAK 
+						(STAGING_PAJAK_ID
+						,OU_NAME
+						,ORGANIZATION_ID
+						,INVOICE_NUM
+						,INVOICE_ID
+						,INVOICE_LINE_NUM
+						,INVOICE_ACCOUNTING_DATE
+						,NO_FAKTUR_PAJAK
+						,TANGGAL_FAKTUR_PAJAK
+						,KODE_PAJAK
+						,KODE_COMPANY
+						,KODE_CABANG
+						,AKUN_PAJAK
+						,AMOUNT_PAJAK
+						,DESCRIPTION
+						,INVOICE_DISTRIBUTION_ID
+						,AMOUNT_DPP
+						,VENDOR_ID
+						,DPP_AMOUNT_EDI
+						,AWT_FLAG
+						,NAMA_PAJAK
+						,TAX_RATE
+						,SOURCE_DATA
+						,PROCESS_FLAG
+						,ERROR_MESSAGE
+						,NAMA_WP
+						,ALAMAT_WP
+						,NPWP
+						,DPP_BASE_AMOUNT
+						,TAX_BASE_AMOUNT
+						,INVOICE_CURRENCY_CODE
+						,INVOICE_RATE
+						,TAX_CCID
+						,SEGMENT4
+						,SEGMENT4_DESC
+						,CUSTOMER_TRX_ID
+						,TRX_NUMBER
+						,CUST_TRX_LINE_GL_DIST_ID
+						,PARTY_ID
+						,PERSON_ID
+						,NO_BUKTI_POTONG
+						,TIPE_21
+						,TGL_BUKTI_POTONG
+						,BULAN_PAJAK
+						,TAHUN_PAJAK
+						,MASA_PAJAK
+						,NPWP_PEMOTONG
+						,NAMA_PEMOTONG
+						,WPLUARNEGERI
+						,KODE_NEGARA
+						,VENDOR_SITE_ID
+						,SALDO_AWAL
+						,MUTASI_DEBIT
+						,MUTASI_CREDIT
+						,REQUEST_ID
+						) 
+						 VALUES
+						 (simtax_staging_pajak_s.nextval,
+						 '".$data[0]."',
+						 '".$data[1]."',
+						 '".$data[2]."',
+						 '".$data[3]."',
+						 '".$data[4]."',
+						 ".$data[5].",
+						 '".$data[6]."',
+						 ".$data[7].",
+						 '".$data[8]."',
+						 '".$data[9]."',
+						 '".$data[10]."',
+						 '".$data[11]."',
+						 '".$data[12]."',
+						 '".$data[13]."',
+						 '".$data[14]."',
+						 '".$data[15]."',
+						 '".$data[16]."',
+						 '".$data[17]."',
+						 '".$data[18]."',
+						 '".$data[19]."',
+						 '".$data[20]."',	
+						 '".$data[21]."',
+						 '".$data[22]."',
+						 '".$data[23]."',
+						 '".$data[24]."',
+						 '".$data[25]."',
+						 '".$data[26]."',
+						 '".$data[27]."',
+						 '".$data[28]."',
+						 '".$data[29]."',
+						 '".$data[30]."',	
+						 '".$data[31]."',
+						 '".$data[32]."',
+						 '".$data[33]."',
+						 '".$data[34]."',
+						 '".$data[35]."',
+						 '".$data[36]."',
+						 '".$data[37]."',
+						 '".$data[38]."',
+						 '".$data[39]."',
+						 '".$data[40]."',
+						 ".$data[41].",
+						 '".$data[42]."',
+						 '".$data[43]."',
+						 '".$data[44]."',
+						 '".$data[45]."',
+						 '".$data[46]."',
+						 '".$data[47]."',
+						 '".$data[48]."',
+						 '".$data[49]."',
+						 '".$data[50]."',
+						 '".$data[51]."',
+						 '".$data[52]."',
+						 '".$ConcReqId."'
+						 )";
+					 
+				$query 		= $this->db->query($sql);	
+				if (!$query) {
+					return false;
+				}
+
+			}
+
+			$row++;
+		}
+		
+		return true;
+		
+    }	
+
+    function do_process_ref($file_path,$jenis_trx) {
+		
+		$row = 0;
+		$handle = fopen($file_path, "r");
+		
+		$dataCsv  = array();
+		
+		if ($jenis_trx == "CUSTOMER") 
+		{
+			while (($data = fgetcsv($handle, 0, ";","'","\\")) !== FALSE) {
+
+				if($row >= 0){
+							 
+					$sql	="MERGE INTO simtax_master_pelanggan smp
+							  USING (SELECT '".$data[0]."' as CUSTOMER_ID,
+											'".$data[1]."' as CUSTOMER_NAME,
+											'".$data[2]."' as ALIAS_CUSTOMER,
+											'".$data[3]."' as CUSTOMER_NUMBER,
+											'".$data[4]."' as NPWP,
+											'".$data[5]."' as OPERATING_UNIT,
+											'".$data[6]."' as CUSTOMER_SITE_ID,
+											'".$data[7]."' as CUSTOMER_SITE_NUMBER,
+											'".$data[8]."' as CUSTOMER_SITE_NAME,
+											'".$data[9]."' as ADDRESS_LINE1,
+											'".$data[10]."' as ADDRESS_LINE2,
+											'".$data[11]."' as ADDRESS_LINE3,
+											'".$data[12]."' as CITY,
+											'".$data[13]."' as PROVINCE,
+											'".$data[14]."' as COUNTRY,
+											'".$data[15]."' as ZIP,
+											'".$data[16]."' as ORGANIZATION_ID
+									 FROM dual) b
+							  ON (smp.CUSTOMER_ID = b.CUSTOMER_ID 
+							      and smp.CUSTOMER_SITE_ID = b.CUSTOMER_SITE_ID
+								  and smp.ORGANIZATION_ID = b.ORGANIZATION_ID)
+							  WHEN MATCHED THEN
+								UPDATE SET
+									 CUSTOMER_NAME          = b.CUSTOMER_NAME
+									,ALIAS_CUSTOMER         = b.ALIAS_CUSTOMER
+									,CUSTOMER_NUMBER        = b.CUSTOMER_NUMBER
+									,NPWP	                = b.NPWP
+									,OPERATING_UNIT	        = b.OPERATING_UNIT
+									,CUSTOMER_SITE_NUMBER   = b.CUSTOMER_SITE_NUMBER
+									,CUSTOMER_SITE_NAME	    = b.CUSTOMER_SITE_NAME
+									,ADDRESS_LINE1	        = b.ADDRESS_LINE1
+									,ADDRESS_LINE2	        = b.ADDRESS_LINE2
+									,ADDRESS_LINE3	        = b.ADDRESS_LINE3
+									,CITY	                = b.CITY
+									,PROVINCE	            = b.PROVINCE
+									,COUNTRY	            = b.COUNTRY
+									,ZIP	                = b.ZIP								
+							  WHEN NOT MATCHED THEN
+								INSERT (CUSTOMER_ID
+										,CUSTOMER_NAME
+										,ALIAS_CUSTOMER
+										,CUSTOMER_NUMBER
+										,NPWP
+										,OPERATING_UNIT
+										,CUSTOMER_SITE_ID
+										,CUSTOMER_SITE_NUMBER
+										,CUSTOMER_SITE_NAME
+										,ADDRESS_LINE1
+										,ADDRESS_LINE2
+										,ADDRESS_LINE3
+										,CITY
+										,PROVINCE
+										,COUNTRY
+										,ZIP
+										,ORGANIZATION_ID
+										)
+								VALUES (b.CUSTOMER_ID
+										,b.CUSTOMER_NAME
+										,b.ALIAS_CUSTOMER
+										,b.CUSTOMER_NUMBER
+										,b.NPWP
+										,b.OPERATING_UNIT
+										,b.CUSTOMER_SITE_ID
+										,b.CUSTOMER_SITE_NUMBER
+										,b.CUSTOMER_SITE_NAME
+										,b.ADDRESS_LINE1
+										,b.ADDRESS_LINE2
+										,b.ADDRESS_LINE3
+										,b.CITY
+										,b.PROVINCE
+										,b.COUNTRY
+										,b.ZIP
+										,b.ORGANIZATION_ID
+										)";
+							 
+					$query 		= $this->db->query($sql);	
+					if (!$query) {
+						return false;
+					}
+
+				}
+
+				$row++;
+			}
+		}
+		
+		if ($jenis_trx == "SUPPLIER") 
+		{
+			while (($data = fgetcsv($handle, 0, ";","'","\\")) !== FALSE) {
+
+				if($row >= 0){
+							 
+					$sql	="MERGE INTO simtax_master_supplier sms
+							  USING (SELECT '".$data[0]."' as VENDOR_ID,
+											'".$data[1]."' as VENDOR_NAME,
+											'".$data[2]."' as VENDOR_NUMBER,
+											'".$data[3]."' as VENDOR_TYPE_LOOKUP_CODE,
+											'".$data[4]."' as NPWP,
+											'".$data[5]."' as OPERATING_UNIT,
+											'".$data[6]."' as VENDOR_SITE_ID,
+											'".$data[7]."' as VENDOR_SITE_CODE,
+											'".$data[8]."' as ADDRESS_LINE1,
+											'".$data[9]."' as ADDRESS_LINE2,
+											'".$data[10]."' as ADDRESS_LINE3,
+											'".$data[11]."' as CITY,
+											'".$data[12]."' as PROVINCE,
+											'".$data[13]."' as COUNTRY,
+											'".$data[14]."' as ZIP,
+											'".$data[15]."' as AREA_CODE,
+											'".$data[16]."' as PHONE,
+											'".$data[17]."' as ORGANIZATION_ID
+									 FROM dual) b
+							  ON (sms.VENDOR_ID = b.VENDOR_ID 
+							  and sms.VENDOR_SITE_ID = b.VENDOR_SITE_ID
+							  and sms.ORGANIZATION_ID = b.ORGANIZATION_ID)
+							  WHEN MATCHED THEN
+								UPDATE SET
+									VENDOR_NAME         = b.VENDOR_NAME,
+									VENDOR_NUMBER       = b.VENDOR_NUMBER,
+									VENDOR_TYPE_LOOKUP_CODE = b.VENDOR_TYPE_LOOKUP_CODE,
+									NPWP                = b.NPWP,
+									OPERATING_UNIT      = b.OPERATING_UNIT,
+									VENDOR_SITE_CODE    = b.VENDOR_SITE_CODE,
+									ADDRESS_LINE1       = b.ADDRESS_LINE1,
+									ADDRESS_LINE2       = b.ADDRESS_LINE2,
+									ADDRESS_LINE3       = b.ADDRESS_LINE3,
+									CITY                = b.CITY,
+									PROVINCE            = b.PROVINCE,
+									COUNTRY             = b.COUNTRY,
+									ZIP                 = b.ZIP,
+									AREA_CODE           = b.AREA_CODE,
+									PHONE               = b.PHONE
+							  WHEN NOT MATCHED THEN
+								INSERT (VENDOR_ID
+										,VENDOR_NAME
+										,VENDOR_NUMBER
+										,VENDOR_TYPE_LOOKUP_CODE
+										,NPWP
+										,OPERATING_UNIT
+										,VENDOR_SITE_ID
+										,VENDOR_SITE_CODE
+										,ADDRESS_LINE1
+										,ADDRESS_LINE2
+										,ADDRESS_LINE3
+										,CITY
+										,PROVINCE
+										,COUNTRY
+										,ZIP
+										,AREA_CODE
+										,PHONE
+										,ORGANIZATION_ID
+										)
+								VALUES (b.VENDOR_ID
+										,b.VENDOR_NAME
+										,b.VENDOR_NUMBER
+										,b.VENDOR_TYPE_LOOKUP_CODE
+										,b.NPWP
+										,b.OPERATING_UNIT
+										,b.VENDOR_SITE_ID
+										,b.VENDOR_SITE_CODE
+										,b.ADDRESS_LINE1
+										,b.ADDRESS_LINE2
+										,b.ADDRESS_LINE3
+										,b.CITY
+										,b.PROVINCE
+										,b.COUNTRY
+										,b.ZIP
+										,b.AREA_CODE
+										,b.PHONE
+										,b.ORGANIZATION_ID
+										)";
+							 
+					$query 		= $this->db->query($sql);	
+					if (!$query) {
+						return false;
+					}
+
+				}
+
+				$row++;
+			}			
+		}	
+
+		if ($jenis_trx == "MSTPPH") 
+		{
+			while (($data = fgetcsv($handle, 0, ";","'","\\")) !== FALSE) {
+
+				if($row >= 0){
+							 
+					$sql	="MERGE INTO simtax_master_pph smp
+							  USING (SELECT '".$data[0]."' as OPERATING_UNIT,
+											'".$data[1]."' as TAX_CODE,
+											'".$data[2]."' as DESCRIPTION,
+											'".$data[3]."' as TAX_RATE,
+											'".$data[4]."' as ENABLED,
+											'".$data[5]."' as VENDOR_NAME,
+											'".$data[6]."' as VENDOR_NUMBER,
+											'".$data[7]."' as VENDOR_SITE_CODE,
+											'".$data[8]."' as KODE_PAJAK,
+											'".$data[9]."' as JENIS_4_AYAT_2,
+											'".$data[10]."' as KODE_PAJAK_SPPD,
+											'".$data[11]."' as JENIS_23,
+											'".$data[12]."' as AKUN_PAJAK,
+											'".$data[13]."' as GL_ACCOUNT,
+											'".$data[14]."' as COMPANY,
+											'".$data[15]."' as BRANCH,
+											'".$data[16]."' as ACCOUNT,
+											'".$data[17]."' as KAP_KJS
+									 FROM dual) b
+							  ON (smp.TAX_CODE = b.TAX_CODE and smp.TAX_CODE = b.TAX_CODE)
+							  WHEN MATCHED THEN
+								UPDATE SET
+									OPERATING_UNIT  = b.OPERATING_UNIT,
+									DESCRIPTION     = b.DESCRIPTION,
+									TAX_RATE        = b.TAX_RATE,
+									ENABLED         = b.ENABLED,
+									VENDOR_NAME     = b.VENDOR_NAME,
+									VENDOR_NUMBER   = b.VENDOR_NUMBER,
+									VENDOR_SITE_CODE = b.VENDOR_SITE_CODE,
+									KODE_PAJAK      = b.KODE_PAJAK,
+									JENIS_4_AYAT_2  = b.JENIS_4_AYAT_2,
+									KODE_PAJAK_SPPD = b.KODE_PAJAK_SPPD,
+									JENIS_23        = b.JENIS_23,
+									AKUN_PAJAK      = b.AKUN_PAJAK,
+									GL_ACCOUNT      = b.GL_ACCOUNT,
+									COMPANY         = b.COMPANY,
+									BRANCH          = b.BRANCH,
+									ACCOUNT         = b.ACCOUNT,
+									KAP_KJS         = b.KAP_KJS
+							  WHEN NOT MATCHED THEN
+								INSERT (OPERATING_UNIT,
+										TAX_CODE,
+										DESCRIPTION,
+										TAX_RATE,
+										ENABLED,
+										VENDOR_NAME,
+										VENDOR_NUMBER,
+										VENDOR_SITE_CODE,
+										KODE_PAJAK,
+										JENIS_4_AYAT_2,
+										KODE_PAJAK_SPPD,
+										JENIS_23,
+										AKUN_PAJAK,
+										GL_ACCOUNT,
+										COMPANY,
+										BRANCH,
+										ACCOUNT,
+										KAP_KJS
+										)
+								VALUES (b.OPERATING_UNIT,
+										b.TAX_CODE,
+										b.DESCRIPTION,
+										b.TAX_RATE,
+										b.ENABLED,
+										b.VENDOR_NAME,
+										b.VENDOR_NUMBER,
+										b.VENDOR_SITE_CODE,
+										b.KODE_PAJAK,
+										b.JENIS_4_AYAT_2,
+										b.KODE_PAJAK_SPPD,
+										b.JENIS_23,
+										b.AKUN_PAJAK,
+										b.GL_ACCOUNT,
+										b.COMPANY,
+										b.BRANCH,
+										b.ACCOUNT,
+										b.KAP_KJS
+										)";
+							 
+					$query 		= $this->db->query($sql);	
+					if (!$query) {
+						return false;
+					}
+
+				}
+
+				$row++;
+			}
+		}	
+
+		if ($jenis_trx == "MSTGCC") 
+		{
+			while (($data = fgetcsv($handle, 0, ";","'","\\")) !== FALSE) {
+
+				if($row >= 0){
+							 
+					$sql	="MERGE INTO gl_code_combinations gcc
+							  USING (SELECT '".$data[0]."' as CODE_COMBINATION_ID,
+											".$data[1]." as LAST_UPDATE_DATE,
+											'".$data[2]."' as LAST_UPDATED_BY,
+											'".$data[3]."' as CHART_OF_ACCOUNTS_ID,
+											'".$data[4]."' as DETAIL_POSTING_ALLOWED_FLAG,
+											'".$data[5]."' as DETAIL_BUDGETING_ALLOWED_FLAG,
+											'".$data[6]."' as ACCOUNT_TYPE,
+											'".$data[7]."' as ENABLED_FLAG,
+											'".$data[8]."' as SUMMARY_FLAG,
+											'".$data[9]."' as SEGMENT1,
+											'".$data[10]."' as SEGMENT2,
+											'".$data[11]."' as SEGMENT3,
+											'".$data[12]."' as SEGMENT4,
+											'".$data[13]."' as SEGMENT5,
+											'".$data[14]."' as SEGMENT6,
+											'".$data[15]."' as SEGMENT7,
+											'".$data[16]."' as SEGMENT8,
+											'".$data[17]."' as SEGMENT9,
+											'".$data[18]."' as DESCRIPTION,
+											'".$data[19]."' as TEMPLATE_ID,
+											'".$data[20]."' as ALLOCATION_CREATE_FLAG,
+											".$data[21]." as START_DATE_ACTIVE,
+											".$data[22]." as END_DATE_ACTIVE,
+											'".$data[23]."' as ATTRIBUTE1,
+											'".$data[24]."' as ATTRIBUTE2,
+											'".$data[25]."' as ATTRIBUTE3,
+											'".$data[26]."' as ATTRIBUTE4,
+											'".$data[27]."' as ATTRIBUTE5,
+											'".$data[28]."' as ATTRIBUTE6,
+											'".$data[29]."' as ATTRIBUTE7,
+											'".$data[30]."' as ATTRIBUTE8,
+											'".$data[31]."' as ATTRIBUTE9
+									 FROM dual) b
+							  ON (gcc.CODE_COMBINATION_ID = b.CODE_COMBINATION_ID)
+							  WHEN MATCHED THEN
+								UPDATE SET 
+											LAST_UPDATE_DATE = b.LAST_UPDATE_DATE,
+											LAST_UPDATED_BY = b.LAST_UPDATED_BY,
+											CHART_OF_ACCOUNTS_ID = b.CHART_OF_ACCOUNTS_ID,
+											DETAIL_POSTING_ALLOWED_FLAG = b.DETAIL_POSTING_ALLOWED_FLAG,
+											DETAIL_BUDGETING_ALLOWED_FLAG = b.DETAIL_BUDGETING_ALLOWED_FLAG,
+											ACCOUNT_TYPE = b.ACCOUNT_TYPE,
+											ENABLED_FLAG = b.ENABLED_FLAG,
+											SUMMARY_FLAG = b.SUMMARY_FLAG,
+											SEGMENT1 = b.SEGMENT1,
+											SEGMENT2 = b.SEGMENT2,
+											SEGMENT3 = b.SEGMENT3,
+											SEGMENT4 = b.SEGMENT4,
+											SEGMENT5 = b.SEGMENT5,
+											SEGMENT6 = b.SEGMENT6,
+											SEGMENT7 = b.SEGMENT7,
+											SEGMENT8 = b.SEGMENT8,
+											SEGMENT9 = b.SEGMENT9,
+											DESCRIPTION = b.DESCRIPTION,
+											TEMPLATE_ID = b.TEMPLATE_ID,
+											ALLOCATION_CREATE_FLAG = b.ALLOCATION_CREATE_FLAG,
+											START_DATE_ACTIVE = b.START_DATE_ACTIVE,
+											END_DATE_ACTIVE = b.END_DATE_ACTIVE,
+											ATTRIBUTE1 = b.ATTRIBUTE1,
+											ATTRIBUTE2 = b.ATTRIBUTE2,
+											ATTRIBUTE3 = b.ATTRIBUTE3,
+											ATTRIBUTE4 = b.ATTRIBUTE4,
+											ATTRIBUTE5 = b.ATTRIBUTE5,
+											ATTRIBUTE6 = b.ATTRIBUTE6,
+											ATTRIBUTE7 = b.ATTRIBUTE7,
+											ATTRIBUTE8 = b.ATTRIBUTE8,
+											ATTRIBUTE9 = b.ATTRIBUTE9
+							  WHEN NOT MATCHED THEN
+								INSERT (CODE_COMBINATION_ID,
+										LAST_UPDATE_DATE,
+										LAST_UPDATED_BY,
+										CHART_OF_ACCOUNTS_ID,
+										DETAIL_POSTING_ALLOWED_FLAG,
+										DETAIL_BUDGETING_ALLOWED_FLAG,
+										ACCOUNT_TYPE,
+										ENABLED_FLAG,
+										SUMMARY_FLAG,
+										SEGMENT1,
+										SEGMENT2,
+										SEGMENT3,
+										SEGMENT4,
+										SEGMENT5,
+										SEGMENT6,
+										SEGMENT7,
+										SEGMENT8,
+										SEGMENT9,
+										DESCRIPTION,
+										TEMPLATE_ID,
+										ALLOCATION_CREATE_FLAG,
+										START_DATE_ACTIVE,
+										END_DATE_ACTIVE,
+										ATTRIBUTE1,
+										ATTRIBUTE2,
+										ATTRIBUTE3,
+										ATTRIBUTE4,
+										ATTRIBUTE5,
+										ATTRIBUTE6,
+										ATTRIBUTE7,
+										ATTRIBUTE8,
+										ATTRIBUTE9
+										)
+								VALUES (b.CODE_COMBINATION_ID,
+										b.LAST_UPDATE_DATE,
+										b.LAST_UPDATED_BY,
+										b.CHART_OF_ACCOUNTS_ID,
+										b.DETAIL_POSTING_ALLOWED_FLAG,
+										b.DETAIL_BUDGETING_ALLOWED_FLAG,
+										b.ACCOUNT_TYPE,
+										b.ENABLED_FLAG,
+										b.SUMMARY_FLAG,
+										b.SEGMENT1,
+										b.SEGMENT2,
+										b.SEGMENT3,
+										b.SEGMENT4,
+										b.SEGMENT5,
+										b.SEGMENT6,
+										b.SEGMENT7,
+										b.SEGMENT8,
+										b.SEGMENT9,
+										b.DESCRIPTION,
+										b.TEMPLATE_ID,
+										b.ALLOCATION_CREATE_FLAG,
+										b.START_DATE_ACTIVE,
+										b.END_DATE_ACTIVE,
+										b.ATTRIBUTE1,
+										b.ATTRIBUTE2,
+										b.ATTRIBUTE3,
+										b.ATTRIBUTE4,
+										b.ATTRIBUTE5,
+										b.ATTRIBUTE6,
+										b.ATTRIBUTE7,
+										b.ATTRIBUTE8,
+										b.ATTRIBUTE9
+										)";
+							 
+					$query 		= $this->db->query($sql);	
+					if (!$query) {
+						return false;
+					}
+
+				}
+
+				$row++;
+			}
+		}	
+
+		if ($jenis_trx == "FLEX") 
+		{
+			while (($data = fgetcsv($handle, 0, ";","'","\\")) !== FALSE) {
+
+				if($row >= 0){
+					
+					if ($data[0] == "FVS") 
+					{
+						$sql	="MERGE INTO FND_FLEX_VALUE_SETS FFVS
+								  USING (SELECT '".$data[1]."' as FLEX_VALUE_SET_ID,
+												'".$data[2]."' as FLEX_VALUE_SET_NAME,
+												".$data[3]." as LAST_UPDATE_DATE,
+												'".$data[4]."' as LAST_UPDATED_BY,
+												".$data[5]." as CREATION_DATE,
+												'".$data[6]."' as CREATED_BY,
+												'".$data[7]."' as LAST_UPDATE_LOGIN,
+												'".$data[8]."' as VALIDATION_TYPE,
+												'".$data[9]."' as PROTECTED_FLAG,
+												'".$data[10]."' as SECURITY_ENABLED_FLAG,
+												'".$data[11]."' as LONGLIST_FLAG,
+												'".$data[12]."' as FORMAT_TYPE,
+												'".$data[13]."' as MAXIMUM_SIZE,
+												'".$data[14]."' as ALPHANUMERIC_ALLOWED_FLAG,
+												'".$data[15]."' as UPPERCASE_ONLY_FLAG,
+												'".$data[16]."' as NUMERIC_MODE_ENABLED_FLAG,
+												'".$data[17]."' as DESCRIPTION,
+												'".$data[18]."' as DEPENDANT_DEFAULT_VALUE,
+												'".$data[19]."' as DEPENDANT_DEFAULT_MEANING,
+												'".$data[20]."' as PARENT_FLEX_VALUE_SET_ID,
+												'".$data[21]."' as MINIMUM_VALUE,
+												'".$data[22]."' as MAXIMUM_VALUE,
+												'".$data[23]."' as NUMBER_PRECISION
+										 FROM dual) b
+								  ON (FFVS.FLEX_VALUE_SET_ID = b.FLEX_VALUE_SET_ID and ffvs.FLEX_VALUE_SET_NAME = b.FLEX_VALUE_SET_NAME)
+								  WHEN MATCHED THEN
+									UPDATE SET 
+												LAST_UPDATE_DATE = b.LAST_UPDATE_DATE,
+												LAST_UPDATED_BY = b.LAST_UPDATED_BY,
+												CREATION_DATE = b.CREATION_DATE,
+												CREATED_BY = b.CREATED_BY,
+												LAST_UPDATE_LOGIN = b.LAST_UPDATE_LOGIN,
+												VALIDATION_TYPE = b.VALIDATION_TYPE,
+												PROTECTED_FLAG = b.PROTECTED_FLAG,
+												SECURITY_ENABLED_FLAG = b.SECURITY_ENABLED_FLAG,
+												LONGLIST_FLAG = b.LONGLIST_FLAG,
+												FORMAT_TYPE = b.FORMAT_TYPE,
+												MAXIMUM_SIZE = b.MAXIMUM_SIZE,
+												ALPHANUMERIC_ALLOWED_FLAG = b.ALPHANUMERIC_ALLOWED_FLAG,
+												UPPERCASE_ONLY_FLAG = b.UPPERCASE_ONLY_FLAG,
+												NUMERIC_MODE_ENABLED_FLAG = b.NUMERIC_MODE_ENABLED_FLAG,
+												DESCRIPTION = b.DESCRIPTION,
+												DEPENDANT_DEFAULT_VALUE = b.DEPENDANT_DEFAULT_VALUE,
+												DEPENDANT_DEFAULT_MEANING = b.DEPENDANT_DEFAULT_MEANING,
+												PARENT_FLEX_VALUE_SET_ID = b.PARENT_FLEX_VALUE_SET_ID,
+												MINIMUM_VALUE = b.MINIMUM_VALUE,
+												MAXIMUM_VALUE = b.MAXIMUM_VALUE,
+												NUMBER_PRECISION = b.NUMBER_PRECISION
+								  WHEN NOT MATCHED THEN
+									INSERT (FLEX_VALUE_SET_ID,
+											FLEX_VALUE_SET_NAME,
+											LAST_UPDATE_DATE,
+											LAST_UPDATED_BY,
+											CREATION_DATE,
+											CREATED_BY,
+											LAST_UPDATE_LOGIN,
+											VALIDATION_TYPE,
+											PROTECTED_FLAG,
+											SECURITY_ENABLED_FLAG,
+											LONGLIST_FLAG,
+											FORMAT_TYPE,
+											MAXIMUM_SIZE,
+											ALPHANUMERIC_ALLOWED_FLAG,
+											UPPERCASE_ONLY_FLAG,
+											NUMERIC_MODE_ENABLED_FLAG,
+											DESCRIPTION,
+											DEPENDANT_DEFAULT_VALUE,
+											DEPENDANT_DEFAULT_MEANING,
+											PARENT_FLEX_VALUE_SET_ID,
+											MINIMUM_VALUE,
+											MAXIMUM_VALUE,
+											NUMBER_PRECISION
+											)
+									VALUES (b.FLEX_VALUE_SET_ID,
+											b.FLEX_VALUE_SET_NAME,
+											b.LAST_UPDATE_DATE,
+											b.LAST_UPDATED_BY,
+											b.CREATION_DATE,
+											b.CREATED_BY,
+											b.LAST_UPDATE_LOGIN,
+											b.VALIDATION_TYPE,
+											b.PROTECTED_FLAG,
+											b.SECURITY_ENABLED_FLAG,
+											b.LONGLIST_FLAG,
+											b.FORMAT_TYPE,
+											b.MAXIMUM_SIZE,
+											b.ALPHANUMERIC_ALLOWED_FLAG,
+											b.UPPERCASE_ONLY_FLAG,
+											b.NUMERIC_MODE_ENABLED_FLAG,
+											b.DESCRIPTION,
+											b.DEPENDANT_DEFAULT_VALUE,
+											b.DEPENDANT_DEFAULT_MEANING,
+											b.PARENT_FLEX_VALUE_SET_ID,
+											b.MINIMUM_VALUE,
+											b.MAXIMUM_VALUE,
+											b.NUMBER_PRECISION
+											)";
+								 
+						$query 		= $this->db->query($sql);	
+						if (!$query) {
+							return false;
+						}						
+					}
+					
+					if ($data[0] == "FFV") 
+					{
+						$sql	="MERGE INTO FND_FLEX_VALUES FFV
+								  USING (SELECT '".$data[1]."' as FLEX_VALUE_SET_ID,
+												'".$data[2]."' as FLEX_VALUE_ID,
+												'".$data[3]."' as FLEX_VALUE,
+												".$data[4]." as LAST_UPDATE_DATE,
+												'".$data[5]."' as LAST_UPDATED_BY,
+												".$data[6]." as CREATION_DATE,
+												'".$data[7]."' as CREATED_BY,
+												'".$data[8]."' as ENABLED_FLAG,
+												'".$data[9]."' as SUMMARY_FLAG,
+												'".$data[10]."' as COMPILED_VALUE_ATTRIBUTES
+										 FROM dual) b
+								  ON (FFV.FLEX_VALUE_SET_ID = b.FLEX_VALUE_SET_ID and FFV.FLEX_VALUE_ID = b.FLEX_VALUE_ID)
+								  WHEN MATCHED THEN
+									UPDATE SET  FLEX_VALUE = b.FLEX_VALUE,
+												LAST_UPDATE_DATE = b.LAST_UPDATE_DATE,
+												LAST_UPDATED_BY = b.LAST_UPDATED_BY,
+												CREATION_DATE = b.CREATION_DATE,
+												CREATED_BY = b.CREATED_BY,
+												ENABLED_FLAG = b.ENABLED_FLAG,
+												SUMMARY_FLAG = b.SUMMARY_FLAG,
+												COMPILED_VALUE_ATTRIBUTES = b.COMPILED_VALUE_ATTRIBUTES
+								  WHEN NOT MATCHED THEN
+									INSERT (FLEX_VALUE_SET_ID,
+											FLEX_VALUE_ID,
+											FLEX_VALUE,
+											LAST_UPDATE_DATE,
+											LAST_UPDATED_BY,
+											CREATION_DATE,
+											CREATED_BY,
+											ENABLED_FLAG,
+											SUMMARY_FLAG,
+											COMPILED_VALUE_ATTRIBUTES
+											)
+									VALUES (b.FLEX_VALUE_SET_ID,
+											b.FLEX_VALUE_ID,
+											b.FLEX_VALUE,
+											b.LAST_UPDATE_DATE,
+											b.LAST_UPDATED_BY,
+											b.CREATION_DATE,
+											b.CREATED_BY,
+											b.ENABLED_FLAG,
+											b.SUMMARY_FLAG,
+											b.COMPILED_VALUE_ATTRIBUTES
+											)";
+								 
+						$query 		= $this->db->query($sql);	
+						if (!$query) {
+							return false;
+						}						
+					}						
+
+					if ($data[0] == "FVT") 
+					{
+						$sql	="MERGE INTO FND_FLEX_VALUES_TL FFVT
+								  USING (SELECT '".$data[1]."' as FLEX_VALUE_ID,
+												'".$data[2]."' as LANGUAGE,
+												".$data[3]." as LAST_UPDATE_DATE,
+												'".$data[4]."' as LAST_UPDATED_BY,
+												".$data[5]." as CREATION_DATE,
+												'".$data[6]."' as CREATED_BY,
+												'".$data[7]."' as DESCRIPTION,
+												'".$data[8]."' as FLEX_VALUE_MEANING
+										 FROM dual) b
+								  ON (FFVT.FLEX_VALUE_ID = b.FLEX_VALUE_ID)
+								  WHEN MATCHED THEN
+									UPDATE SET  LANGUAGE = b.LANGUAGE,
+												LAST_UPDATE_DATE = b.LAST_UPDATE_DATE,
+												LAST_UPDATED_BY = b.LAST_UPDATED_BY,
+												CREATION_DATE = b.CREATION_DATE,
+												CREATED_BY = b.CREATED_BY,
+												DESCRIPTION = b.DESCRIPTION,
+												FLEX_VALUE_MEANING = b.FLEX_VALUE_MEANING
+								  WHEN NOT MATCHED THEN
+									INSERT (FLEX_VALUE_ID,
+											LANGUAGE,
+											LAST_UPDATE_DATE,
+											LAST_UPDATED_BY,
+											CREATION_DATE,
+											CREATED_BY,
+											DESCRIPTION,
+											FLEX_VALUE_MEANING
+											)
+									VALUES (b.FLEX_VALUE_ID,
+											b.LANGUAGE,
+											b.LAST_UPDATE_DATE,
+											b.LAST_UPDATED_BY,
+											b.CREATION_DATE,
+											b.CREATED_BY,
+											b.DESCRIPTION,
+											b.FLEX_VALUE_MEANING
+											)";
+								 
+						$query 		= $this->db->query($sql);	
+						if (!$query) {
+							return false;
+						}						
+					}
+					
+				}
+
+				$row++;
+			}
+		}
+
+		if ($jenis_trx == "ACCPPH21") 
+		{
+			while (($data = fgetcsv($handle, 0, ";","'","\\")) !== FALSE) {
+
+				if($row >= 0){
+							 
+					$sql	="MERGE INTO SIMTAX_PPH21_DTL SPD
+							  USING (SELECT  '".$data[1]."' as NIK,
+											 '".$data[0]."' as NAMA,
+											 ".$data[2]." as EFFECTIVE_DATE,
+											 '".$data[3]."' as KELAS_JABATAN,
+											 '".$data[4]."' as JOB,
+											 '".$data[5]."' as POSISI,
+											 '".$data[6]."' as KATEGORI_POSISI,
+											 '".$data[7]."' as ENTITY,
+											 '".$data[8]."' as PAYROLL_NAME,
+											 '".$data[9]."' as LOKASI,
+											 ".$data[10]." as TANGGAL_LAHIR,
+											 '".$data[11]."' as USIA,
+											 '".$data[12]."' as PENDIDIKAN_TERAKHIR,
+											 '".$data[13]."' as GOLONGAN,
+											 '".$data[14]."' as MASA_KERJA,
+											 '".$data[15]."' as SALARY,
+											 '".$data[16]."' as TAKE_HOME_PAY,
+											 '".$data[17]."' as ELEMENT_NAME,
+											 '".$data[18]."' as CLASSIFICATION_NAME,
+											 '".$data[19]."' as SEGMENT1,
+											 '".$data[20]."' as SEGMENT2,
+											 '".$data[21]."' as SEGMENT3,
+											 '".$data[22]."' as SEGMENT4,
+											 '".$data[23]."' as SEGMENT5,
+											 '".$data[24]."' as SEGMENT6,
+											 '".$data[25]."' as SEGMENT7,
+											 '".$data[26]."' as SEGMENT8,
+											 '".$data[27]."' as SEGMENT9,
+											 '".$data[28]."' as COSTED_VALUE
+									 FROM dual) b
+							  ON (spd.NIK = b.NIK
+									AND spd.NAMA = b.NAMA
+									AND spd.EFFECTIVE_DATE = b.EFFECTIVE_DATE
+									AND spd.KELAS_JABATAN = b.KELAS_JABATAN
+									AND spd.JOB = b.JOB
+									AND spd.POSISI = b.POSISI
+									AND spd.KATEGORI_POSISI = b.KATEGORI_POSISI
+									AND spd.ENTITY = b.ENTITY
+									AND spd.PAYROLL_NAME = b.PAYROLL_NAME
+									AND spd.LOKASI = b.LOKASI
+									AND spd.TANGGAL_LAHIR = b.TANGGAL_LAHIR
+									AND spd.USIA = b.USIA
+									AND spd.PENDIDIKAN_TERAKHIR = b.PENDIDIKAN_TERAKHIR
+									AND spd.GOLONGAN = b.GOLONGAN
+									AND spd.MASA_KERJA = b.MASA_KERJA
+									--AND spd.SALARY = b.SALARY
+									AND spd.TAKE_HOME_PAY = b.TAKE_HOME_PAY
+									AND spd.ELEMENT_NAME = b.ELEMENT_NAME
+									AND spd.CLASSIFICATION_NAME = b.CLASSIFICATION_NAME
+									AND spd.SEGMENT1 = b.SEGMENT1
+									AND spd.SEGMENT2 = b.SEGMENT2
+									AND spd.SEGMENT3 = b.SEGMENT3
+									AND spd.SEGMENT4 = b.SEGMENT4
+									AND spd.SEGMENT5 = b.SEGMENT5
+									AND spd.SEGMENT6 = b.SEGMENT6
+									AND spd.SEGMENT7 = b.SEGMENT7
+									AND spd.SEGMENT8 = b.SEGMENT8
+									AND spd.SEGMENT9 = b.SEGMENT9
+								)
+							  WHEN MATCHED THEN
+								UPDATE SET 
+										COSTED_VALUE = b.COSTED_VALUE
+							  WHEN NOT MATCHED THEN
+								INSERT (NIK,
+										NAMA,
+										EFFECTIVE_DATE,
+										KELAS_JABATAN,
+										JOB,
+										POSISI,
+										KATEGORI_POSISI,
+										ENTITY,
+										PAYROLL_NAME,
+										LOKASI,
+										TANGGAL_LAHIR,
+										USIA,
+										PENDIDIKAN_TERAKHIR,
+										GOLONGAN,
+										MASA_KERJA,
+										SALARY,
+										TAKE_HOME_PAY,
+										ELEMENT_NAME,
+										CLASSIFICATION_NAME,
+										SEGMENT1,
+										SEGMENT2,
+										SEGMENT3,
+										SEGMENT4,
+										SEGMENT5,
+										SEGMENT6,
+										SEGMENT7,
+										SEGMENT8,
+										SEGMENT9,
+										COSTED_VALUE
+										)
+								VALUES (b.NIK,
+										b.NAMA,
+										b.EFFECTIVE_DATE,
+										b.KELAS_JABATAN,
+										b.JOB,
+										b.POSISI,
+										b.KATEGORI_POSISI,
+										b.ENTITY,
+										b.PAYROLL_NAME,
+										b.LOKASI,
+										b.TANGGAL_LAHIR,
+										b.USIA,
+										b.PENDIDIKAN_TERAKHIR,
+										b.GOLONGAN,
+										b.MASA_KERJA,
+										b.SALARY,
+										b.TAKE_HOME_PAY,
+										b.ELEMENT_NAME,
+										b.CLASSIFICATION_NAME,
+										b.SEGMENT1,
+										b.SEGMENT2,
+										b.SEGMENT3,
+										b.SEGMENT4,
+										b.SEGMENT5,
+										b.SEGMENT6,
+										b.SEGMENT7,
+										b.SEGMENT8,
+										b.SEGMENT9,
+										b.COSTED_VALUE
+										)";
+							 
+					$query 		= $this->db->query($sql);	
+					if (!$query) {
+						return false;
+					}
+
+				}
+
+				$row++;
+			}
+		}			
+		
+		return true;
+		
+    }
+
+    function do_process_tb($file_path,$ConcReqId) {
+		
+		$row = 0;
+		$handle = fopen($file_path, "r");
+		
+		$dataCsv  = array();
+		while (($data = fgetcsv($handle, 1000, ";","'","\\")) !== FALSE) {
+
+			if($row >= 0){
+						 
+				$sql	="insert into simtax_rincian_bl_pph_badan 
+						(BEBAN_LAIN_ID
+						,TAHUN_PAJAK
+						,BULAN_PAJAK
+						,MASA_PAJAK
+						,DEBIT
+						,CREDIT
+						,KODE_AKUN
+						,AKUN_DESCRIPTION
+						,CHECKLIST
+						,CODE_COMPANY
+						,LEDGER_ID
+						,CREATION_DATE
+						,CREATED_BY
+						,UPDATE_DATE
+						,UPDATE_BY
+						,TGL_BUKTI
+						,NOMOR_BUKTI
+						,URAIAN
+						,KODE_CABANG
+						,REQUEST_ID
+						,KODE_JASA
+						,JASA_DESCRIPTION
+						,BEGIN_BALANCE
+						) 
+						 VALUES
+						 (RINCIAN_BL_PPH_BADAN_S.nextval,
+						 '".$data[0]."',
+						 '".$data[1]."',
+						 '".$data[2]."',
+						 '".$data[3]."',
+						 '".$data[4]."',
+						 ".$data[5].",
+						 '".$data[6]."',
+						 0,
+						 ".$data[7].",
+						 '".$data[8]."',
+						 sysdate,
+						 'ADMIN',
+						 NULL,
+						 NULL,
+						 '".$data[13]."',						 
+						 '".$data[14]."',
+						 '".$data[15]."',
+						 '".$data[9]."',
+						 '".$ConcReqId."',
+						 '".$data[10]."',						 
+						 '".$data[11]."',						 
+						 '".$data[12]."'
+						 )";
+						 
+				$query 		= $this->db->query($sql);	
+				if (!$query) {
+					return false;
+				}
+
+			}
+
+			$row++;
+		}
+		
+		return true;
+		
+    }
+	
+	function do_import_trx($bulan,$tahun,$ConcReqId,$jenis_trx)
+	{
+		
+		$PARAMETER_1 = $bulan;
+		$PARAMETER_2 = $tahun;
+		$PARAMETER_3 = "";
+		$PARAMETER_4 = $ConcReqId;
+		$OUT_CODE = "";
+		$OUT_MESSAGE = "";
+		
+		$arr_jenis_trx = array("PPNMASUK", "PPNWAPU", "PPNKELUAR");
+		
+		if ($jenis_trx=="PPH21")
+		{
+			$stid = oci_parse($this->db->conn_id, 'BEGIN SIMTAX_PAJAK_UTILITY_PKG.insertStagingToBaseTablePPH21(:PARAMETER_1,:PARAMETER_2,:PARAMETER_3,:PARAMETER_4, :OUT_CODE,:OUT_MESSAGE); end;');
+		} elseif (in_array($jenis_trx, $arr_jenis_trx)) {
+			if ($jenis_trx=="PPNMASUK") {
+				$stid = oci_parse($this->db->conn_id, 'BEGIN SIMTAX_PAJAK_UTILITY_PKG.insertStagingToBaseTablePPNMsk(:PARAMETER_1,:PARAMETER_2,:PARAMETER_3,:PARAMETER_4, :OUT_CODE,:OUT_MESSAGE); end;');			
+			}
+			/*add by badar*/
+			elseif ($jenis_trx=="PPNWAPU") {
+				$stid = oci_parse($this->db->conn_id, 'BEGIN SIMTAX_PAJAK_UTILITY_PKG.insertStagingToBaseTablePPNMsk(:PARAMETER_1,:PARAMETER_2,:PARAMETER_3,:PARAMETER_4, :OUT_CODE,:OUT_MESSAGE); end;');
+			}
+			/*add by badar*/
+			else {
+				$stid = oci_parse($this->db->conn_id, 'BEGIN SIMTAX_PAJAK_UTILITY_PKG.insertStagingToBaseTablePPN(:PARAMETER_1,:PARAMETER_2,:PARAMETER_3,:PARAMETER_4, :OUT_CODE,:OUT_MESSAGE); end;');
+			}
+		} else {
+			$stid = oci_parse($this->db->conn_id, 'BEGIN SIMTAX_PAJAK_UTILITY_PKG.insertStagingToBaseTable(:PARAMETER_1,:PARAMETER_2,:PARAMETER_3,:PARAMETER_4, :OUT_CODE,:OUT_MESSAGE); end;');
+		}
+		
+		oci_bind_by_name($stid, ':PARAMETER_1',  $PARAMETER_1,200);
+		oci_bind_by_name($stid, ':PARAMETER_2',  $PARAMETER_2,200);
+		oci_bind_by_name($stid, ':PARAMETER_3',  $PARAMETER_3,200);
+		oci_bind_by_name($stid, ':PARAMETER_4',  $PARAMETER_4,200);
+		oci_bind_by_name($stid, ':OUT_CODE',  $OUT_MESSAGE ,100, SQLT_CHR);
+		oci_bind_by_name($stid, ':OUT_MESSAGE',  $OUT_MESSAGE ,100, SQLT_CHR);
+
+		if(oci_execute($stid)){
+		  $results = $OUT_CODE;
+		}
+		
+		oci_free_statement($stid);
+		//oci_close($DBEBS->conn_id);
+
+		if ($results==2) {
+			return false;
+		}
+		else {			
+			return true;
+		}
+	}	
+	
+	function get_history()
+	{
+		$q		= (isset($_POST['search']['value']))?$_POST['search']['value']:'';		
+		$where	= " ";
+		if($q) {
+			$where	= " and (upper(skc.NAMA_CABANG) like '%".strtoupper($q)."%' or upper(CONCURRENT_REQUEST_ID) like '%".strtoupper($q)."%' or  upper(PARAMETER5) like '%".strtoupper($q)."%') ";
+		}
+
+		$kode_cabang = $this->session->userdata('kd_cabang');
+		$whereCabang = "";
+		if($kode_cabang != '000'){
+			$whereCabang = " and SKC.kode_cabang = '".$kode_cabang."'";
+		}
+
+		$queryExec	= "select CONCURRENT_REQUEST_ID 
+							 , to_char(REQUESTED_DATE,'DD-MON-YYYY HH24:MI:SS') REQUESTED_DATE 
+							 , case PARAMETER1
+                                    when '1' then 'JAN'
+                                    when '2' then 'FEB'
+                                    when '3' then 'MAR'
+                                    when '4' then 'APR'
+                                    when '5' then 'MAY'
+                                    when '6' then 'JUN'
+                                    when '7' then 'JUL'
+                                    when '8' then 'AUG'
+                                    when '9' then 'SEP'
+                                    when '10' then 'OCT'
+                                    when '11' then 'NOV'
+                                    when '12' then 'DEC'
+                                end BULAN
+							 , PARAMETER2 TAHUN
+							 , PARAMETER3 KODE_CABANG
+							 , PARAMETER5 TIPE_DOKUMEN
+							 , IMPORT_TO_SIMTAX_FLAG
+							 , IMPORT_TO_SIMTAX_DATE
+							 , REPLACE_BY_CONC_REQ_ID
+							 , skc.NAMA_CABANG
+							 , case
+								when IMPORT_TO_SIMTAX_FLAG = 'Y' and REPLACE_BY_CONC_REQ_ID IS NULL then
+									'Sudah diproses'
+								when IMPORT_TO_SIMTAX_FLAG = 'Y' and REPLACE_BY_CONC_REQ_ID IS NOT NULL then
+									'Tidak jadi diproses. digantikan oleh Request ID : ' || REPLACE_BY_CONC_REQ_ID
+								when IMPORT_TO_SIMTAX_FLAG = 'N' then
+									'Belum diproses'            
+							   end STATUS_IMPORT  
+						 from simtax_getdata_history sgh
+							, simtax_kode_cabang skc
+						where sgh.PARAMETER3 = skc.KODE_CABANG (+)
+					   ".$where."
+					   ".$whereCabang."
+						order by CONCURRENT_REQUEST_ID desc ";		
+		
+		$sql		="SELECT * FROM (
+						SELECT rownum rnum, a.* 
+						FROM(
+							".$queryExec."
+						) a 
+						WHERE rownum <=".$_POST['start']."+".$_POST['length']."
+					)
+					WHERE rnum >".$_POST['start']."";
+		
+		$sql2		= $queryExec;	  
+		$query2 	= $this->db->query($sql2);		
+		$rowCount	= $query2->num_rows() ;
+		$query 		= $this->db->query($sql);
+		
+		$result['query']			= $query;
+		$result['jmlRow']			= $rowCount;		
+		return $result;		
+	}	
+		
+}
