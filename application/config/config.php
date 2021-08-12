@@ -24,7 +24,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 |
 */
 
-$config['base_url'] = 'http://dev.me/simtax-pelndo-raya-lap-rekapitulasi/';
+$config['base_url'] = 'http://localhost/simtax/';
 
 $config['fonts_path']= 'system/fonts/';
 
