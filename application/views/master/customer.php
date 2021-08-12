@@ -13,7 +13,7 @@
 							  </div>
 							  <div class="col-lg-6">								
 								<div class="navbar-right">
-									<button id="btnTambah" class="btn btn-default btn-rounded custom-input-width" data-toggle="modal" data-target="#modal-tambah" type="button" ><i class="fa fa-pencil-square-o"></i> ADD</button>
+									<!-- <button id="btnTambah" class="btn btn-default btn-rounded custom-input-width" data-toggle="modal" data-target="#modal-tambah" type="button" ><i class="fa fa-pencil-square-o"></i> ADD</button> -->
 									<button type="button" id="btnEdit" class="btn btn-rounded btn-default custom-input-width" disabled data-toggle="modal" data-target="#modal-cs"><i class="fa fa-pencil"></i> EDIT</button>
 									<button type="button" id="btnHapus" class="btn btn-rounded btn-default custom-input-width " disabled data-toggle="modal" data-target="#modal-cs"><i class="fa fa-trash-o"></i> DELETE</button>											
 								</div>
@@ -127,7 +127,7 @@
 		  <div class="col-lg-6">
 			<div class="form-group">
 				<label>NPWP </label>
-				<input type="text" class="form-control" id="npwp" name="npwp" placeholder="NPWP *(Tidak Boleh Kosong)">
+				<input type="text" class="form-control" id="npwp" name="npwp" placeholder="NPWP *(Tidak Boleh Kosong)" data-inputmask="'mask': '99.999.999.9-999.999'">
 			</div>
 		  </div>
 		  </div>

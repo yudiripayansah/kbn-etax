@@ -10,20 +10,20 @@
 					<label>Bulan</label>
 					<select class="form-control" id="bulan" name="bulan">
 						<?php
-							$namaBulan = list_month();
-							$bln       = date('m');
-							/*if ($bln > 1){
-								$bln     = $bln - 1;
-								$tahun_n = 0;
-							} else {
-								$bln     = 12;
-								$tahun_n = 1;
-							}*/
-							for ($i=1;$i< count($namaBulan);$i++){
-								$selected = ($i==$bln)?"selected":"";
-								echo "<option value='".$i."' data-name='".$namaBulan[$i]."' ".$selected." >".$namaBulan[$i]."</option>";
-							}
-						?>
+                            $namaBulan = list_month();
+                            $bln       = date('m');
+                            /*if ($bln > 1){
+                                $bln     = $bln - 1;
+                                $tahun_n = 0;
+                            } else {
+                                $bln     = 12;
+                                $tahun_n = 1;
+                            }*/
+                            for ($i=1;$i< count($namaBulan);$i++) {
+                                $selected = ($i==$bln)?"selected":"";
+                                echo "<option value='".$i."' data-name='".$namaBulan[$i]."' ".$selected." >".$namaBulan[$i]."</option>";
+                            }
+                        ?>
 					</select>
 				</div>
 			 </div>
@@ -31,16 +31,16 @@
 				<div class="form-group">
 					<label>Tahun</label>
 					<select class="form-control" id="tahun" name="tahun">
-						<?php 
-							$tahun    = date('Y');
-							$tAwal    = $tahun - 5;
-							$tAkhir   = $tahun;
-							$selected = "";
-							for($i=$tAwal; $i<=$tAkhir; $i++){
-								$selected = ($i == $tahun) ? "selected" : "";
-								echo "<option value='".$i."' ".$selected.">".$i."</option>";
-							}
-						?>
+						<?php
+                            $tahun    = date('Y');
+                            $tAwal    = $tahun - 5;
+                            $tAkhir   = $tahun;
+                            $selected = "";
+                            for ($i=$tAwal; $i<=$tAkhir; $i++) {
+                                $selected = ($i == $tahun) ? "selected" : "";
+                                echo "<option value='".$i."' ".$selected.">".$i."</option>";
+                            }
+                        ?>
 					</select>
 					<input type="hidden" class="form-control" id="jenisPajak" value="<?php echo $nama_pajak ?>">
 				</div>
@@ -66,7 +66,7 @@
 	 </div>
 
 	<div id="d-FormCsv">
-		 <div class="white-box boxshadow">
+		<div class="white-box boxshadow">
 	 	<div class="row">
 			<div class="col-md-5">
 				<div class="form-group">
@@ -74,7 +74,7 @@
 				<select class="form-control" id="kategori_eksport" name="kategori_dokumen">
 					<option value="dilaporkan" selected>Data Yang Dilaporkan</option>
 					<option value="tidak_dilaporkan">Data Yang Tidak Dilaporkan</option>
-					<?php if($nama_pajak == "PPN MASUKAN"){ ?>
+					<?php if ($nama_pajak == "PPN MASUKAN") { ?>
 					<option value="pmk">PMK</option>
 					<?php } else { ?>
 					<option value="summary">Data Summary (Tanpa Akun Beban)</option>
@@ -108,7 +108,7 @@
 						<label class="form-control-label">Jenis Dokumen</label>
 						<select class="form-control" id="kategori_dokumen" name="kategori_dokumen">
 								<option value="">Pilih Dokumen</option>
-							<?php if($nama_pajak == "PPN MASUKAN"){ ?>
+							<?php if ($nama_pajak == "PPN MASUKAN") { ?>
 								<option value="FM">eFaktur Masukan</option>
 								<option value="DM">Dokumen Masukan</option>
 							<?php } else { ?>
@@ -128,9 +128,9 @@
 					  </div>
 				  </form>
 			</div>
-		 </div>
-	 </div>
+		</div>
 	</div>
+</div>
 	 
 	<div id="table-1" class="row">
         <div class="col-lg-12">
@@ -144,12 +144,12 @@
 					  	<div class="navbar-right">
 					  		<!-- <button type="button" id="btnAdd1" class="btn btn-rounded btn-default custom-input-width" disabled ><i class="fa fa-plus"></i> ADD</button> -->
 					  		<button type="button" id="btnEdit1" class="btn btn-rounded btn-default custom-input-width" disabled ><i class="fa fa-pencil"></i> EDIT</button>
-							<?php if($nama_pajak == "PPN MASUKAN"){ ?>
+							<?php if ($nama_pajak == "PPN MASUKAN") { ?>
 					  		<button type="button" id="btnDelete1" class="btn btn-rounded btn-default custom-input-width" disabled ><i class="fa fa-trash"></i> DELETE</button>
 							<?php } ?>
 						</div>
 					  </div>
-					</div>
+					</div> 
 				</div>
                 <div class="panel-body"> 
 					<div class="table-responsive">
@@ -192,9 +192,9 @@
 									<th>NOMOR INVOICE</th>
 									<th>JUMLAH DPP</th>
 									<th>JUMLAH PPN</th>
-									<?php if($nama_pajak == "PPN MASUKAN"){ ?>
+									<?php if ($nama_pajak == "PPN MASUKAN") { ?>
 	                            	<th>AKUN BEBAN</th>
-									<?php } else{ ?>
+									<?php } else { ?>
 	                            	<th>AKUN PENDAPATAN</th>
 									<?php } ?>
 	                            	<th>KD JENIS TRANSAKSI</th>
@@ -204,9 +204,9 @@
 									<th>ALAMAT LENGKAP</th>
 									<th>MATA UANG</th>
 									<th>JUMLAH PPNBM</th>
-									<?php if($nama_pajak == "PPN MASUKAN"){ ?>
+									<?php if ($nama_pajak == "PPN MASUKAN") { ?>
 									<th>IS CREDITABLE</th>
-									<?php } else{ ?>
+									<?php } else { ?>
 									<th>ID KETERANGAN TAMBAHAN</th>
 									<th>FG UANG MUKA</th>
 									<th>UANG MUKA DPP</th>
@@ -283,9 +283,9 @@
 	                            	<th>NOMOR INVOICE</th>
 	                            	<th>JUMLAH DPP</th>
 	                            	<th>JUMLAH PPN</th>
-									<?php if($nama_pajak == "PPN MASUKAN"){ ?>
+									<?php if ($nama_pajak == "PPN MASUKAN") { ?>
 	                            	<th>AKUN BEBAN</th>
-									<?php } else{ ?>
+									<?php } else { ?>
 	                            	<th>AKUN PENDAPATAN</th>
 									<?php } ?>
 	                            	<th>JENIS TRANSAKSI</th>
@@ -338,11 +338,11 @@
 										<tr>
 											<th>TOTAL <?php echo ($nama_pajak == "PPN KELUARAN") ? 'E' :'' ?>FAKTUR <?php echo $nama_pajak ?></th>
 											<th>TOTAL DOKUMEN LAIN <?php echo $nama_pajak ?></th>
-											<?php if($nama_pajak == "PPN MASUKAN"){ ?>
+											<?php if ($nama_pajak == "PPN MASUKAN") { ?>
 											<th>PPN YANG DAPAT DIKREDITKAN</th>
 											<th>PPN YANG TIDAK DAPAT DI KREDITKAN</th>
 											<th>JUMLAH PMK</th>
-											<?php }else{?>
+											<?php } else {?>
 											<th>PPN YANG HARUS DIPUNGUT SENDIRI</th>
 											<th>PPN YANG DIPUNGUT OLEH PEMUNGUT PPN</th>
 											<th>PPN YANG TIDAK DIPUNGUT</th>
@@ -438,7 +438,7 @@
 		</div>
 	 </div>
 
-	<?php if($nama_pajak == "PPN MASUKAN"){ ?>
+	<?php if ($nama_pajak == "PPN MASUKAN") { ?>
 	  <div class="row">
 			<div class="col-lg-12">
 				<div id="accordion-3" class="panel panel-info animated slideInDown">
@@ -447,7 +447,7 @@
 					  <div class="col-lg-6">
 						<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion-1" href="#collapse-pmk">PMK78</a>
 					  </div>
-					  <?php if($this->session->userdata('kd_cabang') == "000"): ?>
+					  <?php if ($this->session->userdata('kd_cabang') == "000"): ?>
 					  <div class="col-sm-6">
 					  	<div class="navbar-right">
 					  		<button type="button" id="btn_z_percent" class="btn btn-rounded btn-default custom-input-width" ><i class="fa fa-pencil"></i> EDIT Z PERCENT</button>
@@ -667,7 +667,7 @@
 				<div class="col-md-6">
 					<div class="form-group">
 						<label for="nofakturpajak" class="control-label">NO FAKTUR PAJAK</label>
-						<input type="text" class="form-control" id="nofakturpajak" name="nofakturpajak" placeholder="NO FAKTUR PAJAK" data-toggle="validator" data-error="Mohon isi No Faktur Pajak" required>
+						<input type="text" class="form-control" id="nofakturpajak" name="nofakturpajak" placeholder="NO FAKTUR PAJAK" data-toggle="validator" data-error="Mohon isi No Faktur Pajak" data-inputmask="'mask': '999.999-99.99999999'" required>
 						<div class="help-block with-errors"></div>
 					</div>
 				</div>
@@ -969,17 +969,17 @@
 							<label>Tahun </label>
 							<select id="tahun_z_percent_lov">
 								<?php
-									$tahun    = date('Y');
-									$tAwal    = $tahun - 3;
-									$tAkhir   = $tahun;
-									$selected = "";
-									for($i=$tAwal; $i<=$tAkhir; $i++){
-										$selected = ($i == $tahun) ? "selected" : "";
-										echo "<option value='".$i."' ".$selected.">&nbsp;&nbsp;".$i."&nbsp;&nbsp;</option>";
-									}
-										echo "<option value='".$i."'>&nbsp;&nbsp;".$i."&nbsp;&nbsp;</option>";
+                                    $tahun    = date('Y');
+                                    $tAwal    = $tahun - 3;
+                                    $tAkhir   = $tahun;
+                                    $selected = "";
+                                    for ($i=$tAwal; $i<=$tAkhir; $i++) {
+                                        $selected = ($i == $tahun) ? "selected" : "";
+                                        echo "<option value='".$i."' ".$selected.">&nbsp;&nbsp;".$i."&nbsp;&nbsp;</option>";
+                                    }
+                                        echo "<option value='".$i."'>&nbsp;&nbsp;".$i."&nbsp;&nbsp;</option>";
 
-								?>
+                                ?>
 							</select>
 						</div>
 							<table width="100%" class="cell-border stripe hover small animated slideInDown" id="table-z-percent"> 
@@ -1007,496 +1007,456 @@
 
 
 <script>
-    $(document).ready(function() {
-			var table1                 = "",
-			table2                     = "",
-			table_wp                   = "",
-			val_pajak_line_id          = "",
-			val_pajak_header_id        = "",
-			val_vendor_id              = "",
-			val_organization_id        = "",
-			val_vendor_site_id         = "",
-			val_akun_pajak             = "",
-			val_nama_pajak             = "",
-			val_masa_pajak             = "",
-			val_tahun_pajak            = "",
-			val_jenis_transaksi        = "",
-			val_jenis_dokumen          = "",
-			val_kd_jenis_transaksi     = "",
-			val_fg_pengganti           = "",
-			val_no_dokumen_lain_ganti  = "",
-			val_no_dokumen_lain        = "",
-			val_tanggal_dokumen_lain   = "",
-			val_no_faktur_pajak        = "",
-			val_tanggal_faktur_pajak   = "",
-			val_npwp                   = "",
-			val_nama_wp                = "",
-			val_alamat                 = "",
-			val_invoice_number         = "",
-			val_akun_pajak             = "",
-			val_mata_uang              = "",
-			val_dpp                    = "",
-			val_jumlah_potong          = "",
-			val_jumlah_ppnbm           = "",
-			val_keterangan             = "",
-			val_is_creditable          = "",
-			val_fapr                   = "",
-			val_tanggal_approval       = "",
-			val_id_keterangan_tambahan = "",
-			val_fg_uang_muka           = "",
-			val_uang_muka_dpp          = "",
-			val_uang_muka_ppn          = "",
-			val_uang_muka_ppnbm        = "",
-			val_referensi              = "",
-			vlinse_id                  = "",
-			vcheckbox_id               = "",
-			vcategory_id               = "",
-			val_dl_fs                  = "",
-			dlfs_data                  = "",
-			dlfs_id                    = "",
-			dlfs_val                   = "",
-			dlfs_category              = "",
-			vis_checkAll               = 1,
-			val_faktur_asal            = "",
-			val_tanggal_faktur_asal    = "",
-			val_dpp_asal               = "",
-			val_ppn_asal               = "",
-			val_keterangan_gl          = "",
-			val_ntpn                   = "",
-			pmk_vlinse_id              = "",
-			pmk_vcheckbox_id           = "",
-			pmk_vcategory_id           = "",
-			pmk_vcategoryTable         = "",
-			pmk_vcategoryTable         = "",
-			tidak_terutang_ppn         = 0,
-			terutang_ppn               = 0,
-			terutang_tidak_terutang    = 0,
-			z_percent                  = 0;
-			
-		$("#dpp, #jumlahpotong, #saldoAwal").number(true,2);
-		$("#d-FormCsv").hide();
-		$("#tambah-data").hide();
-		
-		$('#modal-namawp').modal({
-			keyboard: true,
-			backdrop: "static",
-			show:false,
-		});
+$(document).ready(function() {
+	var table1                 = "",
+	table2                     = "",
+	table_wp                   = "",
+	val_pajak_line_id          = "",
+	val_pajak_header_id        = "",
+	val_vendor_id              = "",
+	val_organization_id        = "",
+	val_vendor_site_id         = "",
+	val_akun_pajak             = "",
+	val_nama_pajak             = "",
+	val_masa_pajak             = "",
+	val_tahun_pajak            = "",
+	val_jenis_transaksi        = "",
+	val_jenis_dokumen          = "",
+	val_kd_jenis_transaksi     = "",
+	val_fg_pengganti           = "",
+	val_no_dokumen_lain_ganti  = "",
+	val_no_dokumen_lain        = "",
+	val_tanggal_dokumen_lain   = "",
+	val_no_faktur_pajak        = "",
+	val_tanggal_faktur_pajak   = "",
+	val_npwp                   = "",
+	val_nama_wp                = "",
+	val_alamat                 = "",
+	val_invoice_number         = "",
+	val_akun_pajak             = "",
+	val_mata_uang              = "",
+	val_dpp                    = "",
+	val_jumlah_potong          = "",
+	val_jumlah_ppnbm           = "",
+	val_keterangan             = "",
+	val_is_creditable          = "",
+	val_fapr                   = "",
+	val_tanggal_approval       = "",
+	val_id_keterangan_tambahan = "",
+	val_fg_uang_muka           = "",
+	val_uang_muka_dpp          = "",
+	val_uang_muka_ppn          = "",
+	val_uang_muka_ppnbm        = "",
+	val_referensi              = "",
+	vlinse_id                  = "",
+	vcheckbox_id               = "",
+	vcategory_id               = "",
+	val_dl_fs                  = "",
+	dlfs_data                  = "",
+	dlfs_id                    = "",
+	dlfs_val                   = "",
+	dlfs_category              = "",
+	vis_checkAll               = 1,
+	val_faktur_asal            = "",
+	val_tanggal_faktur_asal    = "",
+	val_dpp_asal               = "",
+	val_ppn_asal               = "",
+	val_keterangan_gl          = "",
+	val_ntpn                   = "",
+	pmk_vlinse_id              = "",
+	pmk_vcheckbox_id           = "",
+	pmk_vcategory_id           = "",
+	pmk_vcategoryTable         = "",
+	pmk_vcategoryTable         = "",
+	tidak_terutang_ppn         = 0,
+	terutang_ppn               = 0,
+	terutang_tidak_terutang    = 0,
+	z_percent                  = 0;
+	
+	$("#dpp, #jumlahpotong, #saldoAwal").number(true,2);
+	$("#d-FormCsv").hide();
+	$("#tambah-data").hide();
 
-		valueAdd();
-		getSummary();
-		orderBy("orderby1");
-		orderBy("orderby2");
+	$('#modal-namawp').modal({
+		keyboard: true,
+		backdrop: "static",
+		show:false,
+	});
+
+	valueAdd();
+	getSummary();
+	orderBy("orderby1");
+	orderBy("orderby2");
 
 /* FAKTUR STANDAR */
-		 Pace.track(function(){
-		   $('#table_faktur').DataTable({
-			"serverSide"	: true,
-			"processing"	: true,
-			"ajax"			: {
-								 "url"  		: baseURL + 'ppn_masa/load_rekonsiliasi',
-								 "type" 		: "POST",
-								 "data"			: function ( d ) {
-										d._searchBulan      = $('#bulan').val();
-										d._searchTahun      = $('#tahun').val();
-										d._searchPpn        = $('#jenisPajak').val();
-										d._searchPembetulan = $("#pembetulanKe").val();
-										d._category         = 'faktur_standar';
-										d._orderby          = orderby1;
-									}
-								},
-			 "language"		: {
-					"emptyTable"	: "<span class='label label-danger'>Data Tidak Ditemukan!</span>",
-					"infoEmpty"		: "Data Kosong",
-					"processing"	:' <img src="' + baseURL + 'assets/vendor/simtax/css/images/loading2.gif">',
-					"search"		: "_INPUT_"
-				},
-			   "columns": [
-					{ "data": "pajak_header_id" },
-					{ "data": "pajak_line_id", "class":"text-left", "width" : "60px" },
-					{ "data": "vendor_id" },
-					{ "data": "organization_id" },
-					{ "data": "vendor_site_id" },
-					{ "data": "is_checklist" },
-					{ "data": "masa_pajak" },
-					{ "data": "tahun_pajak" },
-					{ "data": "category" },
-					{ "data": "no_dokumen_lain", "class":"text-center"},
-					{ "data": "tanggal_dokumen_lain", "class":"text-center"},
-					{ "data": "checkbox", "class":"text-center", "height" : "10px" },
-					{ "data": "no", "class":"text-center" },
-					{ "data": "dl_fs"},
-					{ "data": "pmk_checkbox", "class":"text-center"},
-					{ "data": "npwp"},
-					{ "data": "nama_wp"},
-					{ "data": "invoice_number"},
-					{ "data": "dpp", "class":"text-center"},
-					{ "data": "jumlah_potong", "class":"text-center"},
-					{ "data": "akun_pajak", "class":"text-center" },
-					{ "data": "kd_jenis_transaksi", "class":"text-center"},
-					{ "data": "fg_pengganti", "class":"text-center"},
-					{ "data": "no_faktur_pajak", "class":"text-center"},
-					{ "data": "tanggal_faktur_pajak", "class":"text-center"},
-					{ "data": "alamat_wp"},
-					{ "data": "mata_uang"},
-					{ "data": "jumlah_ppnbm", "class":"text-center"},
-					<?php if($nama_pajak == "PPN MASUKAN"){ ?>
-					{ "data": "is_creditable", "class":"text-center"},
-					<?php }else{ ?>
-					{ "data": "id_keterangan_tambahan", "class":"text-center"},
-					{ "data": "fg_uang_muka", "class":"text-center"},
-					{ "data": "uang_muka_dpp", "class":"text-center"},
-					{ "data": "uang_muka_ppn", "class":"text-center"},
-					{ "data": "uang_muka_ppnbm", "class":"text-center"},
-					{ "data": "referensi", "class":"text-center"},
-					<?php } ?>
-					{ "data": "faktur_asal", "class":"text-center"},
-					{ "data": "tanggal_faktur_asal", "class":"text-center"},
-					{ "data": "dpp_asal", "class":"text-center"},
-					{ "data": "ppn_asal", "class":"text-center"},
-					{ "data": "ntpn", "class":"text-center"},
-					{ "data": "keterangan_gl", "class":"text-center"}
-				],
-			"columnDefs": [
-				{
-					"targets": [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 <?php if($nama_pajak == "PPN KELUARAN"){ echo ', 14'; }?>],
-					"visible": false
-				}
-			],
-			 "select"			: true,
-			 "scrollY"			: 400, 
-			 "scrollCollapse"	: true, 
-			 "scrollX"			: true,
-			 "pageLength"		: 100,
-			 "lengthMenu"       : [[100, 250, 500, 1000], [100, 250, 500, 1000]],
-			 "ordering"			: false,
-			 "bAutoWidth" : false
+	Pace.track(function(){
+			$('#table_faktur').DataTable({
+																		"serverSide"	: true,
+																		"processing"	: true,
+																		"ajax"			: {
+																							"url"  		: baseURL + 'ppn_masa/load_rekonsiliasi',
+																							"type" 		: "POST",
+																							"data"			: function ( d ) {
+																																							d._searchBulan      = $('#bulan').val();
+																																							d._searchTahun      = $('#tahun').val();
+																																							d._searchPpn        = $('#jenisPajak').val();
+																																							d._searchPembetulan = $("#pembetulanKe").val();
+																																							d._category         = 'faktur_standar';
+																																							d._orderby          = orderby1;
+																																						}
+																		},
+																		"language"		: {
+																											"emptyTable"	: "<span class='label label-danger'>Data Tidak Ditemukan!</span>",
+																											"infoEmpty"		: "Data Kosong",
+																											"processing"	:' <img src="' + baseURL + 'assets/vendor/simtax/css/images/loading2.gif">',
+																											"search"		: "_INPUT_"
+																										},
+																		"columns":[
+																									{ "data": "pajak_header_id" },
+																									{ "data": "pajak_line_id", "class":"text-left", "width" : "60px" },
+																									{ "data": "vendor_id" },
+																									{ "data": "organization_id" },
+																									{ "data": "vendor_site_id" },
+																									{ "data": "is_checklist" },
+																									{ "data": "masa_pajak" },
+																									{ "data": "tahun_pajak" },
+																									{ "data": "category" },
+																									{ "data": "no_dokumen_lain", "class":"text-center"},
+																									{ "data": "tanggal_dokumen_lain", "class":"text-center"},
+																									{ "data": "checkbox", "class":"text-center", "height" : "10px" },
+																									{ "data": "no", "class":"text-center" },
+																									{ "data": "dl_fs"},
+																									{ "data": "pmk_checkbox", "class":"text-center"},
+																									{ "data": "npwp"},
+																									{ "data": "nama_wp"},
+																									{ "data": "invoice_number"},
+																									{ "data": "dpp", "class":"text-center"},
+																									{ "data": "jumlah_potong", "class":"text-center"},
+																									{ "data": "akun_pajak", "class":"text-center" },
+																									{ "data": "kd_jenis_transaksi", "class":"text-center"},
+																									{ "data": "fg_pengganti", "class":"text-center"},
+																									{ "data": "no_faktur_pajak", "class":"text-center"},
+																									{ "data": "tanggal_faktur_pajak", "class":"text-center"},
+																									{ "data": "alamat_wp"},
+																									{ "data": "mata_uang"},
+																									{ "data": "jumlah_ppnbm", "class":"text-center"},
+																									<?php if ($nama_pajak == "PPN MASUKAN") { ?>
+																									{ "data": "is_creditable", "class":"text-center"},
+																									<?php } else { ?>
+																									{ "data": "id_keterangan_tambahan", "class":"text-center"},
+																									{ "data": "fg_uang_muka", "class":"text-center"},
+																									{ "data": "uang_muka_dpp", "class":"text-center"},
+																									{ "data": "uang_muka_ppn", "class":"text-center"},
+																									{ "data": "uang_muka_ppnbm", "class":"text-center"},
+																									{ "data": "referensi", "class":"text-center"},
+																									<?php } ?>
+																									{ "data": "faktur_asal", "class":"text-center"},
+																									{ "data": "tanggal_faktur_asal", "class":"text-center"},
+																									{ "data": "dpp_asal", "class":"text-center"},
+																									{ "data": "ppn_asal", "class":"text-center"},
+																									{ "data": "ntpn", "class":"text-center"},
+																									{ "data": "keterangan_gl", "class":"text-center"}
+																								],
+																		"columnDefs": [
+																										{
+																											"targets": [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 <?php if ($nama_pajak == "PPN KELUARAN") {
+                                    echo ', 14';
+                                }?>],
+																											"visible": false
+																										}
+																									],
+																		"select"			: true,
+																		"scrollY"			: 400, 
+																		"scrollCollapse"	: true, 
+																		"scrollX"			: true,
+																		"pageLength"		: 100,
+																		"lengthMenu"       : [[100, 250, 500, 1000], [100, 250, 500, 1000]],
+																		"ordering"			: false,
+																		"bAutoWidth" : false
+																	});
+	});
+	table1 = $('#table_faktur').DataTable();
+	table1.on('error.dt', function(e, settings, techNote, message) {
+		pushTableError($("#table-1 .nama-table").html());
+	})
+	
+	$("#list-data input[type=search]").addClear();
+	$('#list-data #table-1 .dataTables_filter input[type="search"]').attr('placeholder','Cari No Faktur/ Invoice/ Nama WP ...').css({'width':'230px','display':'inline-block'}).addClass('form-control input-sm');
+	
+	$("#table_faktur_filter .add-clear-x").on('click',function(){
+		table1.search('').column().search('').draw();
+	});
+	
+	table1.on( 'draw', function () {
+		$(".checklist-1").on("click", function(){
+			vlinse_id 		= $(this).data("id");
+			vcheckbox_id 	= $(this).attr("id"); 
+			vcategory_id 	= $(this).attr("category-id");
+			vcategoryTable = 'table1';
+			actionCheck();
 			});
-		 });
-		table1 = $('#table_faktur').DataTable();
-		table1.on('error.dt', function(e, settings, techNote, message) {
-			pushTableError($("#table-1 .nama-table").html());
-		})
-		
-		$("#list-data input[type=search]").addClear();
-		$('#list-data #table-1 .dataTables_filter input[type="search"]').attr('placeholder','Cari No Faktur/ Invoice/ Nama WP ...').css({'width':'230px','display':'inline-block'}).addClass('form-control input-sm');
-		
-		$("#table_faktur_filter .add-clear-x").on('click',function(){
-			table1.search('').column().search('').draw();
-		});
-		
-		table1.on( 'draw', function () {
-			$(".checklist-1").on("click", function(){
-				vlinse_id 		= $(this).data("id");
-				vcheckbox_id 	= $(this).attr("id"); 
-				vcategory_id 	= $(this).attr("category-id");
-				vcategoryTable = 'table1';
-				actionCheck();
-			 });
-			$(".pmkchecklist-1").on("click", function(){
-				pmk_vlinse_id      = $(this).data("id");
-				pmk_vcheckbox_id   = $(this).attr("id"); 
-				pmk_vcategory_id   = $(this).attr("category-id");
-				pmk_vcategoryTable = 'table1';
-				actionCheckPmk();
-			 });
-			$(".radio_dlfs").on("click", function(){
-				dlfs_val      = $(this).val();
-				dlfs_data     = $(this).data("id");
-				dlfs_id       = $(this).attr("id");
-				dlfs_category = $(this).attr("category-id");
+		$(".pmkchecklist-1").on("click", function(){
+			pmk_vlinse_id      = $(this).data("id");
+			pmk_vcheckbox_id   = $(this).attr("id"); 
+			pmk_vcategory_id   = $(this).attr("category-id");
+			pmk_vcategoryTable = 'table1';
+			actionCheckPmk();
+			});
+		$(".radio_dlfs").on("click", function(){
+			dlfs_val      = $(this).val();
+			dlfs_data     = $(this).data("id");
+			dlfs_id       = $(this).attr("id");
+			dlfs_category = $(this).attr("category-id");
 
-				if(dlfs_category == "faktur_standar"){
-					action_dlfs();
-				}
-			 });
-			$("#btnEdit1").attr("disabled",true);
-			$("#btnDelete1").attr("disabled",true);
-			getFormCSV();
-			getSelectAll1();
-
-			if(table1.data().any()){
-				$("#btnAdd1").removeAttr('disabled');
+			if(dlfs_category == "faktur_standar"){
+				action_dlfs();
 			}
-			else{
-				$("#btnAdd1").attr("disabled",true);
-			}
-		});
+			});
+		$("#btnEdit1").attr("disabled",true);
+		$("#btnDelete1").attr("disabled",true);
+		getFormCSV();
+		getSelectAll1();
 
-		table1.on( 'page.dt',   function () {
-			orderBy("orderby1");
-		} )
+		if(table1.data().any()){
+			$("#btnAdd1").removeAttr('disabled');
+		}
+		else{
+			$("#btnAdd1").attr("disabled",true);
+		}
+	});
 
-		$('#table_faktur tbody').on( 'click', 'tr', function () {
-			if ( $(this).hasClass('selected') ) {
-				$(this).removeClass('selected');
-				empty();
-			} else {
-				table1.$('tr.selected').removeClass('selected');
-				$(this).addClass('selected');
-				var d                    = table1.row( this ).data();
-				val_pajak_header_id      = d.pajak_header_id;
-				val_pajak_line_id        = d.pajak_line_id;
-				val_akun_pajak           = d.akun_pajak;
-				val_vendor_id            = d.vendor_id;
-				val_masa_pajak           = d.masa_pajak;
-				val_tahun_pajak          = d.tahun_pajak;
-				val_dl_fs                = d.category;
-				val_jenis_dokumen        = d.jenis_dokumen;
-				val_kd_jenis_transaksi   = d.kd_jenis_transaksi;
-				val_fg_pengganti         = d.fg_pengganti;
-				val_no_faktur_pajak      = d.no_faktur_pajak;
-				val_tanggal_faktur_pajak = d.tanggal_faktur_pajak;
-				val_npwp                 = d.npwp;
-				val_nama_wp              = d.nama_wp;
-				val_alamat               = d.alamat_wp;
-				val_invoice_number       = d.invoice_number;
-				val_akun_pajak           = d.akun_pajak;
-				val_mata_uang            = d.mata_uang;
-				val_dpp                  = d.dpp;
-				val_jumlah_potong        = d.jumlah_potong;
-				val_jumlah_ppnbm         = d.jumlah_ppnbm;
-				val_is_creditable        = d.is_creditable;
-				val_fapr                 = d.fapr;
-				val_tanggal_approval     = d.tanggal_approval;
-				val_faktur_asal          = d.faktur_asal;
-				val_tanggal_faktur_asal  = d.tanggal_faktur_asal;
-				val_dpp_asal             = d.dpp_asal;
-				val_ppn_asal             = d.ppn_asal;
-				val_ntpn                 = d.ntpn;
-				val_keterangan_gl        = d.keterangan_gl;
-				valueGrid();
-				showHide();
-				$("#btnEdit1").removeAttr('disabled');
-				$("#btnDelete1").removeAttr('disabled');
-			}
+	table1.on( 'page.dt',   function () {
+		orderBy("orderby1");
+	})
 
-		} ).on("dblclick", "tr", function () {
+	$('#table_faktur tbody').on( 'click', 'tr', function () {
+		if ( $(this).hasClass('selected') ) {
+			$(this).removeClass('selected');
+			empty();
+		} else {
 			table1.$('tr.selected').removeClass('selected');
 			$(this).addClass('selected');
-				var d                    = table1.row( this ).data();
-				val_pajak_header_id      = d.pajak_header_id;
-				val_pajak_line_id        = d.pajak_line_id;
-				val_akun_pajak           = d.akun_pajak;
-				val_vendor_id            = d.vendor_id;
-				val_masa_pajak           = d.masa_pajak;
-				val_tahun_pajak          = d.tahun_pajak;
-				val_dl_fs                = d.category;
-				val_jenis_dokumen        = d.jenis_dokumen;
-				val_kd_jenis_transaksi   = d.kd_jenis_transaksi;
-				val_fg_pengganti         = d.fg_pengganti;
-				val_no_faktur_pajak      = d.no_faktur_pajak;
-				val_tanggal_faktur_pajak = d.tanggal_faktur_pajak;
-				val_npwp                 = d.npwp;
-				val_nama_wp              = d.nama_wp;
-				val_alamat               = d.alamat_wp;
-				val_invoice_number       = d.invoice_number;
-				val_akun_pajak           = d.akun_pajak;
-				val_mata_uang            = d.mata_uang;
-				val_dpp                  = d.dpp;
-				val_jumlah_potong        = d.jumlah_potong;
-				val_jumlah_ppnbm         = d.jumlah_ppnbm;
-				val_is_creditable        = d.is_creditable;
-				val_fapr                 = d.fapr;
-				val_tanggal_approval     = d.tanggal_approval;
-				val_faktur_asal          = d.faktur_asal;
-				val_tanggal_faktur_asal  = d.tanggal_faktur_asal;
-				val_dpp_asal             = d.dpp_asal;
-				val_ppn_asal             = d.ppn_asal;
-				val_ntpn                 = d.ntpn;
-				val_keterangan_gl        = d.keterangan_gl;
+			var d                    = table1.row( this ).data();
+			val_pajak_header_id      = d.pajak_header_id;
+			val_pajak_line_id        = d.pajak_line_id;
+			val_akun_pajak           = d.akun_pajak;
+			val_vendor_id            = d.vendor_id;
+			val_masa_pajak           = d.masa_pajak;
+			val_tahun_pajak          = d.tahun_pajak;
+			val_dl_fs                = d.category;
+			val_jenis_dokumen        = d.jenis_dokumen;
+			val_kd_jenis_transaksi   = d.kd_jenis_transaksi;
+			val_fg_pengganti         = d.fg_pengganti;
+			val_no_faktur_pajak      = d.no_faktur_pajak;
+			val_tanggal_faktur_pajak = d.tanggal_faktur_pajak;
+			val_npwp                 = d.npwp;
+			val_nama_wp              = d.nama_wp;
+			val_alamat               = d.alamat_wp;
+			val_invoice_number       = d.invoice_number;
+			val_akun_pajak           = d.akun_pajak;
+			val_mata_uang            = d.mata_uang;
+			val_dpp                  = d.dpp;
+			val_jumlah_potong        = d.jumlah_potong;
+			val_jumlah_ppnbm         = d.jumlah_ppnbm;
+			val_is_creditable        = d.is_creditable;
+			val_fapr                 = d.fapr;
+			val_tanggal_approval     = d.tanggal_approval;
+			val_faktur_asal          = d.faktur_asal;
+			val_tanggal_faktur_asal  = d.tanggal_faktur_asal;
+			val_dpp_asal             = d.dpp_asal;
+			val_ppn_asal             = d.ppn_asal;
+			val_ntpn                 = d.ntpn;
+			val_keterangan_gl        = d.keterangan_gl;
 			valueGrid();
 			showHide();
 			$("#btnEdit1").removeAttr('disabled');
-			$("#list-data").slideUp(700);
-			$("#tambah-data").slideDown(700);
-			$("#capAdd").html("<span class='label label-danger'>Edit Data "+val_nama_pajak+" Bulan "+val_masa_pajak+" Tahun "+val_tahun_pajak+"</span>");
-		} );
+			$("#btnDelete1").removeAttr('disabled');
+		}
+
+	}).on("dblclick", "tr", function () {
+		table1.$('tr.selected').removeClass('selected');
+		$(this).addClass('selected');
+			var d                    = table1.row( this ).data();
+			val_pajak_header_id      = d.pajak_header_id;
+			val_pajak_line_id        = d.pajak_line_id;
+			val_akun_pajak           = d.akun_pajak;
+			val_vendor_id            = d.vendor_id;
+			val_masa_pajak           = d.masa_pajak;
+			val_tahun_pajak          = d.tahun_pajak;
+			val_dl_fs                = d.category;
+			val_jenis_dokumen        = d.jenis_dokumen;
+			val_kd_jenis_transaksi   = d.kd_jenis_transaksi;
+			val_fg_pengganti         = d.fg_pengganti;
+			val_no_faktur_pajak      = d.no_faktur_pajak;
+			val_tanggal_faktur_pajak = d.tanggal_faktur_pajak;
+			val_npwp                 = d.npwp;
+			val_nama_wp              = d.nama_wp;
+			val_alamat               = d.alamat_wp;
+			val_invoice_number       = d.invoice_number;
+			val_akun_pajak           = d.akun_pajak;
+			val_mata_uang            = d.mata_uang;
+			val_dpp                  = d.dpp;
+			val_jumlah_potong        = d.jumlah_potong;
+			val_jumlah_ppnbm         = d.jumlah_ppnbm;
+			val_is_creditable        = d.is_creditable;
+			val_fapr                 = d.fapr;
+			val_tanggal_approval     = d.tanggal_approval;
+			val_faktur_asal          = d.faktur_asal;
+			val_tanggal_faktur_asal  = d.tanggal_faktur_asal;
+			val_dpp_asal             = d.dpp_asal;
+			val_ppn_asal             = d.ppn_asal;
+			val_ntpn                 = d.ntpn;
+			val_keterangan_gl        = d.keterangan_gl;
+		valueGrid();
+		showHide();
+		$("#btnEdit1").removeAttr('disabled');
+		$("#list-data").slideUp(700);
+		$("#tambah-data").slideDown(700);
+		$("#capAdd").html("<span class='label label-danger'>Edit Data "+val_nama_pajak+" Bulan "+val_masa_pajak+" Tahun "+val_tahun_pajak+"</span>");
+	});
 
 /* FAKTUR STANDAR END */
 
 /* DOKUMEN LAIN */
-		 Pace.track(function(){
-		   $('#tabledata').DataTable({
-			"serverSide"	: true,
-			"processing"	: true,
-			"ajax"			: {
-									"url"  		: baseURL + 'ppn_masa/load_rekonsiliasi',
-									"type" 		: "POST",
-									"data"		: function ( d ) {
-										d._searchBulan      = $('#bulan').val();
-										d._searchTahun      = $('#tahun').val();
-										d._searchPpn        = $('#jenisPajak').val();
-										d._searchPembetulan = $("#pembetulanKe").val();
-										d._category         = 'dokumen_lain';
-										d._orderby          = orderby2;
-									}
-								},
+	Pace.track(function(){
+			$('#tabledata').DataTable({
+		"serverSide"	: true,
+		"processing"	: true,
+		"ajax"			: {
+								"url"  		: baseURL + 'ppn_masa/load_rekonsiliasi',
+								"type" 		: "POST",
+								"data"		: function ( d ) {
+									d._searchBulan      = $('#bulan').val();
+									d._searchTahun      = $('#tahun').val();
+									d._searchPpn        = $('#jenisPajak').val();
+									d._searchPembetulan = $("#pembetulanKe").val();
+									d._category         = 'dokumen_lain';
+									d._orderby          = orderby2;
+								}
+							},
 
-			 "language"		: {
-					"emptyTable"	: "<span class='label label-danger'>Data Tidak Ditemukan!</span>",
-					"infoEmpty"		: "Data Kosong",
-					"processing"	:' <img src="' + baseURL + 'assets/vendor/simtax/css/images/loading2.gif">',
-					"search"		: "_INPUT_"
-				},
-			   "columns": [
-					{ "data": "pajak_header_id" },
-					{ "data": "pajak_line_id", "class":"text-left", "width" : "60px" },
-					{ "data": "vendor_id" },
-					{ "data": "is_checklist"},
-					{ "data": "masa_pajak" },
-					{ "data": "tahun_pajak" },
-					{ "data": "category" },
-					{ "data": "checkbox", "class":"text-center", "height" : "10px" },
-					{ "data": "no", "class":"text-center" },
-					{ "data": "dl_fs"},
-					{ "data": "pmk_checkbox", "class":"text-center"},
-					{ "data": "npwp"},
-					{ "data": "nama_wp"},
-					{ "data": "invoice_number"},
-					{ "data": "dpp", "class":"text-center"},
-					{ "data": "jumlah_potong", "class":"text-center"},
-					{ "data": "akun_pajak", "class":"text-center" },
-					{ "data": "jenis_transaksi",  "class":"text-center"},
-					{ "data": "jenis_dokumen",  "class":"text-center"},
-					{ "data": "kd_jenis_transaksi",  "class":"text-center"},
-					{ "data": "fg_pengganti",  "class":"text-center"},
-					{ "data": "no_dokumen_lain", "class":"text-center"},
-					{ "data": "tanggal_dokumen_lain", "class":"text-center"},
-					{ "data": "no_faktur_pajak", "class":"text-center"},
-					{ "data": "tanggal_faktur_pajak", "class":"text-center"},
-					{ "data": "no_dokumen_lain_ganti", "class":"text-center"},
-					{ "data": "alamat_wp"},
-					{ "data": "mata_uang"},
-					{ "data": "jumlah_ppnbm", "class":"text-center"},
-					{ "data": "keterangan"},
-					{ "data": "fapr"},
-					{ "data": "tanggal_approval"},
-					{ "data": "faktur_asal"},
-					{ "data": "tanggal_faktur_asal"},
-					{ "data": "dpp_asal"},
-					{ "data": "ppn_asal"},
-					{ "data": "ntpn"},
-					{ "data": "keterangan_gl"}
-				],
-			"columnDefs": [ 
-				{
-					"targets": [ 0, 1, 2, 3, 4, 5, 6 <?php if($nama_pajak == "PPN KELUARAN"){ echo ', 10'; }?>, 23, 24],
-					"visible": false
-				}
+			"language"		: {
+				"emptyTable"	: "<span class='label label-danger'>Data Tidak Ditemukan!</span>",
+				"infoEmpty"		: "Data Kosong",
+				"processing"	:' <img src="' + baseURL + 'assets/vendor/simtax/css/images/loading2.gif">',
+				"search"		: "_INPUT_"
+			},
+				"columns": [
+				{ "data": "pajak_header_id" },
+				{ "data": "pajak_line_id", "class":"text-left", "width" : "60px" },
+				{ "data": "vendor_id" },
+				{ "data": "is_checklist"},
+				{ "data": "masa_pajak" },
+				{ "data": "tahun_pajak" },
+				{ "data": "category" },
+				{ "data": "checkbox", "class":"text-center", "height" : "10px" },
+				{ "data": "no", "class":"text-center" },
+				{ "data": "dl_fs"},
+				{ "data": "pmk_checkbox", "class":"text-center"},
+				{ "data": "npwp"},
+				{ "data": "nama_wp"},
+				{ "data": "invoice_number"},
+				{ "data": "dpp", "class":"text-center"},
+				{ "data": "jumlah_potong", "class":"text-center"},
+				{ "data": "akun_pajak", "class":"text-center" },
+				{ "data": "jenis_transaksi",  "class":"text-center"},
+				{ "data": "jenis_dokumen",  "class":"text-center"},
+				{ "data": "kd_jenis_transaksi",  "class":"text-center"},
+				{ "data": "fg_pengganti",  "class":"text-center"},
+				{ "data": "no_dokumen_lain", "class":"text-center"},
+				{ "data": "tanggal_dokumen_lain", "class":"text-center"},
+				{ "data": "no_faktur_pajak", "class":"text-center"},
+				{ "data": "tanggal_faktur_pajak", "class":"text-center"},
+				{ "data": "no_dokumen_lain_ganti", "class":"text-center"},
+				{ "data": "alamat_wp"},
+				{ "data": "mata_uang"},
+				{ "data": "jumlah_ppnbm", "class":"text-center"},
+				{ "data": "keterangan"},
+				{ "data": "fapr"},
+				{ "data": "tanggal_approval"},
+				{ "data": "faktur_asal"},
+				{ "data": "tanggal_faktur_asal"},
+				{ "data": "dpp_asal"},
+				{ "data": "ppn_asal"},
+				{ "data": "ntpn"},
+				{ "data": "keterangan_gl"}
 			],
-			 "select"			: true,
-			 "scrollY"			: 400, 
-			 "scrollCollapse"	: true,
-			 "scrollX"			: true,
-			 "pageLength"		: 100,
-			 "lengthMenu"       : [[100, 250, 500, 1000], [100, 250, 500, 1000]],
-			 "ordering"         : false,
-			 "bAutoWidth" : false
+		"columnDefs": [ 
+			{
+				"targets": [ 0, 1, 2, 3, 4, 5, 6 <?php if ($nama_pajak == "PPN KELUARAN") {
+                                    echo ', 10';
+                                }?>, 23, 24],
+				"visible": false
+			}
+		],
+			"select"			: true,
+			"scrollY"			: 400, 
+			"scrollCollapse"	: true,
+			"scrollX"			: true,
+			"pageLength"		: 100,
+			"lengthMenu"       : [[100, 250, 500, 1000], [100, 250, 500, 1000]],
+			"ordering"         : false,
+			"bAutoWidth" : false
+		});
+	});
+	
+	table2 = $('#tabledata').DataTable();
+
+	table2.on('error.dt', function(e, settings, techNote, message) {
+		pushTableError($("#table-2 .nama-table").html());
+	})
+	
+	$("#list-data input[type=search]").addClear();
+
+	$('#list-data #table-2 .dataTables_filter input[type="search"]').attr('placeholder','Cari No Dok/ Invoice/ Nama WP ...').css({'width':'230px','display':'inline-block'}).addClass('form-control input-sm');
+	
+	$("#tabledata_filter .add-clear-x").on('click',function(){
+		table2.search('').column().search('').draw();
+	});
+
+	table2.on( 'draw', function () {
+		$(".checklist-2").on("click", function(){
+			vlinse_id      = $(this).data("id");
+			vcheckbox_id   = $(this).attr("id"); 
+			vcategory_id   = $(this).attr("category-id");
+			vcategoryTable = 'table2';
+			actionCheck();
 			});
-		 });
-		
-		table2 = $('#tabledata').DataTable();
-
-		table2.on('error.dt', function(e, settings, techNote, message) {
-			pushTableError($("#table-2 .nama-table").html());
-		})
-		
-		$("#list-data input[type=search]").addClear();
-
-		$('#list-data #table-2 .dataTables_filter input[type="search"]').attr('placeholder','Cari No Dok/ Invoice/ Nama WP ...').css({'width':'230px','display':'inline-block'}).addClass('form-control input-sm');
-		
-		$("#tabledata_filter .add-clear-x").on('click',function(){
-			table2.search('').column().search('').draw();
-		});
-
-		table2.on( 'draw', function () {
-			$(".checklist-2").on("click", function(){
-				vlinse_id      = $(this).data("id");
-				vcheckbox_id   = $(this).attr("id"); 
-				vcategory_id   = $(this).attr("category-id");
-				vcategoryTable = 'table2';
-				actionCheck();
-			 });
-			$(".pmkchecklist-2").on("click", function(){
-				pmk_vlinse_id      = $(this).data("id");
-				pmk_vcheckbox_id   = $(this).attr("id"); 
-				pmk_vcategory_id   = $(this).attr("category-id");
-				pmk_vcategoryTable = 'table2';
-				actionCheckPmk();
-			 });
-			$(".radio_dlfs").on("click", function(){
-				dlfs_val      = $(this).val();
-				dlfs_data     = $(this).data("id");
-				dlfs_id       = $(this).attr("id");
-				dlfs_category = $(this).attr("category-id");
-				
-				if(dlfs_category == "dokumen_lain"){
-					action_dlfs();
-				}
-			 });
-			$("#btnEdit2").attr("disabled",true);
-			$("#btnDelete2").attr("disabled",true);
-			getFormCSV();
-			getSelectAll2();
-
-			if(table2.data().any()){
-				$("#btnAdd2").removeAttr('disabled');
+		$(".pmkchecklist-2").on("click", function(){
+			pmk_vlinse_id      = $(this).data("id");
+			pmk_vcheckbox_id   = $(this).attr("id"); 
+			pmk_vcategory_id   = $(this).attr("category-id");
+			pmk_vcategoryTable = 'table2';
+			actionCheckPmk();
+			});
+		$(".radio_dlfs").on("click", function(){
+			dlfs_val      = $(this).val();
+			dlfs_data     = $(this).data("id");
+			dlfs_id       = $(this).attr("id");
+			dlfs_category = $(this).attr("category-id");
+			
+			if(dlfs_category == "dokumen_lain"){
+				action_dlfs();
 			}
-			else{
-				$("#btnAdd2").attr("disabled",true);
-			}
-		});
+			});
+		$("#btnEdit2").attr("disabled",true);
+		$("#btnDelete2").attr("disabled",true);
+		getFormCSV();
+		getSelectAll2();
 
-		$('#tabledata tbody').on( 'click', 'tr', function () {
-			if ( $(this).hasClass('selected') ) {
-				$(this).removeClass('selected');
-				empty();
-			} else {
-				table2.$('tr.selected').removeClass('selected');
-				$(this).addClass('selected');
-				var d                     = table2.row( this ).data();
-				val_pajak_header_id       = d.pajak_header_id;
-				val_pajak_line_id         = d.pajak_line_id;
-				val_akun_pajak            = d.akun_pajak;
-				val_vendor_id             = d.vendor_id;
-				val_masa_pajak            = d.masa_pajak;
-				val_tahun_pajak           = d.tahun_pajak;
-				val_dl_fs                 = d.category;
-				val_jenis_transaksi       = d.jenis_transaksi;
-				val_jenis_dokumen         = d.jenis_dokumen;
-				val_kd_jenis_transaksi    = d.kd_jenis_transaksi;
-				val_fg_pengganti          = d.fg_pengganti;
-				val_no_dokumen_lain_ganti = d.no_dokumen_lain_ganti;
-				val_no_dokumen_lain       = d.no_dokumen_lain;
-				val_tanggal_dokumen_lain  = d.tanggal_dokumen_lain;
-				val_no_faktur_pajak       = d.no_faktur_pajak;
-				val_tanggal_faktur_pajak  = d.tanggal_faktur_pajak;
-				val_npwp                  = d.npwp;
-				val_nama_wp               = d.nama_wp;
-				val_alamat                = d.alamat_wp;
-				val_invoice_number        = d.invoice_number;
-				val_akun_pajak            = d.akun_pajak;
-				val_mata_uang             = d.mata_uang;
-				val_dpp                   = d.dpp;
-				val_jumlah_potong         = d.jumlah_potong;
-				val_jumlah_ppnbm          = d.jumlah_ppnbm;
-				val_keterangan            = d.keterangan;
-				val_fapr                  = d.fapr;
-				val_faktur_asal           = d.faktur_asal;
-				val_tanggal_faktur_asal   = d.tanggal_faktur_asal;
-				val_dpp_asal              = d.dpp_asal;
-				val_ppn_asal              = d.ppn_asal;
-				val_keterangan_gl         = d.keterangan_gl;
-				val_ntpn                  = d.ntpn;
+		if(table2.data().any()){
+			$("#btnAdd2").removeAttr('disabled');
+		}
+		else{
+			$("#btnAdd2").attr("disabled",true);
+		}
+	});
 
-				valueGrid();
-				showHide();
-				$("#btnEdit2").removeAttr('disabled');
-				$("#btnDelete2").removeAttr('disabled');
-			}
-
-		} ).on("dblclick", "tr", function () {
+	$('#tabledata tbody').on( 'click', 'tr', function () {
+		if ( $(this).hasClass('selected') ) {
+			$(this).removeClass('selected');
+			empty();
+		} else {
 			table2.$('tr.selected').removeClass('selected');
 			$(this).addClass('selected');
 			var d                     = table2.row( this ).data();
@@ -1536,12 +1496,56 @@
 
 			valueGrid();
 			showHide();
-
 			$("#btnEdit2").removeAttr('disabled');
-			$("#list-data").slideUp(700);
-			$("#tambah-data").slideDown(700);
-			$("#capAdd").html("<span class='label label-danger'>Edit Data "+val_nama_pajak+" Bulan "+val_masa_pajak+" Tahun "+val_tahun_pajak+"</span>");
-		} );
+			$("#btnDelete2").removeAttr('disabled');
+		}
+
+	}).on("dblclick", "tr", function () {
+		table2.$('tr.selected').removeClass('selected');
+		$(this).addClass('selected');
+		var d                     = table2.row( this ).data();
+		val_pajak_header_id       = d.pajak_header_id;
+		val_pajak_line_id         = d.pajak_line_id;
+		val_akun_pajak            = d.akun_pajak;
+		val_vendor_id             = d.vendor_id;
+		val_masa_pajak            = d.masa_pajak;
+		val_tahun_pajak           = d.tahun_pajak;
+		val_dl_fs                 = d.category;
+		val_jenis_transaksi       = d.jenis_transaksi;
+		val_jenis_dokumen         = d.jenis_dokumen;
+		val_kd_jenis_transaksi    = d.kd_jenis_transaksi;
+		val_fg_pengganti          = d.fg_pengganti;
+		val_no_dokumen_lain_ganti = d.no_dokumen_lain_ganti;
+		val_no_dokumen_lain       = d.no_dokumen_lain;
+		val_tanggal_dokumen_lain  = d.tanggal_dokumen_lain;
+		val_no_faktur_pajak       = d.no_faktur_pajak;
+		val_tanggal_faktur_pajak  = d.tanggal_faktur_pajak;
+		val_npwp                  = d.npwp;
+		val_nama_wp               = d.nama_wp;
+		val_alamat                = d.alamat_wp;
+		val_invoice_number        = d.invoice_number;
+		val_akun_pajak            = d.akun_pajak;
+		val_mata_uang             = d.mata_uang;
+		val_dpp                   = d.dpp;
+		val_jumlah_potong         = d.jumlah_potong;
+		val_jumlah_ppnbm          = d.jumlah_ppnbm;
+		val_keterangan            = d.keterangan;
+		val_fapr                  = d.fapr;
+		val_faktur_asal           = d.faktur_asal;
+		val_tanggal_faktur_asal   = d.tanggal_faktur_asal;
+		val_dpp_asal              = d.dpp_asal;
+		val_ppn_asal              = d.ppn_asal;
+		val_keterangan_gl         = d.keterangan_gl;
+		val_ntpn                  = d.ntpn;
+
+		valueGrid();
+		showHide();
+
+		$("#btnEdit2").removeAttr('disabled');
+		$("#list-data").slideUp(700);
+		$("#tambah-data").slideDown(700);
+		$("#capAdd").html("<span class='label label-danger'>Edit Data "+val_nama_pajak+" Bulan "+val_masa_pajak+" Tahun "+val_tahun_pajak+"</span>");
+	});
 /* DOKUMEN LAIN END */
 	
 	function orderBy(order){
@@ -1566,7 +1570,8 @@
 
 
 
-	function getSummary(){
+	function getSummary()
+	{
 
 		if ( ! $.fn.DataTable.isDataTable( '#tabledata-summaryAll1' ) ) {
 		 $('#tabledata-summaryAll1').DataTable({
@@ -1593,11 +1598,11 @@
 			   "columns": [
 					{ "data": "total_faktur", "class":"text-center" },
 					{ "data": "total_doklain", "class":"text-center" },
-				<?php if($nama_pajak == "PPN MASUKAN"){ ?>
+				<?php if ($nama_pajak == "PPN MASUKAN") { ?>
 					{ "data": "di_kreditkan", "class":"text-center" },
 					{ "data": "not_creditable", "class":"text-center" },
 					{ "data": "pmk", "class":"text-center" }
-				<?php }else{ ?>
+				<?php } else { ?>
 					{ "data": "ppn_dipungut", "class":"text-center" },
 					{ "data": "ppn_dipungut_oleh_pemungut", "class":"text-center" },
 					{ "data": "ppn_tdk_dipungut", "class":"text-center" },
@@ -1840,414 +1845,414 @@
 		$("#tahun_z_percent_v").val(tahun_z_percent);
 	});
 
-		$('#table-detail-summary tbody').on("change", "tr .ket_detail", function () {
+	$('#table-detail-summary tbody').on("change", "tr .ket_detail", function () {
 
-			idnya = $(this).attr('data-id');
-			ket   = $(this).val();
+		idnya = $(this).attr('data-id');
+		ket   = $(this).val();
 
-		  	$.ajax({
-				url		: baseURL + 'ppn_masa/save_keterangan',
-				type	: "POST",
-				data	: ({id:idnya, ket:ket}),
-				success	: function(result){
-					if (result==1) {
-						 flashnotif('Sukses','Keterangan Berhasil di Simpan!','success' );
-					} else {
-						 flashnotif('Error','Keterangan Gagal di Simpan!','error' );
-					}
+			$.ajax({
+			url		: baseURL + 'ppn_masa/save_keterangan',
+			type	: "POST",
+			data	: ({id:idnya, ket:ket}),
+			success	: function(result){
+				if (result==1) {
+						flashnotif('Sukses','Keterangan Berhasil di Simpan!','success' );
+				} else {
+						flashnotif('Error','Keterangan Gagal di Simpan!','error' );
 				}
-			});
-		} );
-
-
-		$('#table-pmk tbody').on("click", "tr .uraian_pekerjaan", function () {
-
-			uraian_id        = $(this).attr('data-id');
-			data_vendor      = $(this).attr('data-vendor');
-			uraian_pekerjaan = $(this).attr('data-uraian');
-
-			$("#uraian_wp").html(data_vendor);
-			$("#uraian_id").val(uraian_id);
-			$("#uraian_pekerjaan").val(uraian_pekerjaan);
-			
-			$("#modal-uraian").modal("show");
-
-		} );
-		$("#btnCancel_Uraian").on("click",batal_uraian);
-
-
-		$("#btn_z_percent").on('click',function(){
-
-			$("#z_percent_bulan").val(val_z_bulan);
-			$("#z_percent_tahun").val(val_z_tahun);
-			$("#z_percent").val(val_z_percent);
-			$("#tidak_terutang_ppn").val(val_tidak_terutang);
-			$("#terutang_ppn").val(val_terutang_ppn);
-			// $("#terutang_tidak_terutang").val(terutang3);
-
-			$("#modal-zpercent").modal("show");
-
-		} );
-
-
-		$("#tidak_terutang_ppn, #terutang_ppn").on("keyup blur",function(){
-			tidak_terutang_ppn      = $("#tidak_terutang_ppn").val();
-			terutang_ppn            = $("#terutang_ppn").val();
-			terutang_tidak_terutang = +tidak_terutang_ppn + +terutang_ppn;
-			z_percent               = (terutang_ppn/terutang_tidak_terutang)*100;
-			z_percent_nya           = number_format(z_percent,2,'.',',');
-			
-			$("#terutang_tidak_terutang").val(number_format(terutang_tidak_terutang,0,'.',','));
-			$("#z_percent").val(z_percent_nya+'%');
-		});
-
-		$('#btnSave_uraian').on('click', function(e) {
-				
-		  	$.ajax({
-				url		: baseURL + 'ppn_masa/save_uraian_pekerjaan',
-				type	: "POST",
-				data	: $('#form-uraian_pmk').serialize(),
-				success	: function(result){
-					if (result==1) {
-						$("#modal-uraian").modal("hide");
-						flashnotif('Sukses','Berhasil di Simpan!','success' );
-						getSummary();
-					} else {
-						flashnotif('Error','Gagal di Simpan!','error' );
-						getSummary();
-					}
-				}
-			});
-
-		});
-
-		$('#btnSave_zpercent').on('click', function(e) {
-
-		  	$.ajax({
-				url		: baseURL + 'ppn_masa/save_z_percent',
-				type	: "POST",
-				data	: $('#form-zpercent').serialize(),
-				success	: function(result){
-					if (result==1) {
-						$("#modal-zpercent").modal("hide");
-						flashnotif('Sukses','Berhasil di Simpan!','success' );
-						getSummary();
-					} else {
-						flashnotif('Error','Gagal di Simpan!','error' );
-						getSummary();
-					}
-				}
-			});
-
-		});
-
-		function batal_uraian()
-		{
-			uraian_id        = "";
-			data_vendor      = "";
-			uraian_pekerjaan = "";
-		}
-
-		$('.modal').on('shown.bs.modal', function () {
-			$('#namawp').trigger('focus')
-		})
-		
-		$("#btnView").on("click", function(){
-			valueAdd();
-			getSummary();
-			table1.ajax.reload();
-			table2.ajax.reload();
-			errorCheck();
-		});
-		
-		$("#bulan, #tahun, #pembetulanKe").on("change", function(){
-			valueAdd();
-		});
-
-		$('#form-wp').validator().on('submit', function(e) {
-		  if (e.isDefaultPrevented()) {
-		  }
-		  else {
-		  	 $.ajax({
-				url		: baseURL + 'ppn_masa/save_rekonsiliasi',
-				type	: "POST",
-				data	: $('#form-wp').serialize(),
-				beforeSend	: function(){
-					 $("body").addClass("loading");
-					 },
-				success	: function(result){
-					if (result==true) {
-						table1.ajax.reload(null, false);
-						table2.ajax.reload(null, false);
-						$("body").removeClass("loading");
-						$("#list-data").slideDown(700);
-						$("#tambah-data").slideUp(700);
-						flashnotif('Sukses','Data Berhasil di Simpan!','success' );
-						getSummary();
-						empty();
-					} else {
-						 $("body").removeClass("loading");
-						 flashnotif('Error', result,'error' );
-					}
-				}
-			});
-		  }
-		  e.preventDefault();
-		});
-
-		$("#btnDelete1, #btnDelete2").click(function(){
-			  bootbox.confirm({
-				title: "Hapus data <span class='label label-danger'>"+val_nama_pajak+"</span> ?",
-				message: "Apakah anda ingin melanjutkan?",
-				buttons: {
-					cancel: {
-						label: '<i class="fa fa-times-circle"></i> CANCEL'
-					},
-					confirm: {
-						label: '<i class="fa fa-check-circle"></i> YES'
-					}
-				},
-				callback: function (result) {
-					if(result) {
-						$.ajax({
-							url		: baseURL + 'ppn_masa/delete_rekonsiliasi',
-							type	: "POST",
-							data	: $('#form-wp').serialize(),
-							beforeSend	: function(){
-								 $("body").addClass("loading");
-								},
-							success	: function(result){
-								if (result==1) {
-									$("body").removeClass("loading");
-									table1.ajax.reload(null, false);
-									table2.ajax.reload(null, false);
-									getSummary();
-									empty();
-									flashnotif('Sukses','Data Berhasil di Hapus!','success' );
-								} else {
-									 $("body").removeClass("loading");
-									 flashnotif('Error','Data Gagal di Hapus!','error' );
-								}
-							}
-						});
-					}
-				}
-			});
-		});
-
-		function getFormCSV(){
-			if (table1.data().any() || table2.data().any()){
-				$("#d-FormCsv").slideDown(700);
-			} else {
-				$("#d-FormCsv").slideUp(700);
 			}
-		}
-
-		$('.datepicker-autoclose').datepicker({
-		    format: 'dd/mm/yyyy'
 		});
+	});
+
+
+	$('#table-pmk tbody').on("click", "tr .uraian_pekerjaan", function () {
+
+		uraian_id        = $(this).attr('data-id');
+		data_vendor      = $(this).attr('data-vendor');
+		uraian_pekerjaan = $(this).attr('data-uraian');
+
+		$("#uraian_wp").html(data_vendor);
+		$("#uraian_id").val(uraian_id);
+		$("#uraian_pekerjaan").val(uraian_pekerjaan);
+		
+		$("#modal-uraian").modal("show");
+
+	});
+	$("#btnCancel_Uraian").on("click",batal_uraian);
+
+
+	$("#btn_z_percent").on('click',function(){
+
+		$("#z_percent_bulan").val(val_z_bulan);
+		$("#z_percent_tahun").val(val_z_tahun);
+		$("#z_percent").val(val_z_percent);
+		$("#tidak_terutang_ppn").val(val_tidak_terutang);
+		$("#terutang_ppn").val(val_terutang_ppn);
+		// $("#terutang_tidak_terutang").val(terutang3);
+
+		$("#modal-zpercent").modal("show");
+
+	});
+
+
+	$("#tidak_terutang_ppn, #terutang_ppn").on("keyup blur",function(){
+		tidak_terutang_ppn      = $("#tidak_terutang_ppn").val();
+		terutang_ppn            = $("#terutang_ppn").val();
+		terutang_tidak_terutang = +tidak_terutang_ppn + +terutang_ppn;
+		z_percent               = (terutang_ppn/terutang_tidak_terutang)*100;
+		z_percent_nya           = number_format(z_percent,2,'.',',');
+		
+		$("#terutang_tidak_terutang").val(number_format(terutang_tidak_terutang,0,'.',','));
+		$("#z_percent").val(z_percent_nya+'%');
+	});
+
+	$('#btnSave_uraian').on('click', function(e) {
+			
+			$.ajax({
+			url		: baseURL + 'ppn_masa/save_uraian_pekerjaan',
+			type	: "POST",
+			data	: $('#form-uraian_pmk').serialize(),
+			success	: function(result){
+				if (result==1) {
+					$("#modal-uraian").modal("hide");
+					flashnotif('Sukses','Berhasil di Simpan!','success' );
+					getSummary();
+				} else {
+					flashnotif('Error','Gagal di Simpan!','error' );
+					getSummary();
+				}
+			}
+		});
+
+	});
+
+	$('#btnSave_zpercent').on('click', function(e) {
+
+			$.ajax({
+			url		: baseURL + 'ppn_masa/save_z_percent',
+			type	: "POST",
+			data	: $('#form-zpercent').serialize(),
+			success	: function(result){
+				if (result==1) {
+					$("#modal-zpercent").modal("hide");
+					flashnotif('Sukses','Berhasil di Simpan!','success' );
+					getSummary();
+				} else {
+					flashnotif('Error','Gagal di Simpan!','error' );
+					getSummary();
+				}
+			}
+		});
+
+	});
+
+	function batal_uraian()
+	{
+		uraian_id        = "";
+		data_vendor      = "";
+		uraian_pekerjaan = "";
+	}
+
+	$('.modal').on('shown.bs.modal', function () {
+		$('#namawp').trigger('focus')
+	})
 	
-		$("#btnExportCSV").on("click", function(){
+	$("#btnView").on("click", function(){
+		valueAdd();
+		getSummary();
+		table1.ajax.reload();
+		table2.ajax.reload();
+		errorCheck();
+	});
+	
+	$("#bulan, #tahun, #pembetulanKe").on("change", function(){
+		valueAdd();
+	});
 
-			var urlnya = baseURL + 'ppn_masa/export_format_csv';
-			var j      = $("#jenisPajak").val();
-			var b      = $("#bulan").val();
-			var t      = $("#tahun").val();
-			var p      = $("#pembetulanKe").val();
-			var expCat = $("#kategori_eksport").val();
+	$('#form-wp').validator().on('submit', function(e) {
+		if (e.isDefaultPrevented()) {
+		}
+		else {
+				$.ajax({
+			url		: baseURL + 'ppn_masa/save_rekonsiliasi',
+			type	: "POST",
+			data	: $('#form-wp').serialize(),
+			beforeSend	: function(){
+					$("body").addClass("loading");
+					},
+			success	: function(result){
+				if (result==true) {
+					table1.ajax.reload(null, false);
+					table2.ajax.reload(null, false);
+					$("body").removeClass("loading");
+					$("#list-data").slideDown(700);
+					$("#tambah-data").slideUp(700);
+					flashnotif('Sukses','Data Berhasil di Simpan!','success' );
+					getSummary();
+					empty();
+				} else {
+						$("body").removeClass("loading");
+						flashnotif('Error', result,'error' );
+				}
+			}
+		});
+		}
+		e.preventDefault();
+	});
 
-			if(expCat != "dilaporkan"){
-				if (table1.data().any() && table2.data().any()){
-					window.open(urlnya+'?pajak='+j+'&masa='+b+'&tahun='+t+'&pembetulan='+p+'&category=faktur_standar&dilaporkan='+expCat);
-					setTimeout(function () {
-						window.open(urlnya+'?pajak='+j+'&masa='+b+'&tahun='+t+'&pembetulan='+p+'&category=dokumen_lain&dilaporkan='+expCat);
-					}, 1000);
-					window.focus();
+	$("#btnDelete1, #btnDelete2").click(function(){
+			bootbox.confirm({
+			title: "Hapus data <span class='label label-danger'>"+val_nama_pajak+"</span> ?",
+			message: "Apakah anda ingin melanjutkan?",
+			buttons: {
+				cancel: {
+					label: '<i class="fa fa-times-circle"></i> CANCEL'
+				},
+				confirm: {
+					label: '<i class="fa fa-check-circle"></i> YES'
 				}
-				else if( table1.data().any() && !table2.data().any()){
-					window.open(urlnya+'?pajak='+j+'&masa='+b+'&tahun='+t+'&pembetulan='+p+'&category=faktur_standar&dilaporkan='+expCat);
-					window.focus();
+			},
+			callback: function (result) {
+				if(result) {
+					$.ajax({
+						url		: baseURL + 'ppn_masa/delete_rekonsiliasi',
+						type	: "POST",
+						data	: $('#form-wp').serialize(),
+						beforeSend	: function(){
+								$("body").addClass("loading");
+							},
+						success	: function(result){
+							if (result==1) {
+								$("body").removeClass("loading");
+								table1.ajax.reload(null, false);
+								table2.ajax.reload(null, false);
+								getSummary();
+								empty();
+								flashnotif('Sukses','Data Berhasil di Hapus!','success' );
+							} else {
+									$("body").removeClass("loading");
+									flashnotif('Error','Data Gagal di Hapus!','error' );
+							}
+						}
+					});
 				}
-				else if( !table1.data().any() && table2.data().any()){
+			}
+		});
+	});
+
+	function getFormCSV(){
+		if (table1.data().any() || table2.data().any()){
+			$("#d-FormCsv").slideDown(700);
+		} else {
+			$("#d-FormCsv").slideUp(700);
+		}
+	}
+
+	$('.datepicker-autoclose').datepicker({
+			format: 'dd/mm/yyyy'
+	});
+
+	$("#btnExportCSV").on("click", function(){
+
+		var urlnya = baseURL + 'ppn_masa/export_format_csv';
+		var j      = $("#jenisPajak").val();
+		var b      = $("#bulan").val();
+		var t      = $("#tahun").val();
+		var p      = $("#pembetulanKe").val();
+		var expCat = $("#kategori_eksport").val();
+
+		if(expCat != "dilaporkan"){
+			if (table1.data().any() && table2.data().any()){
+				window.open(urlnya+'?pajak='+j+'&masa='+b+'&tahun='+t+'&pembetulan='+p+'&category=faktur_standar&dilaporkan='+expCat);
+				setTimeout(function () {
 					window.open(urlnya+'?pajak='+j+'&masa='+b+'&tahun='+t+'&pembetulan='+p+'&category=dokumen_lain&dilaporkan='+expCat);
-					window.focus();
-				}
-				else{
-					 flashnotif('Info','Data Kosong!','warning' );
-					 return false;
-				}
+				}, 1000);
+				window.focus();
+			}
+			else if( table1.data().any() && !table2.data().any()){
+				window.open(urlnya+'?pajak='+j+'&masa='+b+'&tahun='+t+'&pembetulan='+p+'&category=faktur_standar&dilaporkan='+expCat);
+				window.focus();
+			}
+			else if( !table1.data().any() && table2.data().any()){
+				window.open(urlnya+'?pajak='+j+'&masa='+b+'&tahun='+t+'&pembetulan='+p+'&category=dokumen_lain&dilaporkan='+expCat);
+				window.focus();
 			}
 			else{
-
-				if (table1.data().any() && table2.data().any()){
-					window.open(urlnya+'?pajak='+j+'&masa='+b+'&tahun='+t+'&pembetulan='+p+'&category=faktur_standar');
-					setTimeout(function () {
-						window.open(urlnya+'?pajak='+j+'&masa='+b+'&tahun='+t+'&pembetulan='+p+'&category=dokumen_lain');
-					}, 1000);
-					window.focus();
-				}
-				else if( table1.data().any() && !table2.data().any()){
-					window.open(urlnya+'?pajak='+j+'&masa='+b+'&tahun='+t+'&pembetulan='+p+'&category=faktur_standar');
-					window.focus();
-				}
-				else if( !table1.data().any() && table2.data().any()){
-					window.open(urlnya+'?pajak='+j+'&masa='+b+'&tahun='+t+'&pembetulan='+p+'&category=dokumen_lain');
-					window.focus();
-				}
-				else{
-					 flashnotif('Info','Data Kosong!','warning' );
-					 return false;
-				}
+					flashnotif('Info','Data Kosong!','warning' );
+					return false;
 			}
-		});
+		}
+		else{
+
+			if (table1.data().any() && table2.data().any()){
+				window.open(urlnya+'?pajak='+j+'&masa='+b+'&tahun='+t+'&pembetulan='+p+'&category=faktur_standar');
+				setTimeout(function () {
+					window.open(urlnya+'?pajak='+j+'&masa='+b+'&tahun='+t+'&pembetulan='+p+'&category=dokumen_lain');
+				}, 1000);
+				window.focus();
+			}
+			else if( table1.data().any() && !table2.data().any()){
+				window.open(urlnya+'?pajak='+j+'&masa='+b+'&tahun='+t+'&pembetulan='+p+'&category=faktur_standar');
+				window.focus();
+			}
+			else if( !table1.data().any() && table2.data().any()){
+				window.open(urlnya+'?pajak='+j+'&masa='+b+'&tahun='+t+'&pembetulan='+p+'&category=dokumen_lain');
+				window.focus();
+			}
+			else{
+					flashnotif('Info','Data Kosong!','warning' );
+					return false;
+			}
+		}
+	});
 	
-		$("#btnImportCSV").click(function(){
-	        var form = $('#form-import')[0];
-	        var data = new FormData(form);
-
-	        $.ajax({
-	            type: "POST",
-	            enctype: 'multipart/form-data',
-	            url: baseURL + 'ppn_masa/import_csv',
-	            data: data,
-				beforeSend	: function(){
-					 $("body").addClass("loading");
-				},
-	            processData: false,
-	            contentType: false,
-				dataType: "json", 
-	            cache: false,
-	            success: function (result) {
-            		$("#csv_remove").trigger('click');
-	            	if(result.status == "true"){
-						table1.ajax.reload(null, false);
-						table2.ajax.reload(null, false);
-						$("body").removeClass("loading");
-						flashnotif('Sukses', 'Data Berhasil di Import!','success');
-	                    $("#file_csv").val("");
-	                    getSummary();
-	                    empty();
-	            	}
-	            	else{
-	                    $("body").removeClass("loading");
-						flashnotif('Error', result.keterangan,'error');
-	            	}
-	            }
-	        });
-	    });
-
-	
-		$("#btnsaldoAwal").on("click", function(){
-			var j    = $("#jenisPajak").val();
-			var b    = $("#bulan").val();
-			var t    = $("#tahun").val();
-			var p    = $("#pembetulanKe").val();
-			
-			var sal              = $("#saldoAwal").val();
-			var mtsd             = $("#mutasiDebet").val();
-			var mtsk             = $('#mutasiKredit').val();
-			var pmk              = $('#pmk').val();
-			var ppn_beban        = $('#ppn_beban').val();
-			var ppn_dipungut     = $('#ppn_dipungut').val();
-			var ppn_tdk_dipungut = $('#ppn_tdk_dipungut').val();
-		
-			$.ajax({
-					url		: baseURL + 'ppn_masa/save_saldo_awal',
-					type	: "POST",
-					data	: ({pajak:j, bulan:b, tahun:t, pembetulan:p, vsal:sal, vmtsd:mtsd, vmtsk:mtsk, pmk:pmk, ppn_beban:ppn_beban, ppn_dipungut:ppn_dipungut, ppn_tdk_dipungut:ppn_tdk_dipungut }),
-					success	: function(result){
-						if (result==1){
-							 getSummary();
-							 flashnotif('Sukses','Data Berhasil di Simpan!','success');
-						} else {
-							 flashnotif('Error','Data Gagal di Simpan!','error' );
-						}
-					}
-				});
-		});
-		
-
-		$("#btnSubmit").click(function(){
-
-			if (table1.data().any() || table2.data().any()){
-				 if(table1.data().any()){
-					data  = table1.row(0).data();
-				 }
-				 else{
-					data  = table2.row(0).data();
-				 }
-
-				pajak_header_id = data.pajak_header_id;
-				nama_pajak      = $("#jenisPajak").val();
+	$("#btnImportCSV").click(function(){
+				var form = $('#form-import')[0];
+				var data = new FormData(form);
 
 				$.ajax({
-					url		: baseURL + 'ppn_masa/validation_rekonsiliasi/' + pajak_header_id +'/'+nama_pajak,
-					type	: "GET",
-					dataType: "json",
-					success	: function(result){
-						if (result.st==1){						
-							flashnotifnohide("info",result.data,"warning");
-							$("body").removeClass("loading");
-							return false;
-						} else {
-							j 	= $("#jenisPajak").val();
-							b	= $("#bulan").val();
-							t	= $("#tahun").val();
-							
-							jnm	= $("#jenisPajak").find(":selected").attr("data-name");
-							bnm	= $("#bulan").find(":selected").attr("data-name");
-							pbt	= $("#pembetulanKe").find(":selected").attr("data-name");
-							
-							if (j != '' && b != '' && t != '') 
-							{ 
-								bootbox.confirm({
-								title: "Submit data <span class='label label-danger'>PPN <?php echo ($nama_pajak == "PPN MASUKAN") ? "MASUKAN" : "KELUARAN" ?></span> Bulan <span class='label label-danger'>"+bnm+"</span> Tahun <span class='label label-danger'>"+t+"</span> ?",
-								message: "Apakah anda ingin melanjutkan?",
-								buttons: {
-									cancel: {
-										label: '<i class="fa fa-times-circle"></i> CANCEL'
-									},
-									confirm: {
-										label: '<i class="fa fa-check-circle"></i> YES'
-									}
-								},
-								callback: function (result) {
-									if(result) {
-										$.ajax({
-											url		: baseURL + 'ppn_masa/submit_rekonsiliasi',
-											type	: "POST",
-											// data	: $('#form-wp').serialize(),
-											dataType: "json", 
-											data	: ({ _searchBulan : $('#bulan').val(), _searchTahun : $('#tahun').val(), _searchPpn : $('#jenisPajak').val(), _searchPembetulan : $('#pembetulanKe').val()}),
-											beforeSend	: function(){
-												 $("body").addClass("loading");
-												 },
-											success	: function(result){
-												if (result==1) {
-													$("body").removeClass("loading");
-													table1.draw();
-													table2.draw();
-													getSummary();
-													empty();
-													flashnotif('Sukses','Data Berhasil di Submit!','success' );
-												} else {
-													$("body").removeClass("loading");
-													table1.draw();
-													table2.draw();
-													flashnotif('Error','Data Gagal di Submit!','error' );
-												}
-											}
-										});
-									}
-								  }
-								});
+						type: "POST",
+						enctype: 'multipart/form-data',
+						url: baseURL + 'ppn_masa/import_csv',
+						data: data,
+			beforeSend	: function(){
+					$("body").addClass("loading");
+			},
+						processData: false,
+						contentType: false,
+			dataType: "json", 
+						cache: false,
+						success: function (result) {
+							$("#csv_remove").trigger('click');
+							if(result.status == "true"){
+					table1.ajax.reload(null, false);
+					table2.ajax.reload(null, false);
+					$("body").removeClass("loading");
+					flashnotif('Sukses', 'Data Berhasil di Import!','success');
+										$("#file_csv").val("");
+										getSummary();
+										empty();
+							}
+							else{
+										$("body").removeClass("loading");
+					flashnotif('Error', result.keterangan,'error');
 							}
 						}
-					}
 				});
-			}
+	});
 
-		});
+
+	$("#btnsaldoAwal").on("click", function(){
+		var j    = $("#jenisPajak").val();
+		var b    = $("#bulan").val();
+		var t    = $("#tahun").val();
+		var p    = $("#pembetulanKe").val();
+		
+		var sal              = $("#saldoAwal").val();
+		var mtsd             = $("#mutasiDebet").val();
+		var mtsk             = $('#mutasiKredit').val();
+		var pmk              = $('#pmk').val();
+		var ppn_beban        = $('#ppn_beban').val();
+		var ppn_dipungut     = $('#ppn_dipungut').val();
+		var ppn_tdk_dipungut = $('#ppn_tdk_dipungut').val();
+	
+		$.ajax({
+				url		: baseURL + 'ppn_masa/save_saldo_awal',
+				type	: "POST",
+				data	: ({pajak:j, bulan:b, tahun:t, pembetulan:p, vsal:sal, vmtsd:mtsd, vmtsk:mtsk, pmk:pmk, ppn_beban:ppn_beban, ppn_dipungut:ppn_dipungut, ppn_tdk_dipungut:ppn_tdk_dipungut }),
+				success	: function(result){
+					if (result==1){
+							getSummary();
+							flashnotif('Sukses','Data Berhasil di Simpan!','success');
+					} else {
+							flashnotif('Error','Data Gagal di Simpan!','error' );
+					}
+				}
+			});
+	});
+		
+
+	$("#btnSubmit").click(function(){
+
+		if (table1.data().any() || table2.data().any()){
+				if(table1.data().any()){
+				data  = table1.row(0).data();
+				}
+				else{
+				data  = table2.row(0).data();
+				}
+
+			pajak_header_id = data.pajak_header_id;
+			nama_pajak      = $("#jenisPajak").val();
+
+			$.ajax({
+				url		: baseURL + 'ppn_masa/validation_rekonsiliasi/' + pajak_header_id +'/'+nama_pajak,
+				type	: "GET",
+				dataType: "json",
+				success	: function(result){
+					if (result.st==1){						
+						flashnotifnohide("info",result.data,"warning");
+						$("body").removeClass("loading");
+						return false;
+					} else {
+						j 	= $("#jenisPajak").val();
+						b	= $("#bulan").val();
+						t	= $("#tahun").val();
+						
+						jnm	= $("#jenisPajak").find(":selected").attr("data-name");
+						bnm	= $("#bulan").find(":selected").attr("data-name");
+						pbt	= $("#pembetulanKe").find(":selected").attr("data-name");
+						
+						if (j != '' && b != '' && t != '') 
+						{ 
+							bootbox.confirm({
+							title: "Submit data <span class='label label-danger'>PPN <?php echo ($nama_pajak == "PPN MASUKAN") ? "MASUKAN" : "KELUARAN" ?></span> Bulan <span class='label label-danger'>"+bnm+"</span> Tahun <span class='label label-danger'>"+t+"</span> ?",
+							message: "Apakah anda ingin melanjutkan?",
+							buttons: {
+								cancel: {
+									label: '<i class="fa fa-times-circle"></i> CANCEL'
+								},
+								confirm: {
+									label: '<i class="fa fa-check-circle"></i> YES'
+								}
+							},
+							callback: function (result) {
+								if(result) {
+									$.ajax({
+										url		: baseURL + 'ppn_masa/submit_rekonsiliasi',
+										type	: "POST",
+										// data	: $('#form-wp').serialize(),
+										dataType: "json", 
+										data	: ({ _searchBulan : $('#bulan').val(), _searchTahun : $('#tahun').val(), _searchPpn : $('#jenisPajak').val(), _searchPembetulan : $('#pembetulanKe').val()}),
+										beforeSend	: function(){
+												$("body").addClass("loading");
+												},
+										success	: function(result){
+											if (result==1) {
+												$("body").removeClass("loading");
+												table1.draw();
+												table2.draw();
+												getSummary();
+												empty();
+												flashnotif('Sukses','Data Berhasil di Submit!','success' );
+											} else {
+												$("body").removeClass("loading");
+												table1.draw();
+												table2.draw();
+												flashnotif('Error','Data Gagal di Submit!','error' );
+											}
+										}
+									});
+								}
+								}
+							});
+						}
+					}
+				}
+			});
+		}
+
+	});
 		
 	$("#btnAdd1, #btnAdd2, #btnEdit1, #btnEdit2").click(function (){
 		btn = $(this).attr('id');
@@ -2292,20 +2297,20 @@
 		if(val_dl_fs == "dokumen_lain"){
 			$(".dokumen_group").show();
 			$(".faktur_group").hide();
-			<?php if($nama_pajak == "PPN KELUARAN"){ ?>
+			<?php if ($nama_pajak == "PPN KELUARAN") { ?>
 			$(".faktur_group2").hide();
 			<?php } ?>
-			<?php if($nama_pajak == "PPN MASUKAN"){ ?>
+			<?php if ($nama_pajak == "PPN MASUKAN") { ?>
 			$(".faktur_group3").hide();
 			<?php } ?>
 		}
 		else{
 			$(".dokumen_group").hide();
 			$(".faktur_group").show();
-			<?php if($nama_pajak == "PPN KELUARAN"){ ?>
+			<?php if ($nama_pajak == "PPN KELUARAN") { ?>
 			$(".faktur_group2").show();
 			<?php } ?>
-			<?php if($nama_pajak == "PPN MASUKAN"){ ?>
+			<?php if ($nama_pajak == "PPN MASUKAN") { ?>
 			$(".faktur_group3").show();
 			<?php } ?>
 		}
@@ -2701,8 +2706,8 @@
 		var t = $("#tahun").val();
 	}
 
-//Awal modal get nama wp
-$("#getnamawp").on("click", function(){
+	//Awal modal get nama wp
+	$("#getnamawp").on("click", function(){
 		val_vendor_id		        = "";
 		vnama               = "";				
 		valamat             = "";
@@ -2831,5 +2836,5 @@ $("#getnamawp").on("click", function(){
 		val_npwp      = "";
 	}
 
- });
+});
 </script>

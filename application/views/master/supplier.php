@@ -13,7 +13,7 @@
 					  </div>
 					  <div class="col-lg-6">
 						<div class="navbar-right">
-							<button id="btnTambah" class="btn btn-default btn-rounded custom-input-width" data-toggle="modal" data-target="#modal-tambah" type="button" ><i class="fa fa-pencil-square-o"></i> ADD</button>
+							<!-- <button id="btnTambah" class="btn btn-default btn-rounded custom-input-width" data-toggle="modal" data-target="#modal-tambah" type="button" ><i class="fa fa-pencil-square-o"></i> ADD</button> -->
 							<button type="button" id="btnEdit" class="btn btn-rounded btn-default custom-input-width" disabled data-toggle="modal" data-target="#modal-wp"><i class="fa fa-pencil"></i> EDIT</button>
 							<button type="button" id="btnHapus" class="btn btn-rounded btn-default custom-input-width " disabled data-toggle="modal" data-target="#modal-hapus"><i class="fa fa-trash-o"></i> DELETE</button>
 						</div>
@@ -54,7 +54,7 @@
 								</div>
 							</div>	 
 						</div>
-						<?php if($this->session->userdata('kd_cabang') == "000"): ?>
+						<?php if ($this->session->userdata('kd_cabang') == "000"): ?>
 						<div style="padding-bottom: 5px;color:#333;font-weight: 400">
 							<label>Filter by Cabang</label>
 							<select id="cabang" name="cabang">
@@ -133,7 +133,7 @@
 			<div class="col-lg-6">
 				<div class="form-group">
 					<label>NPWP</label>
-					<input type="text" class="form-control" id="edit_npwp" name="edit_npwp" placeholder="NPWP *(Tidak Boleh Kosong)" data-toggle="validator" data-error="Mohon isi NPWP" required>
+					<input type="text" class="form-control" id="edit_npwp" name="edit_npwp" placeholder="NPWP *(Tidak Boleh Kosong)" data-toggle="validator" data-error="Mohon isi NPWP" required data-inputmask="'mask': '99.999.999.9-999.999'">
 					<div class="help-block with-errors"></div>
 				</div>
 			</div>
@@ -236,7 +236,7 @@
 			
 		//$("#btnHapus").hide();
 		$("#edit-data").hide();
-		<?php if(($this->session->userdata('kd_cabang') == "000")): ?>
+		<?php if (($this->session->userdata('kd_cabang') == "000")): ?>
 			var conCabang = "pusat";
 		<?php else: ?>
 			var conCabang = "cabang";
