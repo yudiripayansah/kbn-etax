@@ -3,25 +3,27 @@
 defined('BASEPATH') or exit('No direct script access allowed');
 
 
-  if (!function_exists('check_kswp')) {
-      function djp_get_token()
+  if (!function_exists('djp_get_token')) {
+      function djp_get_token($user, $pwd)
       {
-          $url = 'https://ws.pajak.go.id/djp/token?user=pelindo1&pwd=Sos7Rk1';
+          $url = 'https://api-eservice.indonesiaport.co.id/api_djp/v1/getToken.php/wsdl?user='.$user.'&pwd='.$pwd.'&base_url=https://ws.pajak.go.id/djp/';
           $payload = [
-            'user' => 'pelindo3',
-            'pwd' => 'pelindo3'
+            'user' => $user,
+            'pwd' => $pwd,
+            'base_url' => 'https://ws.pajak.go.id/djp/',
           ];
           $type = 'POST';
           return djp_curl($url, $type, $payload);
       }
   }
-  if (!function_exists('check_kswp')) {
-      function djp_check_kswp($token, $npwp, $kdizin=0)
+  if (!function_exists('djp_check_kswp')) {
+      function djp_check_kswp($token, $npwp, $kdizin=1)
       {
-          $url = 'https://ws.pajak.go.id/djp/kswp?npwp=000000000000&kdizin=1111';
+          $url = 'https://api-eservice.indonesiaport.co.id/api_djp/v1/getKswp.php/wsdl?auth='.$token.'&npwp='.$npwp.'&kdizin='.$kdizin.'&base_url=https://ws.pajak.go.id/djp/';
           $payload = [
             'npwp' => $npwp,
-            'kdizin' => $kdizin
+            'kdizin' => $kdizin,
+            'base_url' => 'https://ws.pajak.go.id/djp/',
           ];
           $type = 'POST';
           $header = [
@@ -30,12 +32,13 @@ defined('BASEPATH') or exit('No direct script access allowed');
           return djp_curl($url, $type, $payload, $header);
       }
   }
-  if (!function_exists('check_kswp')) {
+  if (!function_exists('djp_check_npwp')) {
       function djp_check_npwp($token, $npwp)
       {
-          $url = 'https://ws.pajak.go.id/djp/npwp?npwp=000000000000';
+          $url = 'https://api-eservice.indonesiaport.co.id/api_djp/v1/getNpwp.php/wsdl?auth='.$token.'&npwp='.$npwp.'&base_url=https://ws.pajak.go.id/djp/';
           $payload = [
             'npwp' => $npwp,
+            'base_url' => 'https://ws.pajak.go.id/djp/',
           ];
           $type = 'POST';
           $header = [
@@ -44,39 +47,20 @@ defined('BASEPATH') or exit('No direct script access allowed');
           return djp_curl($url, $type, $payload, $header);
       }
   }
-  if (!function_exists('check_kswp')) {
-      function djp_curl($url, $type, $payload, $header = null)
-      {
-          // persiapkan curl
-          $ch = curl_init();
-
-          // set url
-          curl_setopt($ch, CURLOPT_URL, $url);
-      
-          // set user agent
-          curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.13) Gecko/20080311 Firefox/2.0.0.13');
-
-          // set header
-          if ($header) {
-              curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
-          }
-
-          // return the transfer as a string
-          curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-
-          // request type
-          curl_setopt($ch, CURLOPT_POST, ($type == 'POST') ? 1 : 0);
-
-          // parameters / payload
-          curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
-
-          // $output contains the output string
-          $output = curl_exec($ch);
-
-          // tutup curl
-          curl_close($ch);
-
-          // mengembalikan hasil curl
-          return $output;
-      }
+  function djp_curl($url, $type, $payload = null, $header = null)
+  {
+      $curl = curl_init();
+      curl_setopt_array($curl, array(
+        CURLOPT_URL => $url,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => '',
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 0,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => $type,
+      ));
+      $response = json_decode(curl_exec($curl));
+      curl_close($curl);
+      return $response;
   }
