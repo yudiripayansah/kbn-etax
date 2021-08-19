@@ -140,6 +140,7 @@
 						<option value="APBONUS" data-name="APBONUS" >Beban Bonus</option>
 						<option value="PPH21DTL" data-name="PPH21DTL" >Report Ekual PPh 21</option>
 						<option value="SPPD" data-name="SPPD" >Perjalanan Dinas</option>
+						<option value="GLJE" data-name="GLJE" >Detail Jurnal Transaksi</option>
 					</select>
 				</div>
 			 </div>
