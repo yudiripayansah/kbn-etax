@@ -88,6 +88,37 @@ class Ppn_masa extends CI_Controller {
 		
 	}
 
+	public function detail_jurnal_transaksi(){
+
+		if($this->ion_auth->is_admin()){
+			$permission = true;
+		}
+		else if(in_array("ppn_masa/detail_jurnal_transaksi", $this->session->userdata['menu_url'])){
+			$permission = true;
+		}
+		else{
+			$permission = false;
+		}
+
+		if($permission === false)
+		{
+			redirect('dashboard');
+		}
+		else{
+			
+			$this->data['template_page'] = "ppn_masa/detail_jurnal_transaksi";
+			$this->data['title']         = 'Detail Jurnal Transaksi';
+			$this->data['subtitle']      = "Detail Jurnal Transaksi";
+			$this->data['activepage']    = "ppn_masa";
+			$this->data['list_cabang']   = $this->cabang->get_all();
+			$this->data['nama_pajak']    = $this->daftar_pajak[1];
+			
+			$this->template->load('template', $this->data['template_page'], $this->data);
+
+		}
+		
+	}
+
     function load_rekonsiliasi($header_id="")
 	{
 

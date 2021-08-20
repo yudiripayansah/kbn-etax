@@ -31,11 +31,26 @@ class Sync_data_ebs_mdl extends CI_Model {
 				}
 		}
 		
-		$PARAMETER_1 = $bulan;
-		$PARAMETER_2 = $tahun;
-		$PARAMETER_3 = $kode_cabang;
-		$PARAMETER_4 = $perusahaan;
-		$PARAMETER_5 = $jenis_trx;
+		if($jenis_trx != "GLJE"){
+			$PARAMETER_1 = $bulan;
+			$PARAMETER_2 = $tahun;
+			$PARAMETER_3 = $kode_cabang;
+			$PARAMETER_4 = $perusahaan;
+			$PARAMETER_5 = $jenis_trx;
+		} else {
+			$sqlledger   = "select * from SIMTAX_MASTER_LEDGER where ledger_id = 2022";
+			$queryledger = $this->db->query($sqlledger);
+			
+			foreach($queryledger->result_array() as $rowledger)	{
+				$kode_perusahaan	= $rowledger['LEDGER_ID'];
+			}
+			$PARAMETER_1 = $bulan;
+			$PARAMETER_2 = $tahun;
+			$PARAMETER_3 = $kode_cabang;
+			$PARAMETER_4 = $kode_perusahaan;
+			$PARAMETER_5 = $jenis_trx;
+		}
+		
 		$OUT_MESSAGE = "";
 		$stid = oci_parse($DBEBS->conn_id, 'BEGIN :OUT_MESSAGE := SIMTAX_PAJAK_UTILITY_PKG.getPPh23(:PARAMETER_1,:PARAMETER_2,:PARAMETER_3, :PARAMETER_4,:PARAMETER_5); end;');
 
@@ -294,10 +309,33 @@ class Sync_data_ebs_mdl extends CI_Model {
 		$user_name = $this->session->userdata('identity');		
 		$dataCsv  = array();
 		$vPeriod = "";
+
+		if($jenis_trx === 'GLJE'){
+				$bulan				= $this->input->post('srcBulan');
+				$tahun				= $this->input->post('srcTahun');	
+				$kode_cabang		= $this->input->post('srcKodeCabang');
+				$kode_perusahaan	= "";
+
+				$sqlledger   = "select * from SIMTAX_MASTER_LEDGER where ledger_id = 2022";
+				$queryledger = $this->db->query($sqlledger);
+				
+				foreach($queryledger->result_array() as $rowledger)	{
+					$kode_perusahaan	= $rowledger['LEDGER_ID'];
+				}
+				$ledger		= $kode_perusahaan;
+				$sqlDel	="	
+				delete from simtax_detail_jurnal_transaksi
+					where tahun_buku = ".$tahun."
+						and bulan_buku = ".$bulan."
+						and ledger_id = '".$ledger."'
+						and kode_cabang = '".$kode_cabang."'";	
+				$this->db->query($sqlDel);
+		}
+
 		while (($data = fgetcsv($handle, 1000, ";","'","\\")) !== FALSE) {
 
 			if($row >= 0){						
-        if ($jenis_trx != 'FAFISKAL' && $jenis_trx != 'APBONUS' && $jenis_trx != 'SPPD') {
+        if ($jenis_trx != 'FAFISKAL' && $jenis_trx != 'APBONUS' && $jenis_trx != 'SPPD' && $jenis_trx != 'GLJE') {
 
 			//pph2326 get npwp dan alamat dari master supplier
 			if($jenis_trx === 'PPH2326')
@@ -767,69 +805,6 @@ class Sync_data_ebs_mdl extends CI_Model {
 							$rpjkHeader  	= $qPjkhdr->row();
 							$vPjkHeaderId  	= $rpjkHeader->VPJK_HEADER_ID; 
 				}
-				/*
-				$sql = "
-					insert into simtax_rekon_fixed_asset (
-					KELOMPOK_FIXED_ASSET
-					,KODE_CABANG
-					,JENIS_AKTIVA
-					,ASSET_NO
-					,NAMA_AKTIVA
-					,KETERANGAN
-					,TANGGAL_BELI
-					,HARGA_PEROLEHAN
-					,KELOMPOK_AKTIVA
-					,JENIS_USAHA
-					,JENIS_HARTA
-					,STATUS_PEMBEBANAN
-					,TANGGAL_JUAL
-					,HARGA_JUAL
-					,PH_FISKAL
-					,AKUMULASI_PENYUSUTAN
-					,NSBF
-					,PENYUSUTAN_FISKAL
-					,PEMBEBANAN
-					,AKUMULASI_PENYUSUTAN_FISKAL
-					,NILAI_SISA_BUKU_FISKAL
-					,BULAN_PAJAK
-					,TAHUN_PAJAK
-					,MASA_PAJAK
-					,PEMBETULAN_KE
-					,IS_CHECKLIST
-					,PAJAK_HEADER_ID
-					)
-					values 
-					(
-					'".$data[0]."' 
-					,'".$data[1]."'
-					,'".$data[2]."'
-					,'".$data[3]."'
-					,'".str_replace("'", "", $data[4])."'
-					,'".$data[5]."'
-					,'".$data[6]."'
-					,'".$data[7]."'
-					,'".$data[8]."'
-					,'".$data[9]."'
-					,'".$data[10]."'
-					,'".$data[11]."'
-					,'".$data[12]."'
-					,'".$data[13]."'
-					,'".$data[14]."'
-					,'".$data[15]."'
-					,'".$data[16]."'
-					,'".$data[17]."'
-					,'".$data[18]."'
-					,'".$data[19]."'
-					,'".$data[20]."'
-					,'".$bulan."'
-					,'".$tahun."'
-					,'".$masa."'
-					,0
-					,1
-					,".$vPjkHeaderId."
-					)
-				";
-				*/
 
 				$sql	="MERGE INTO simtax_rekon_fixed_asset srfa
 							  USING (SELECT '".$data[0]."' as KELOMPOK_FIXED_ASSET,
@@ -1068,6 +1043,72 @@ class Sync_data_ebs_mdl extends CI_Model {
 
 			}
 
+			if ($jenis_trx === 'GLJE') 
+			{ 
+				$sql = " insert into simtax_detail_jurnal_transaksi (
+					LEDGER_ID, 
+					PERIOD_NAME, 
+					USER_JE_SOURCE_NAME, 
+					DOCNUMBER, 
+					NOMOR_FAKTUR, 
+					BULAN_BUKU, 
+					TAHUN_BUKU, 
+					TANGGALPOSTING, 
+					DESCJENISTRANSAKSI, 
+					LINENO, 
+					ACCOUNT, 
+					DESCACCOUNT, 
+					AMOUNT, 
+					SUBLEDGER, 
+					CODESUBLEDGER, 
+					DESCSUBLEDGER, 
+					DESCRIPTIONHEADER, 
+					REFERENCELINE, 
+					PROFITCENTER, 
+					PROFITCENTERDESC, 
+					COSTCENTER, 
+					COSTCENTERDESC, 
+					PONUMBER, 
+					TANGGALPO, 
+					KODE_CABANG,
+					NOMORINVOICE,
+					TANGGALINVOICE,
+					STATUSDOKUMEN,
+					INVOICE_ID
+					)
+					values 
+					(
+					'".$data[0]."',
+					'".$data[1]."',
+					'".$data[2]."',
+					'".$data[3]."',
+					'".$data[4]."',
+					".$data[5].",
+					".$data[6].",
+					'".$data[7]."',
+					'".$data[8]."',
+					".$data[9].",
+					'".$data[10]."', 
+					'".$data[11]."', 
+					".$data[12].",
+					'".$data[13]."',  
+					'".$data[14]."', 
+					'".str_replace("'", "", $data[15])."', 
+					'".$data[16]."', 
+					'".str_replace("'", "", $data[17])."', 
+					'".$data[18]."', 
+					'".$data[19]."', 
+					'".$data[20]."', 
+					'".$data[21]."', 
+					'".$data[22]."', 
+					'".$data[23]."', 
+					'".$data[24]."',
+					'".$data[25]."',
+					'".$data[26]."',
+					'DRAFT',
+					 ".$data[27]."
+					)";
+			}
         }
       try {
         $query 		= $this->db->query($sql);	

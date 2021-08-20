@@ -185,7 +185,8 @@ class Sync_data_ebs extends CI_Controller {
 				
 			} else {
 				$data	= $this->Sync_data_ebs_mdl->do_process_trx($file_path,$ConcReqId,$jenis_trx);
-				if ($jenis_trx != 'FAFISKAL' && $jenis_trx != 'APBONUS' && $jenis_trx != 'SPPD') {          
+				if ($jenis_trx != 'FAFISKAL' && $jenis_trx != 'APBONUS' && $jenis_trx != 'SPPD' && $jenis_trx != 'GLJE') 
+				{          
 					if($data){
 						$data2	= $this->Sync_data_ebs_mdl->do_import_trx($bulan,$tahun,$ConcReqId,$jenis_trx);
 						if ($data2) {
@@ -209,7 +210,7 @@ class Sync_data_ebs extends CI_Controller {
 					if (!$data) {
 						echo '3';
 					} else {
-						if ($jenis_trx == "FAFISKAL" || $jenis_trx == "APBONUS" || $jenis_trx == "SPPD"){
+						if ($jenis_trx == "FAFISKAL" || $jenis_trx == "APBONUS" || $jenis_trx == "SPPD" || $jenis_trx == "GLJE"){
 							$sql	="update simtax_getdata_history
 								 		set IMPORT_TO_SIMTAX_FLAG = 'Y'
 							   			where CONCURRENT_REQUEST_ID = '".$ConcReqId."'
