@@ -78,6 +78,8 @@
 						<option value="" data-name="" >Pilih Jenis Pajak</option>
 						<option value="PPN MASUKAN" data-name="PPN MASUKAN" > PPN MASUKAN </option>
 						<option value="PPN KELUARAN" data-name="PPN KELUARAN" > PPN KELUARAN </option>
+						<option value="DOKUMEN LAIN MASUKAN" data-name="DOKUMEN LAIN MASUKAN" > DOKUMEN LAIN MASUKAN </option>
+						<option value="DOKUMEN LAIN KELUARAN" data-name="DOKUMEN LAIN KELUARAN" > DOKUMEN LAIN KELUARAN </option>
 					</select>
 				</div>
 			 </div>
@@ -509,8 +511,16 @@
 			if(j == "PPN MASUKAN"){
 				var url1 = baseURL + 'h2h_staging/download_csv_m/'+vcategory+'/'+kode_cabang+'/'+j+'/'+b+'/'+t+'/'+vpembetulan+'/faktur_standar/creditable/'+dengan_akun;
 				var url2 = baseURL + 'h2h_staging/download_csv_m/'+vcategory+'/'+kode_cabang+'/'+j+'/'+b+'/'+t+'/'+vpembetulan+'/faktur_standar/not_creditable/'+dengan_akun;
-			} else {
+			} else if (j == "PPN KELUARAN") {
 				var url1 = baseURL + 'h2h_staging/download_csv_k/'+vcategory+'/'+kode_cabang+'/'+j+'/'+b+'/'+t+'/'+vpembetulan+'/faktur_standar/';
+				var url2 = '';
+			} else if (j == "DOKUMEN LAIN MASUKAN"){
+				j = 'PPN MASUKAN';
+				var url1 = baseURL + 'h2h_staging/download_csv_m/'+vcategory+'/'+kode_cabang+'/'+j+'/'+b+'/'+t+'/'+vpembetulan+'/dokumen_lain/xx/'+dengan_akun;
+				var url2 = '';
+			} else {
+				j = 'PPN KELUARAN';
+				var url1 = baseURL + 'h2h_staging/download_csv_k/'+vcategory+'/'+kode_cabang+'/'+j+'/'+b+'/'+t+'/'+vpembetulan+'/dokumen_lain/';
 				var url2 = '';
 			}
 		} else {
@@ -761,7 +771,7 @@
 			},
 			callback: function (result) {
 				if(result) {
-						var url1 = baseURL + 'h2h_staging/export_log_by_docnumber/'+vdocnumber+'/'+vpajak+'/'+vjenis_pajak;
+						var url1 = baseURL + 'h2h_staging/export_log_by_docnumber/'+vdocnumber+'/'+vpajak+'/'+vjenis_pajak+'/'+nmcbg+'/x';
 
 						setTimeout(function () {
 							window.open(url1);
