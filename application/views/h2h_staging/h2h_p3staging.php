@@ -15,6 +15,8 @@
 		<input type="hidden" class="form-control" id="PEMBETULAN" name="PEMBETULAN">
 		<input type="hidden" class="form-control" id="RKODE_CABANG" name="RKODE_CABANG">
 		<input type="hidden" class="form-control" id="IS_CREDITABLE" name="IS_CREDITABLE">
+		<input type="hidden" class="form-control" id="SEARCH_VIEW" name="SEARCH_VIEW">
+		<input type="hidden" class="form-control" id="JOURNALNUMBER" name="JOURNALNUMBER">
 		<div class="row">
 			<div class="col-md-2">
 				<div class="form-group">
@@ -197,6 +199,7 @@
         getSelectPajak();
 		getSelectCabang();
 		vcabang = '<?php echo $kantor_cabang ?>';
+		vpajak2 = '<?php echo $nama_pajak ?>';
 		audioSuccess = new Audio(baseURL + '/notification.ogg');
 
         Pace.track(function(){  
@@ -214,6 +217,7 @@
 										d._searchJenisPajak     = $('#jenisPajak').val();
 										d._searchPembetulan 	= $('#pembetulanKe').val();
 										d._searchPajakku 		= $('#pajakku').val();
+										d._searchView			= $('#SEARCH_VIEW').val();
 									}
 							},
 			"language"		: {
@@ -293,10 +297,12 @@
 									targets: 11,
 									render: $.fn.dataTable.render.number(',', '.', 0, '')
 								}, 
+								<?php if ($nama_pajak == 'PPN MASA') {?>
 								{
 									targets: 12,
 									render: $.fn.dataTable.render.number(',', '.', 0, '')
 								}, 
+								<?php } ?>
 							],
 			fixedColumns	:   {
 					leftColumns: 0
@@ -312,8 +318,11 @@
 		table = $('#tabledata').DataTable();
   
         $("input[type=search]").addClear();
-		$('.dataTables_filter input[type="search"]').attr('placeholder','Cari Doc. Number / Nama WP / NPWP ').css({'width':'300px','display':'inline-block'}).addClass('form-control input-sm');		
-		
+		<?php if($nama_pajak == 'PPN MASA') {?>
+			$('.dataTables_filter input[type="search"]').attr('placeholder','Cari Doc. Number / Nama WP / NPWP ').css({'width':'300px','display':'inline-block'}).addClass('form-control input-sm');		
+		<?php } else {?>
+			$('.dataTables_filter input[type="search"]').attr('placeholder','Cari Doc. Number / No Faktur / Desc. Subledger / No PO ').css({'width':'400px','display':'inline-block'}).addClass('form-control input-sm');		
+		<?php } ?>
 		$("#tabledata_filter .add-clear-x").on('click',function(){
 			table.search('').column().search('').draw();			
 		});
@@ -333,6 +342,7 @@
 				$('#PEMBETULAN').val(d.pembetulan);
 				$('#RKODE_CABANG').val(d.kode_cabang);
 				$('#IS_CREDITABLE').val(d.is_creditable);
+				$('#JOURNALNUMBER').val(d.journalnumber);	
 			}			
 		}).on("dblclick", "tr", function () {
 			table.$('tr.selected').removeClass('selected');
@@ -347,6 +357,7 @@
 		$('#TAHUN_PAJAK').val('');										
 		$('#PEMBETULAN').val('');		
 		$('#IS_CREDITABLE').val('');	
+		$('#JOURNALNUMBER').val('');
 		table.$('tr.selected').removeClass('selected');
 	}	
 
@@ -499,71 +510,11 @@
 	}
 
 	var dengan_akun = "";
-	$("#btnDownload").on("click", function(){
-		var p 	= $("#pajak").val();
-		var j 	= $("#jenisPajak").val();			
-		var b	= $("#bulan").val();			
-		var t	= $("#tahun").val();	
-		var bnm	= $("#bulan").find(":selected").attr("data-name");	
-
-		var kode_cabang = $("#cabang_trx").val();
-		var vpembetulan = $("#pembetulanKe").val();
-
-		if (kode_cabang == ''){
-			alert('Mohon pilih Cabang');
-			return;
-		} else if (b == '') {
-			alert('Mohon pilih Bulan');
-			return;
-		} else if (t == '') {
-			alert('Mohon pilih Tahun');
-			return;
-		} else if (p === ''){
-			alert('Mohon pilih Pajak');
-			return;
-		} else if (p != 'PPNMASA'){
-			alert('Mohon maaf untuk sementara pajak '+p+' belum bisa di download');
-			return;
-		}
-		if (j === '') {
-			alert('Mohon pilih Jenis Pajak');
-			return;
-		}
-
-		if(vcabang == "pusat"){
-			vcategory = "kompilasi";
-		}
-		else{
-			vcategory = "cabang";
-		}
-
-		if(j == "PPN MASUKAN"){
-			//var url1 = baseURL + 'tara_pajakku/download_csv_m/'+vcategory+'/'+kode_cabang+'/'+j+'/'+b+'/'+t+'/'+vpembetulan+'/dokumen_lain/xx/'+dengan_akun;
-			var url1 = baseURL + 'tara_pajakku/download_csv_m/'+vcategory+'/'+kode_cabang+'/'+j+'/'+b+'/'+t+'/'+vpembetulan+'/faktur_standar/creditable/'+dengan_akun;
-			var url2 = baseURL + 'tara_pajakku/download_csv_m/'+vcategory+'/'+kode_cabang+'/'+j+'/'+b+'/'+t+'/'+vpembetulan+'/faktur_standar/not_creditable/'+dengan_akun;
-		} else {
-			//var url1 = baseURL + 'tara_pajakku/download_csv_k/'+vcategory+'/'+kode_cabang+'/'+j+'/'+b+'/'+t+'/'+vpembetulan+'/dokumen_lain/xx/'+dengan_akun;
-			var url1 = baseURL + 'tara_pajakku/download_csv_k/'+vcategory+'/'+kode_cabang+'/'+j+'/'+b+'/'+t+'/'+vpembetulan+'/faktur_standar/';
-			var url2 = '';
-		}
-		window.open(url1);
-	
-		setTimeout(function () {
-			window.open(url2);
-		}, 1000);
-		//if(url3 != ''){
-		//	setTimeout(function () {
-		//		window.open(url3);
-		//	}, 2000);
-		//}
-	
-			window.focus();				
-	});
 
     function getSelectPajak()
 	{
 		$.ajax({
-				url		: "<?php echo site_url('tara_pajakku/load_master_pajak') ?>",
+				url		: "<?php echo site_url('h2h_staging/load_master_pajak') ?>",
 				type	: "POST",
 				dataType: "html",
 				success	: function(result){
@@ -572,134 +523,6 @@
 				}
 		});			
 	}
-
-	<!--Resend File CSV Per File-->
-	$("#btnResend").click(function(){		
-		var vpajakhid = $('#PAJAK_HEADER_ID').val();
-		var vpajak = $('#PAJAK').val();	
-		var vjenis_pajak = $('#JENIS_PAJAK').val();	
-		var vbulan_pajak = $('#BULAN_PAJAK').val();	
-		var vtahun_pajak = $('#TAHUN_PAJAK').val();
-		var vmodul = $('#MODUL').val();
-		var vis_creditable = $('#IS_CREDITABLE').val();
-		var vpembetulan = $('#PEMBETULAN').val();
-		var vkode_cabang = $('#RKODE_CABANG').val();
-		var vblnname = vbulan_pajak;
-		switch (vbulan_pajak) {
-								case "JANUARI":
-									vbulan_pajak = 1;
-								break;
-								case "FEBRUARI":
-									vbulan_pajak = 2;
-								break;
-								case "MARET":
-									vbulan_pajak = 3;
-								break;
-								case "APRIL":
-									vbulan_pajak = 4;
-								break;
-								case "MEI":
-									vbulan_pajak = 5;
-								break;
-								case "JUNI":
-									vbulan_pajak = 6;
-								break;
-								case "JULI":
-									vbulan_pajak = 7;
-								break;
-								case "AGUSTUS":
-									vbulan_pajak = 8;
-								break;
-								case "SEPTEMBER":
-									vbulan_pajak = 9;
-								break;
-								case "OKTOBER":
-									vbulan_pajak = 10;
-								break; 
-								case "NOVEMBER":
-									vbulan_pajak = 11;
-								break;
-								case "DESEMBER":
-									vbulan_pajak = 12;
-								break;
-						}
-
-		if(vpajakhid == ''){
-			alert('Mohon pilih salah satu data yang akan di kirim ulang');
-			return;
-		}
-
-		  bootbox.confirm({
-			title: "Kirim ulang modul <span class='label label-danger'>"+vmodul+"</span> Pajak <span class='label label-danger'>"+vpajak+"</span> Jenis pajak <span class='label label-danger'>"+vjenis_pajak+"</span> Bulan Pajak <span class='label label-danger'>"+vblnname+"</span> Tahun Pajak <span class='label label-danger'>"+vtahun_pajak+"</span> Creditable <span class='label label-danger'>"+vis_creditable+"</span> Pembetulan Ke <span class='label label-danger'>"+vpembetulan+"</span> ?",
-			message: "Apakah anda ingin melanjutkan?",
-			buttons: {
-				cancel: {
-					label: '<i class="fa fa-times-circle"></i> CANCEL'
-				},
-				confirm: {
-					label: '<i class="fa fa-check-circle"></i> Resend'
-				}
-			},
-			callback: function (result) {
-				if(result) {
-					$.ajax({
-						url		: "<?php echo site_url('Tara_pajakku/resend_file') ?>",
-						type	: "POST",
-						data	: ({pajak_header_id:vpajakhid,pajak:vpajak,jenisPajak:vjenis_pajak,bulan:vbulan_pajak,tahun:vtahun_pajak,modul:vmodul,creditable:vis_creditable,pembetulanKe:vpembetulan,kode_cabang:vkode_cabang}),
-						beforeSend	: function(){
-							 $("body").addClass("loading2")
-							 $("#message").html('Kirim ulang Modul '+vmodul+'...');
-							},
-						success	: function(result){
-							if (result==111 || result==11 || result==1 ) {
-								waitingTime = 2000;
-								setTimeout(function(){
-									$("body").removeClass("loading2");
-									$("#message").html('');
-									flashnotif('Sukses','File sukses Terkirim!','success' );
-									empty();
-									table.draw();
-								}, waitingTime);
-
-							} else if (result==114){
-								$("body").removeClass("loading2");
-								flashnotif('Warning','Dokumen Masukan dan Faktur Masukan creditable Terkirim! Data Faktur Masukan not creditable tidak terkirim (data kosong)!','warning' );
-								empty();
-								table.draw();
-								table.ajax.reload();
-							} else if (result==144 || result==14 ){			
-								$("body").removeClass("loading2");
-								flashnotif('Warning','Dokumen Masukan Terkirim! Faktur Masukan creditable dan Faktur Masukan not creditable tidak terkirim (data kosong)!','warning' );
-								empty();
-								table.draw();
-								table.ajax.reload();
-							}
-							else if (result== 2){	
-								$("body").removeClass("loading2");
-								flashnotif('Error','Gagal insert log ke database','error' );
-								empty();
-								table.draw();
-								table.ajax.reload();
-							} else if (result == 4 || result == 44 || result == 444 || result == 22 || result == 2222) {
-								$("body").removeClass("loading2");	
-								flashnotif('Error','Data kosong','error' );
-								empty();
-								table.draw();
-								table.ajax.reload();
-							}
-							else {
-								$("body").removeClass("loading2");	
-								flashnotif('Error','Kirim ke Tara Gagal!','error' );
-								empty();
-								table.draw();
-								table.ajax.reload();
-							}
-						}
-					});	
-				}
-			}
-		});			
-	})
 
 	function getSelectCabang()
 	{
@@ -725,6 +548,7 @@
 		var vis_creditable = $('#IS_CREDITABLE').val();
 		var vpembetulan = $('#PEMBETULAN').val();
 		var vdocnumber = $('#DOCNUMBER').val();
+		var vjournalnumber = $('#JOURNALNUMBER').val();
 		var vblnname = vbulan_pajak;
 		var nmcbg = $('#RKODE_CABANG').val();
 		switch (vbulan_pajak) {
@@ -772,12 +596,17 @@
 		}				
 		
 		if(vdocnumber === 'FKXXXXXX' || vdocnumber === 'FMXXXXXX'){
+			alert('Mohon pilih data yang tidak kosong');
+			return;
+		}
+
+		if(vjournalnumber === ""){
 			alert('Mohon pilih Doc. Number yang tidak kosong');
 			return;
 		}
 
 		  bootbox.confirm({
-			title: "Download Log <span class='label label-danger'>"+vmodul+"</span> Pajak <span class='label label-danger'>"+vpajak+"</span> Jenis pajak <span class='label label-danger'>"+vjenis_pajak+"</span> Bulan Pajak <span class='label label-danger'>"+vblnname+"</span> Tahun Pajak <span class='label label-danger'>"+vtahun_pajak+"</span> Creditable <span class='label label-danger'>"+vis_creditable+"</span> Pembetulan Ke <span class='label label-danger'>"+vpembetulan+"</span> Doc. Number <span class='label label-danger'>"+vdocnumber+"</span> ?",
+			title: "Download Log  Jenis pajak <span class='label label-danger'>"+vjenis_pajak+"</span> Bulan Pajak <span class='label label-danger'>"+vblnname+"</span> Tahun Pajak <span class='label label-danger'>"+vtahun_pajak+"</span> Creditable <span class='label label-danger'>"+vis_creditable+"</span> Pembetulan Ke <span class='label label-danger'>"+vpembetulan+"</span> Sender ID <span class='label label-danger'>"+vdocnumber+"</span> Doc. Number <span class='label label-danger'>"+vjournalnumber+"</span>?",
 			message: "Apakah anda ingin melanjutkan?",
 			buttons: {
 				cancel: {
@@ -789,8 +618,8 @@
 			},
 			callback: function (result) {
 				if(result) {
-						var url1 = baseURL + 'h2h_staging/export_log_by_docnumber/'+vdocnumber;
-
+						var url1 = baseURL + 'h2h_staging/export_log_by_docnumber/'+vdocnumber+'/'+vpajak2+'/'+vjenis_pajak+'/'+nmcbg+'/'+vjournalnumber;
+						//var url1;
 						setTimeout(function () {
 							window.open(url1);
 						}, 1000);
@@ -801,6 +630,7 @@
 	})
 
 	$("#btnView").on("click", function(){
+			$('#SEARCH_VIEW').val('1');
 			table.ajax.reload();			
 	});
 

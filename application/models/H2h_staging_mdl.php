@@ -95,11 +95,15 @@ class H2h_staging_mdl extends CI_Model {
 		$tahun_pajak   = $this->input->post('_searchTahun');
 		$pembetulan_ke = $this->input->post('_searchPembetulan');
 		$jenis_pajak   = $this->input->post('_searchJenisPajak');
+		$is_view   = $this->input->post('_searchView');
+		$valsenderid ="";
 
 		if($pajakku == 'PPN MASA'){
 			$wherePajakku = " and b.pajak = 'PPNMASA'";
+			$wherePajakku2 = " and pajak = 'PPNMASA'";
 		} else {
 			$wherePajakku = " and b.pajak = 'DETAILJT'";
+			$wherePajakku2 = " and pajak = 'DETAILJT'";
 		}
 		
 		$where	= "";
@@ -108,26 +112,61 @@ class H2h_staging_mdl extends CI_Model {
 						or upper(a.journalnumber) like '%".strtoupper($q)."%'
 						or upper(a.npwp) like '%".strtoupper($q)."%'
 						or upper(a.nama_wp) like '%".strtoupper($q)."%'
+						or upper(a.no_faktur_pajak) like '%".strtoupper($q)."%'
+						or upper(a.subledger) like '%".strtoupper($q)."%'
+						or upper(a.ponumber) like '%".strtoupper($q)."%'
 						";
 		}
-
+		
 		if($kode_cabang != ""){
-			$whereCabang	= " and a.kode_cabang = '".$kode_cabang."'";
+			$whereCabang	= " and b.kode_cabang = '".$kode_cabang."'";
+			$whereCabang2	= " and kode_cabang = '".$kode_cabang."'";
 		}
 		if($nama_pajak != ""){
 			$wherePajak	= " and b.pajak = '".$nama_pajak."'";
+			$wherePajak2	= " and pajak = '".$nama_pajak."'";
 		}
 		if($jenis_pajak != ""){
 			$whereJnsPajak	= " and a.jenis_pajak = '".$jenis_pajak."'";
+			$whereJnsPajak2	= " and jenis_pajak = '".$jenis_pajak."'";
 		}
 		if($bulan_pajak != ""){
 			$whereBulan	= " and b.bulan_pajak = ".$bulan_pajak;
+			$whereBulan2	= " and bulan_pajak = ".$bulan_pajak;
 		}
 		if($tahun_pajak != ""){
 			$whereTahun = " and b.tahun_pajak = ".$tahun_pajak;
+			$whereTahun2 = " and tahun_pajak = ".$tahun_pajak;
 		}
 		if($pembetulan_ke != ""){
 			$wherePembetulan = " and b.pembetulan = '".$pembetulan_ke."'";
+			$wherePembetulan2 = " and pembetulan = '".$pembetulan_ke."'";
+		}
+		
+		if($is_view != ''){
+			$qsenderid = "select distinct docnumber
+						from simtax_h2h_staging_log
+						where 1=1 
+						".$wherePajakku2."
+						".$whereCabang2.$wherePajak2.$whereJnsPajak2.$whereBulan2.$whereTahun2.$wherePembetulan2."
+							and tanggal_kirim  = 
+							(
+							select max(tanggal_kirim) tgl_kirim
+							from simtax_h2h_staging_log
+							where 1=1
+							".$wherePajakku2."
+							".$whereCabang2.$wherePajak2.$whereJnsPajak2.$whereBulan2.$whereTahun2.$wherePembetulan2.
+							")";
+			$rsenderid 	= $this->db->query($qsenderid);		
+			
+			foreach($rsenderid->result_array() as $val => $vsenderid) {			
+				$valsenderid = $vsenderid['DOCNUMBER'];
+			}
+		}
+			
+		$wheresenderid = "";
+		if($valsenderid != ""){
+			$wheresenderid = " and b.docnumber = '".$valsenderid."'";
 		}
 		
 		$queryExec	= "Select a.journalnumber, 
@@ -188,7 +227,7 @@ class H2h_staging_mdl extends CI_Model {
 						where a.docnumber is not null
 						".$wherePajakku."
                         ".$where."
-						".$whereCabang.$wherePajak.$whereJnsPajak.$whereBulan.$whereTahun.$wherePembetulan.
+						".$whereCabang.$wherePajak.$whereJnsPajak.$whereBulan.$whereTahun.$wherePembetulan.$wheresenderid.
 						" order by TO_CHAR(b.tanggal_kirim, 'MM-DD-YYYY HH24:MI:SS') desc";		
 		
 		$sql		="SELECT * FROM (
@@ -206,7 +245,8 @@ class H2h_staging_mdl extends CI_Model {
 		$query 		= $this->db->query($sql);							
 		$result['query']	= $query;
 		$result['jmlRow']	= $rowCount;
-		return $result;			
+		return $result;		
+			
 	}
 
 	function insertLog($insert_data)
@@ -256,7 +296,7 @@ class H2h_staging_mdl extends CI_Model {
 			$fgPengganti = $element_data->fgPengganti;
 			$nomorFaktur = $element_data->nomorFaktur;
 			$tanggalFaktur = $element_data->tanggalFaktur;
-			if($jenispajak != "PPN MASUKAN"){
+			if($jenispajak == "PPN KELUARAN" || $jenispajak == "DOKUMEN LAIN KELUARAN"){
 				$npwpwp = $element_data->npwpPembeli;
 				$namawp = $element_data->namaPembeli;
 				$alamatwp = $element_data->alamatPembeli;
@@ -1007,14 +1047,27 @@ class H2h_staging_mdl extends CI_Model {
 		return $query;
 	}
 
-	function get_data_log($senderid){
+	function get_data_log($senderid, $journalnumber){
+		$wheresender ="";
+		$wherejournalnumber = "";
+
+		if($senderid != ""){
+			$wheresender = " and a.docnumber = '".$senderid."' ";
+		}
+
+		if($journalnumber != "x"){
+			$wherejournalnumber = "and a.journalnumber = '".$journalnumber."' ";
+		}
 		$sql	=  "SELECT 
-							journalnumber, lineno
-                            FROM SIMTAX_H2H_STAGING
-					        WHERE docnumber = '".$senderid."'
+							a.journalnumber, a.lineno, b.bulan_pajak, b.tahun_pajak
+                            FROM SIMTAX_H2H_STAGING a
+							LEFT JOIN SIMTAX_H2H_STAGING_LOG b
+							on b.docnumber = a.docnumber
+					        WHERE 1=1 
+							".$wheresender.$wherejournalnumber."
 							and journalnumber is not null
 					";
-
+		
 		$query = $this->db->query($sql);
 		return $query;
 	}
