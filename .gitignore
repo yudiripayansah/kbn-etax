@@ -1,6 +1,6 @@
 .DS_Store
 download/
-application/config/config.php
+application/config/
 application/cache/*
 !application/cache/index.html
 
