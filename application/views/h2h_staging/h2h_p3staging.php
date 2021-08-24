@@ -79,6 +79,8 @@
 						<option value="" data-name="" >Pilih Jenis Pajak</option>
 						<option value="PPN MASUKAN" data-name="PPN MASUKAN" > PPN MASUKAN </option>
 						<option value="PPN KELUARAN" data-name="PPN KELUARAN" > PPN KELUARAN </option>
+						<option value="DOKUMEN LAIN MASUKAN" data-name="DOKUMEN LAIN MASUKAN" > DOKUMEN LAIN MASUKAN </option>
+						<option value="DOKUMEN LAIN KELUARAN" data-name="DOKUMEN LAIN KELUARAN" > DOKUMEN LAIN KELUARAN </option>
 					</select>
 				</div>
 			 </div>
@@ -196,10 +198,11 @@
 <script>
     $(document).ready(function() {
 		var table	= "", table2	= "", table3	= "", vkodepajak = "",vbulan = "", vtahun ="", vcabang ="", kode_cabang ="", vpembetulan ="";
-        getSelectPajak();
-		getSelectCabang();
 		vcabang = '<?php echo $kantor_cabang ?>';
 		vpajak2 = '<?php echo $nama_pajak ?>';
+		getSelectPajak();
+		getSelectCabang();
+
 		audioSuccess = new Audio(baseURL + '/notification.ogg');
 
         Pace.track(function(){  
@@ -370,6 +373,19 @@
 		$('#pembetulanKe').val('');
 	}
 
+	$("#pajak").change(function () {
+
+		var valueSelected = $("#pajak :selected").val();
+		if(valueSelected == 'PPNMASA'){
+			$("#jenisPajak option[value='DOKUMEN LAIN MASUKAN']").show();
+			$("#jenisPajak option[value='DOKUMEN LAIN KELUARAN']").show();
+		} else {
+			$("#jenisPajak option[value='DOKUMEN LAIN MASUKAN']").hide();
+			$("#jenisPajak option[value='DOKUMEN LAIN KELUARAN']").hide();
+		}
+
+	});
+
 	$("#btnRefresh").on("click", function(){
 	
 		$.ajax({
@@ -514,7 +530,7 @@
     function getSelectPajak()
 	{
 		$.ajax({
-				url		: "<?php echo site_url('h2h_staging/load_master_pajak') ?>",
+				url		: "<?php echo site_url('h2h_staging/load_master_pajak/'.$nama_pajak) ?>",
 				type	: "POST",
 				dataType: "html",
 				success	: function(result){

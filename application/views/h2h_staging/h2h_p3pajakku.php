@@ -200,6 +200,7 @@
 		getSelectCabang();
 		vcabang = '<?php echo $kantor_cabang ?>';
 		audioSuccess = new Audio(baseURL + '/notification.ogg');
+		vpajak2 = '<?php echo $nama_pajak ?>';
 
         Pace.track(function(){  
 		   $('#tabledata').DataTable({	 		
@@ -318,6 +319,19 @@
 		$('#jenisPajak').val('');
 		$('#pembetulanKe').val('');
 	}
+
+	$("#pajak").change(function () {
+
+		var valueSelected = $("#pajak :selected").val();
+		if(valueSelected == 'PPNMASA'){
+			$("#jenisPajak option[value='DOKUMEN LAIN MASUKAN']").show();
+			$("#jenisPajak option[value='DOKUMEN LAIN KELUARAN']").show();
+		} else {
+			$("#jenisPajak option[value='DOKUMEN LAIN MASUKAN']").hide();
+			$("#jenisPajak option[value='DOKUMEN LAIN KELUARAN']").hide();
+		}
+
+	});
 
 	$("#btnRefresh").on("click", function(){
 	
@@ -539,7 +553,7 @@
     function getSelectPajak()
 	{
 		$.ajax({
-				url		: "<?php echo site_url('h2h_staging/load_master_pajak') ?>",
+				url		: "<?php echo site_url('h2h_staging/load_master_pajak/'.$nama_pajak) ?>",
 				type	: "POST",
 				dataType: "html",
 				success	: function(result){
