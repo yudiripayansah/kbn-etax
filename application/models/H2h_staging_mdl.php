@@ -990,10 +990,10 @@ class H2h_staging_mdl extends CI_Model {
 		$whereCategory = "";
 
 		if($nama_pajak == "PPN MASUKAN"){
-			$qnama_pajak = " and account like '109%'";
+			$qnama_pajak = " and account = '10901601'";
 		}
 		else{
-			$qnama_pajak = " and account like '309%'";
+			$qnama_pajak = " and account = '30901601'";
 		}
 
 		if($kode_cabang != ""){
