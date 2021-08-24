@@ -929,9 +929,9 @@ class H2h_staging_mdl extends CI_Model {
 		if($nama_pajak != ""){
 			$wherePajak	= " and pajak = '".$nama_pajak."'";
 			if ($nama_pajak == 'PPN MASUKAN'){
-				$whereAccount = " and account like '109%'";
+				$whereAccount = " and account = '10901601'";
 			} else {
-				$whereAccount = " and account like '309%'";
+				$whereAccount = " and account = '30901601'";
 			}
 		}
 		if($jenis_pajak != ""){
@@ -990,10 +990,10 @@ class H2h_staging_mdl extends CI_Model {
 		$whereCategory = "";
 
 		if($nama_pajak == "PPN MASUKAN"){
-			$qnama_pajak = " and account like '109%'";
+			$qnama_pajak = " and account = '10901601'";
 		}
 		else{
-			$qnama_pajak = " and account like '309%'";
+			$qnama_pajak = " and account = '30901601'";
 		}
 
 		if($kode_cabang != ""){
