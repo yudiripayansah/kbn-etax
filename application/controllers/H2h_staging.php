@@ -566,7 +566,7 @@ class H2h_staging extends CI_Controller {
                            if ($adaEfaktur == true){
                                   
                                 $cntarr = count($element_data_str1);   
-                                for($i=0;$i<=1;$i++){
+                                for($i=0;$i<=9;$i++){
                                    $row_temp = array();  
                                    $resfk = $this->import_faktur_keluaran($apifk, $element_data_str1[$i], $token_type, $utoken);
                                    
@@ -585,7 +585,7 @@ class H2h_staging extends CI_Controller {
                                 
                            } else {
                                 $cntarr = count($element_data_str);   
-                                for($i=0;$i<=1;$i++){
+                                for($i=0;$i<=9;$i++){
                                    $resfk = $this->import_faktur_keluaran($apifk, $element_data_str[$i], $token_type, $utoken);
                                  
                                    $row_temp['element_data'] = $element_data_str[$i];
@@ -786,7 +786,7 @@ class H2h_staging extends CI_Controller {
                            if($nama_pajak == "PPN MASUKAN"){
                               if($category == "dokumen_lain"){
                                   $cntarr = count($element_data_str);     
-                                  for($i=0;$i<=1;$i++){      
+                                  for($i=0;$i<=9;$i++){      
                                      $resfm = $this->import_faktur_masukan($apifm, $element_data_str[$i], $token_type, $utoken);
                                      $row_temp['element_data'] = $element_data_str[$i];
                                      $row_temp['docNumber'] = $date;
@@ -803,7 +803,7 @@ class H2h_staging extends CI_Controller {
                               }
                               else {   
                                   $cntarr = count($element_data_str);     
-                                  for($i=0;$i<=1;$i++){  
+                                  for($i=0;$i<=9;$i++){  
                                        $resfm = $this->import_faktur_masukan($apifm, $element_data_str[$i], $token_type, $utoken);
                                        $row_temp['element_data'] = $element_data_str[$i];
                                        $row_temp['docNumber'] = $date;
@@ -946,7 +946,7 @@ class H2h_staging extends CI_Controller {
                         $add_push_element = array();
                            
                         $cntarr = count($element_data_str);     
-                        for($i=0;$i<=1;$i++){  
+                        for($i=0;$i<=9;$i++){  
                                 $resjt = $this->jurnal_transaksi($apidjt, $element_data_str[$i], $token_type, $utoken);
                                 $row_temp['element_data'] = $element_data_str[$i];
                                 $row_temp['docNumber'] = $date;
@@ -1642,28 +1642,26 @@ class H2h_staging extends CI_Controller {
         
                                 if($pushDokLain){
                                     $arrDokumenLain = array(
-                                        ($nama_pajak == "PPN MASUKAN") ? "DM" : "DK",
-                                        $val_jenis_transaksi,
-                                        $val_jenis_dokumen,
+                                        $row['DOCNUMBER'],
+                                        $row['TAHUN_PAJAK'],
                                         $kd_jenis_transaksi,
                                         $fg_pengganti,
-                                        $no_dokumen_lain_ganti,
-                                        $row['NO_DOKUMEN_LAIN'],
-                                        $tanggal_dokumen_lain,
-                                        sprintf("%02d", $row['BULAN_PAJAK']),
-                                        $row['TAHUN_PAJAK'],
+                                        $row['NO_FAKTUR_PAJAK'],
+                                        $tanggal_faktur,
                                         $npwp,
                                         $row['VENDOR_NAME'],
                                         $alamatNya,
-                                        $dppNya,
-                                        $ppnNya,
+                                        $row['DPP'],
+                                        $row['JUMLAH_POTONG_PPN'],
                                         ($row['JUMLAH_PPNBM'] != "") ? $row['JUMLAH_PPNBM'] : 0,
-                                        $row['KETERANGAN'],
+                                        ($row['REFERENSI'] != "") ? $row['REFERENSI'] : "-",
+                                        "-",
                                         $kode_cabang,
-                                        $row['PAJAK_LINE_ID'],
-                                        $row['AKUN_PAJAK'],
-                                        $row['INVOICE_NUM'],
-                                        $row['INVOICE_CURRENCY_CODE']
+                                        $row['NAMA_CABANG'],
+                                        ($row['INVOICE_CURRENCY_CODE'] != "") ? $row['INVOICE_CURRENCY_CODE'] : "-",
+                                        0,
+                                        "2",
+                                        "Pelindo 2"
                                     );
         
                                     if($withAkun == 1){
@@ -1678,7 +1676,7 @@ class H2h_staging extends CI_Controller {
                                     if($row['E_FAKTUR'] != 'keluaran' ){
                                         array_push($faktur_standar,
                                             array(
-                                                    "FK",
+                                                    $row['DOCNUMBER'],
                                                     $row['TAHUN_PAJAK'],
                                                     $kd_jenis_transaksi,
                                                     $fg_pengganti,
@@ -1708,7 +1706,7 @@ class H2h_staging extends CI_Controller {
                                         if ($row['SOURCE_DATA'] == 'CSV'){
                                             array_push($faktur_standar_efaktur,
                                                 array(
-                                                        "FK",
+                                                        $row['DOCNUMBER'],
                                                         $row['TAHUN_PAJAK'],
                                                         $kd_jenis_transaksi,
                                                         $fg_pengganti,
