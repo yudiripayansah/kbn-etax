@@ -929,9 +929,9 @@ class H2h_staging_mdl extends CI_Model {
 		if($nama_pajak != ""){
 			$wherePajak	= " and pajak = '".$nama_pajak."'";
 			if ($nama_pajak == 'PPN MASUKAN'){
-				$whereAccount = " and account like '109%'";
+				$whereAccount = " and account = '10901601'";
 			} else {
-				$whereAccount = " and account like '309%'";
+				$whereAccount = " and account = '30901601'";
 			}
 		}
 		if($jenis_pajak != ""){
