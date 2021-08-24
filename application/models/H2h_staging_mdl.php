@@ -184,7 +184,7 @@ class H2h_staging_mdl extends CI_Model {
 							a.masa_pengkreditan,
 							a.tahun_pengkreditan,
 							a.referensi,
-							a.kode_cabang,
+							b.kode_cabang,
 							a.nama_cabang,
 							a.status_transaksi,
 							a.company_id,

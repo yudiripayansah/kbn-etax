@@ -15,7 +15,7 @@ class H2h_staging extends CI_Controller {
 		$this->load->model('Cabang_mdl');
                 $this->load->model('ppnmasa_detail_jurnal_mdl', 'ppnmasa_jurnal');
                 $this->daftar_pajak = array("PPN MASUKAN", "PPN KELUARAN");
-                $this->pajakku = array("PPN MASA", "DETAIL JURNAL");
+                $this->pajakku = array("PPN MASA", "DETAIL JURNAL", "ALL");
                 $this->load->model('Tara_pajakku_mdl', 'tara');
 	}	
 
@@ -26,6 +26,7 @@ class H2h_staging extends CI_Controller {
 		$data['activepage'] = "lap_pajakku";
 		$data['error']      = "";
 		$data['kantor_cabang'] = "cabang";
+                $data['nama_pajak']    = $this->pajakku[2];
 		$this->template->load('template', 'h2h_staging/h2h_p3pajakku',$data);
 	}
 
@@ -51,16 +52,23 @@ class H2h_staging extends CI_Controller {
 		$this->template->load('template', 'h2h_staging/h2h_p3staging',$data);
 	}
 	
-        function load_master_pajak()
+        function load_master_pajak($_pajakku)
         {
+                $_pajakku = str_replace("%20"," ",$_pajakku);
+                $ppnmasa = str_replace(" ","",$this->pajakku[0]);
                 $hasil	= $this->tara->get_master_pajak();
-                $query 		= $hasil['query'];			
-                $result ="";
+                $query 	= $hasil['query'];			
+                $result = "";
                 $result .= "<option value='' data-name='' > Pilih Pajak </option>";
                                 foreach($query->result_array() as $row)	{
+                                    if (($ppnmasa == $row['KELOMPOK_PAJAK'] && $this->pajakku[0] == $_pajakku) || ($ppnmasa == $row['KELOMPOK_PAJAK'] && $_pajakku == "ALL")){
                                         $result .= "<option value='".$row['KELOMPOK_PAJAK']."' data-name='".$row['KELOMPOK_PAJAK']."' >".$row['KELOMPOK_PAJAK']."</option>";
+                                    } 
                                 }	
-                                $result .= "<option value='DETAILJT' data-name='DETAIL JURNAL TRANSAKSI' >DETAIL JURNAL TRANSAKSI</option>";	
+                                
+                                if($this->pajakku[1] == $_pajakku || $_pajakku == "ALL"){
+                                    $result .= "<option value='DETAILJT' data-name='DETAIL JURNAL TRANSAKSI' >DETAIL JURNAL TRANSAKSI</option>";	
+                                }
                 echo $result;
                 $query->free_result();
         }
@@ -1842,7 +1850,7 @@ class H2h_staging extends CI_Controller {
                     $jenis_pajak = 'PPN KELUARAN'; 
                     $vjenis_pajak = 'DOKUMEN LAIN KELUARAN'; 
                 }
-
+                
                 if($request['httpcode'] == 200)
                 {
                         $utoken = $el_request->token_jwt;
@@ -1853,10 +1861,10 @@ class H2h_staging extends CI_Controller {
                         if(!empty($datalog)){
                                 foreach($datalog->result_array() as $row) {
                                         $tahun_pajak = $row['TAHUN_PAJAK'];
-                                        $bulan_pajak = $row['TAHUN_PAJAK'];
+                                        $bulan_pajak = $row['BULAN_PAJAK'];
                                         $vdocumentnumber = $row['JOURNALNUMBER'];  
                                         $vlineno =  $row['LINENO'];
-                                        if ($nama_pajak != 'DETAILJT'){
+                                        if ($nama_pajak != 'DETAIL JURNAL' && $nama_pajak != 'DETAILJT'){
                                             if($jenis_pajak != 'PPN MASUKAN'){
                                                 $urlgetdata = $base_url.'pajak/faktur-keluaran/get-data?docNumber='.$vdocumentnumber; 
                                             } else {
@@ -1986,7 +1994,7 @@ class H2h_staging extends CI_Controller {
                         $vrow=1;
                         foreach ($element_data_str as $line => $row) {
                                 
-                                if ($nama_pajak != 'DETAILJT'){
+                                if ($nama_pajak != 'DETAIL JURNAL' && $nama_pajak != 'DETAILJT'){
                                     if($jenis_pajak != 'PPN MASUKAN'){
                                         $namaPembeli = str_replace(","," ",$row[0]['namaPembeli']); 
                                         $alamatPembeli = str_replace(","," ",$row[0]['alamatPembeli']);    
@@ -2106,7 +2114,7 @@ class H2h_staging extends CI_Controller {
                        $fileName = '_'.$tahun_pajak.'_'.$bulan_pajak.'_'.$kode_cabang.'_';
                        $filepajak = ($vjenis_pajak != "") ? $vjenis_pajak : $jenis_pajak;
                         
-                        if ($nama_pajak != 'DETAILJT'){
+                        if ($nama_pajak != 'DETAIL JURNAL' && $nama_pajak != 'DETAILJT'){
                             if($jenis_pajak != 'PPN MASUKAN'){
                                 convert_to_csv($dokumen_faktur_keluaran, 'getData_'.$filepajak.'_'.$fileName.'.csv', ';');
                             } else {
