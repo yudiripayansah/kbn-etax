@@ -258,134 +258,166 @@ class H2h_staging_mdl extends CI_Model {
 		$pajak = $this->input->post('pajak');
 		$jenispajak = $this->input->post('jenisPajak');
 		$date = date('Y-m-d H:i:s');
-		$docNumber = "";
-		$jurnalNumber = "";
-		$tahunBuku = "";
-		$kdTransaksi = "";
-		$fgPengganti = "";
-		$nomorFaktur = "";
-		$tanggalFaktur = "";
-		$npwpPembeli = "";
-		$namaPembeli = "";
-		$alamatPembeli = "";
-		$jumlahDpp = "";
-		$jumlahPpn = "";
-		$jumlahPpnbm = "";
-		$masaPengkreditan = "";
-		$tahunPengkreditan = "";
-		$referensi = "";
-		$nikPembeli = "";
-		$kodeBranch = "";
-		$namaBranch = "";
-		$idCurreny = "";
-		$statusTransaksi = "";
-		$company_name = "";
-		$pajak_header_id = "";
-		$creditable = "";
-		$pembetulan_ke = "";
-		$kode_cabang = "";
-		$total_baris_kirim = "";
+		$docNumber 			= "";
+		$jurnalNumber 		= "";
+		$tahunBuku 			= "";
+		$kdTransaksi 		= "";
+		$fgPengganti 		= "";
+		$nomorFaktur 		= "";
+		$tanggalFaktur 		= "";
+		$npwpPembeli 		= "";
+		$namaPembeli 		= "";
+		$alamatPembeli 		= "";
+		$jumlahDpp 			= "";
+		$jumlahPpn 			= "";
+		$jumlahPpnbm 		= "";
+		$masaPengkreditan 	= "";
+		$tahunPengkreditan 	= "";
+		$referensi 			= "";
+		$nikPembeli 		= "";
+		$kodeBranch 		= "";
+		$namaBranch 		= "";
+		$idCurreny 			= "";
+		$statusTransaksi 	= "";
+		$company_name 		= "";
+		$pajak_header_id 	= "";
+		$creditable 		= "";
+		$pembetulan_ke 		= "";
+		$kode_cabang 		= "";
+		$total_baris_kirim 	= "";
+		$fgUangmuka 		= "null";
+		$uangMukadpp 		= "null";
+		$uangMukappn 		= "null";
+		$uangMukappnbm 		= "null";
+		$jenisFaktur		= "null";
+		$iscreditable		= "null";
 
 		$ins = true;
 		foreach($insert_data as $row_data){
-			$element_data = json_decode($row_data['element_data']);
-			$docNumber = $row_data['docNumber'];
-			$jurnalNumber = $element_data->docNumber;
-			$tahunBuku = $element_data->tahunBuku;
-			$kdTransaksi = $element_data->kdTransaksi;
-			$fgPengganti = $element_data->fgPengganti;
-			$nomorFaktur = $element_data->nomorFaktur;
-			$tanggalFaktur = $element_data->tanggalFaktur;
+			$element_data 	= json_decode($row_data['element_data']);
+			$docNumber 		= $row_data['docNumber'];
+			$jurnalNumber 	= $element_data->docNumber;
+			$tahunBuku 		= $element_data->tahunBuku;
+			$kdTransaksi 	= $element_data->kdTransaksi;
+			$fgPengganti 	= $element_data->fgPengganti;
+			$nomorFaktur 	= $element_data->nomorFaktur;
+			$tanggalFaktur 	= $element_data->tanggalFaktur;
 			if($jenispajak == "PPN KELUARAN" || $jenispajak == "DOKUMEN LAIN KELUARAN"){
-				$npwpwp = $element_data->npwpPembeli;
-				$namawp = $element_data->namaPembeli;
-				$alamatwp = $element_data->alamatPembeli;
-				$masaPengkreditan = $element_data->masaPengkreditan;
-				$tahunPengkreditan = $element_data->tahunPengkreditan;
+				$npwpwp 			= $element_data->npwpPembeli;
+				$namawp 			= $element_data->namaPembeli;
+				$alamatwp 			= $element_data->alamatPembeli;
+				$fgUangmuka 		= ($element_data->fgUangmuka) ? $element_data->fgUangmuka : "null";
+				$uangMukadpp 		= ($element_data->uangMukadpp) ? $element_data->uangMukadpp : "null";
+				$uangMukappn 		= ($element_data->uangMukappn) ? $element_data->uangMukappn : "null";
+				$uangMukappnbm 		= ($element_data->uangMukappnbm) ? $element_data->uangMukappnbm : "null";
+				$jenisFaktur 		= $element_data->jenisFaktur;
 			} else {
-				$npwpwp = $element_data->npwpPenjual;
-				$namawp = $element_data->namaPenjual;
-				$alamatwp = $element_data->alamatPenjual;
+				$npwpwp 			= $element_data->npwpPenjual;
+				$namawp 			= $element_data->namaPenjual;
+				$alamatwp 			= $element_data->alamatPenjual;
+				$iscreditable 		= $element_data->isCreditable;
+				$masaPengkreditan 	= $element_data->masaPengkreditan;
+				$tahunPengkreditan 	= $element_data->tahunPengkreditan;
+				if($jenispajak != "DOKUMEN LAIN MASUKAN"){
+					$jenisFaktur 		= "FM";
+				} else {
+					$jenisFaktur 		= "DM";
+				}
 			}
-			$jumlahDpp = $element_data->jumlahDpp;
-			$jumlahPpn = $element_data->jumlahPpn;
-			$jumlahPpnbm = $element_data->jumlahPpnbm;
-			$referensi = $element_data->referensi;
-			$nikPembeli = $element_data->nikPembeli;
-			$kodeBranch = $element_data->kodeBranch;
-			$namaBranch = $element_data->namaBranch;
-			$idCurreny = $element_data->idCurrency;
-			$statusTransaksi = $element_data->statusTransaksi;
-			$company_id = $element_data->company_id;
-			$company_name = $element_data->company_name;
-			$status_message = $row_data['statusMessage']; //sukses atau error
-			$status = $row_data['status']; // S atau E
-			$pajak_header_id = $row_data['pajak_header_id'];
-			$creditable = $row_data['creditable'];
-			$pembetulan_ke = $row_data['pembetulan_ke'];
-			$kode_cabang = $row_data['kode_cabang'];
-			$total_baris_kirim = $row_data['total_baris_kirim'];
-
-			$sql = "Insert into SIMTAX_H2H_STAGING (
-				DOCNUMBER,
-				JOURNALNUMBER,
-				TAHUN_BUKU,
-				KD_JENIS_TRANSAKSI,
-				FG_PENGGANTI,
-				NO_FAKTUR_PAJAK,
-				TANGGAL_FAKTUR_PAJAK,
-				NPWP,
-				NAMA_WP,
-				ALAMAT_WP,
-				DPP,
-				JUMLAH_PPN,
-				JUMLAH_PPNBM,
-				MASA_PENGKREDITAN,
-				TAHUN_PENGKREDITAN,
-				REFERENSI,
-				KODE_CABANG,
-				NAMA_CABANG,
-				STATUS_TRANSAKSI,
-				COMPANY_ID,
-				COMPANY_NAME,
-				STATUS_KIRIM,
-				KETERANGAN,
-				JENIS_PAJAK,
-				CURRENCY
-				) 
-				 values (
-					 '".$docNumber."',
-					 '".$jurnalNumber."',
-					 ".$tahunBuku.",
-					 ".$kdTransaksi.",
-					 ".$fgPengganti.",
-					 '".$nomorFaktur."',
-					 '".$tanggalFaktur."',
-					 '".$npwpwp."',
-					 '".$namawp."',
-					 '".$alamatwp."',
-					  ".$jumlahDpp.",
-					  ".$jumlahPpn.",
-					  ".$jumlahPpnbm.",
-					 '".$masapengkreditan."',
-					 '".$tahunPengkreditan."',
-					 '".$referensi."',
-					 '".$kodeBranch."',
-					 '".$namaBranch."',
-					 ".$statusTransaksi.",
-					 ".$company_id.",
-					 '".$company_name."',
-					 '".$status."',
-					 '".$status_message."',
-					 '".$jenispajak."',
-					 '".$idCurreny."'
-					 )";	
-					 			 					 
+			$jumlahDpp 			= $element_data->jumlahDpp;
+			$jumlahPpn 			= $element_data->jumlahPpn;
+			$jumlahPpnbm 		= $element_data->jumlahPpnbm;
+			$referensi 			= $element_data->referensi;
+			$nikPembeli 		= $element_data->nikPembeli;
+			$kodeBranch 		= $element_data->kodeBranch;
+			$namaBranch 		= $element_data->namaBranch;
+			$idCurreny 			= $element_data->idCurrency;
+			$statusTransaksi 	= $element_data->statusTransaksi;
+			$company_id 		= $element_data->company_id;
+			$company_name 		= $element_data->company_name;
+			$status_message 	= $row_data['statusMessage']; //sukses atau error
+			$status 			= $row_data['status']; // S atau E
+			$pajak_header_id 	= $row_data['pajak_header_id'];
+			$creditable 		= $row_data['creditable'];
+			$pembetulan_ke 		= $row_data['pembetulan_ke'];
+			$kode_cabang 		= $row_data['kode_cabang'];
+			$total_baris_kirim 	= $row_data['total_baris_kirim'];
+			
+			if($total_baris_kirim > 0){
+				$sql = "Insert into SIMTAX_H2H_STAGING (
+					DOCNUMBER,
+					JOURNALNUMBER,
+					TAHUN_BUKU,
+					KD_JENIS_TRANSAKSI,
+					FG_PENGGANTI,
+					NO_FAKTUR_PAJAK,
+					TANGGAL_FAKTUR_PAJAK,
+					NPWP,
+					NAMA_WP,
+					ALAMAT_WP,
+					DPP,
+					JUMLAH_PPN,
+					JUMLAH_PPNBM,
+					MASA_PENGKREDITAN,
+					TAHUN_PENGKREDITAN,
+					REFERENSI,
+					KODE_CABANG,
+					NAMA_CABANG,
+					STATUS_TRANSAKSI,
+					COMPANY_ID,
+					COMPANY_NAME,
+					STATUS_KIRIM,
+					KETERANGAN,
+					JENIS_PAJAK,
+					CURRENCY,
+					IS_CREDITABLE,
+					FG_UANG_MUKA,
+					UANG_MUKA_DPP,
+					UANG_MUKA_PPN,
+					UANG_MUKA_PPNBM,
+					JENIS_FAKTUR
+					) 
+					 values (
+						 '".$docNumber."',
+						 '".$jurnalNumber."',
+						 ".$tahunBuku.",
+						 ".$kdTransaksi.",
+						 ".$fgPengganti.",
+						 '".$nomorFaktur."',
+						 '".$tanggalFaktur."',
+						 '".$npwpwp."',
+						 '".$namawp."',
+						 '".$alamatwp."',
+						  ".$jumlahDpp.",
+						  ".$jumlahPpn.",
+						  ".$jumlahPpnbm.",
+						 '".$masaPengkreditan."',
+						 '".$tahunPengkreditan."',
+						 '".$referensi."',
+						 '".$kodeBranch."',
+						 '".$namaBranch."',
+						 ".$statusTransaksi.",
+						 ".$company_id.",
+						 '".$company_name."',
+						 '".$status."',
+						 '".$status_message."',
+						 '".$jenispajak."',
+						 '".$idCurreny."',
+						 ".$iscreditable.",
+						 ".$fgUangmuka.",
+						 ".$uangMukadpp.",
+						 ".$uangMukappn.",
+						 ".$uangMukappnbm.",
+						 '".$jenisFaktur."'
+					)";	
+				}
+					 					 
 			try {
 				$query = $this->db->query($sql);
 				if($query){
 					$ins =true;
 				} else {
+					//print_r($this->db->error());
 					return false;
 				}	
 			} catch (Exception $ex) {
@@ -393,14 +425,29 @@ class H2h_staging_mdl extends CI_Model {
 			}	
 		}
 
+		if($total_baris_kirim != 0){
+			$vstatuskirim = 'T';
+			$vketerangan = 'Terkirim';
+		} else {
+			$vstatuskirim = 'K';
+			$vketerangan = 'Data Kosong';
+		}
 		if($ins){
-			if($total_baris_kirim != 0){
-				$vstatuskirim = 'T';
-				$vketerangan = 'Terkirim';
-			} else {
-				$vstatuskirim = 'K';
-				$vketerangan = 'Data Kosong';
-			}
+			/*
+			//data lama dianggap tidak valid 
+			$sqldtlama	="update simtax_h2h_staging_log
+			set REPLACE_BY_SENDER_ID = '".$docNumber."'
+			where bulan_pajak = ".$bulan."
+				and tahun_pajak = ".$tahun."
+				and kode_cabang = '".$kode_cabang."'
+				and pajak = '".$pajak."'
+				and jenis_pajak = '".$jenispajak."'
+				and status_kirim = 'T'
+				and pembetulan = '".$pembetulan_ke."'
+			";	
+			$querydtlama	= $this->db->query($sqldtlama);	
+			*/
+
 			$sqllog = "Insert into SIMTAX_H2H_STAGING_LOG (
 				DOCNUMBER,
 				KODE_CABANG,
@@ -431,7 +478,7 @@ class H2h_staging_mdl extends CI_Model {
 					  ".$total_baris_kirim.",
 					 '".$creditable."',
 					 '".$pembetulan_ke."')";
-
+					 
 				$query = $this->db->query($sqllog);
 
 				if($query){
@@ -519,65 +566,67 @@ class H2h_staging_mdl extends CI_Model {
 			$kode_cabang = $row_data['kode_cabang'];
 			$total_baris_kirim = $row_data['total_baris_kirim'];
 
-			$sql = "Insert into SIMTAX_H2H_STAGING (
-				DOCNUMBER,
-				JOURNALNUMBER,
-				TAHUN_BUKU,
-				BULAN_BUKU,
-				TANGGALPOSTING,
-				NO_FAKTUR_PAJAK,
-				DESCRIPTIONHEADER,
-				LINENO,
-				DESCJENISTRANSAKSI,
-				ACCOUNT,
-				DESCACCOUNT,
-				AMOUNT,
-				SUBLEDGER,
-				CODESUBLEDGER,
-				DESCSUBLEDGER,
-				REFERENCELINE,
-				PROFITCENTER,
-				PROFITCENTERDESC,
-				COSTCENTER,
-				COSTCENTERDESC,
-				PONUMBER,
-				TANGGALPO,
-				COMPANY_ID,
-				COMPANY_NAME,
-				STATUS_KIRIM,
-				KETERANGAN,
-				JENIS_PAJAK
-				) 
-				 values (
-					 '".$docNumber."',
-					 '".$jurnalNumber."',
-					 ".$tahunBuku.",
-					 ".$bulanBuku.",
-					 '".$tanggalPosting."',
-					 '".$nomorFaktur."',
-					 '".$descriptionHeader."',
-					 ".$lineNo.",
-					 '".$descJenisTransaksi."',
-					 '".$account."',
-					 '".$descAccount."',
-					  ".$amount.",
-					 '".$subLedger."',
-					 '".$codeSubLedger."',
-					 '".$descSubLedger."',
-					 '".$referenceLine."',
-					 '".$profitCenterId."',
-					 '".$profitCenterDesc."',
-					 '".$costCenterId."', 
-					 '".$costCenterDesc."',
-					 '".$poNumber."',
-					 '".$tanggalPo."',
-					 ".$company_id.",
-					 '".$company_name."',
-					 '".$status."',
-					 '".$status_message."',
-					 '".$jenispajak."'
-					 )";	
-	
+			if($total_baris_kirim != 0){
+				$sql = "Insert into SIMTAX_H2H_STAGING (
+					DOCNUMBER,
+					JOURNALNUMBER,
+					TAHUN_BUKU,
+					BULAN_BUKU,
+					TANGGALPOSTING,
+					NO_FAKTUR_PAJAK,
+					DESCRIPTIONHEADER,
+					LINENO,
+					DESCJENISTRANSAKSI,
+					ACCOUNT,
+					DESCACCOUNT,
+					AMOUNT,
+					SUBLEDGER,
+					CODESUBLEDGER,
+					DESCSUBLEDGER,
+					REFERENCELINE,
+					PROFITCENTER,
+					PROFITCENTERDESC,
+					COSTCENTER,
+					COSTCENTERDESC,
+					PONUMBER,
+					TANGGALPO,
+					COMPANY_ID,
+					COMPANY_NAME,
+					STATUS_KIRIM,
+					KETERANGAN,
+					JENIS_PAJAK
+					) 
+					 values (
+						 '".$docNumber."',
+						 '".$jurnalNumber."',
+						 ".$tahunBuku.",
+						 ".$bulanBuku.",
+						 '".$tanggalPosting."',
+						 '".$nomorFaktur."',
+						 '".$descriptionHeader."',
+						 ".$lineNo.",
+						 '".$descJenisTransaksi."',
+						 '".$account."',
+						 '".$descAccount."',
+						  ".$amount.",
+						 '".$subLedger."',
+						 '".$codeSubLedger."',
+						 '".$descSubLedger."',
+						 '".$referenceLine."',
+						 '".$profitCenterId."',
+						 '".$profitCenterDesc."',
+						 '".$costCenterId."', 
+						 '".$costCenterDesc."',
+						 '".$poNumber."',
+						 '".$tanggalPo."',
+						 ".$company_id.",
+						 '".$company_name."',
+						 '".$status."',
+						 '".$status_message."',
+						 '".$jenispajak."'
+					)";
+				}
+			
 			try {
 				$query = $this->db->query($sql);
 				if($query){
@@ -590,14 +639,14 @@ class H2h_staging_mdl extends CI_Model {
 			}	
 		}
 
+		if($total_baris_kirim != 0){
+			$vstatuskirim = 'T';
+			$vketerangan = 'Terkirim';
+		} else {
+			$vstatuskirim = 'K';
+			$vketerangan = 'Data Kosong';
+		}
 		if($ins){
-			if($total_baris_kirim != 0){
-				$vstatuskirim = 'T';
-				$vketerangan = 'Terkirim';
-			} else {
-				$vstatuskirim = 'K';
-				$vketerangan = 'Data Kosong';
-			}
 			$sqllog = "Insert into SIMTAX_H2H_STAGING_LOG (
 				DOCNUMBER,
 				KODE_CABANG,

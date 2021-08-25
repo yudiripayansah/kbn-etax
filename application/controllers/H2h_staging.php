@@ -390,7 +390,7 @@ class H2h_staging extends CI_Controller {
                          
                         if($nama_pajak == "PPN KELUARAN"){
                            if($category == "dokumen_lain"){
-                              $tileDMFM = "DK_DM";
+                              $tileDMFM = "DK";
                            }
                            else{
                               $tileDMFM = "FK";
@@ -493,11 +493,16 @@ class H2h_staging extends CI_Controller {
                                                 "kodeBranch" => $kode_cabang,
                                                 "namaBranch" => $row['NAMA_CABANG'],
                                                 "idCurrency" => $row['INVOICE_CURRENCY_CODE'],
+                                                "fgUangmuka" => $row['FG_UANG_MUKA'],
+                                                "uangMukadpp" => $row['UANG_MUKA_DPP'],
+                                                "uangMukappn" => $row['UANG_MUKA_PPN'],
+                                                "uangMukappnbm" => $row['UANG_MUKA_PPNBM'],
+                                                "jenisFaktur" => $tileDMFM,
                                                 "statusTransaksi" => 0,
                                                 "company_id" => $comp_id,
                                                 "company_name" => $comp_name
                                              );
-                                        $element_data_str[] = json_encode($element_data);
+                                        $element_data_str_dk[] = json_encode($element_data);
                                 }
                                 
                                 if($nama_pajak == "PPN KELUARAN"){
@@ -520,6 +525,11 @@ class H2h_staging extends CI_Controller {
                                                 "kodeBranch" => $kode_cabang,
                                                 "namaBranch" => $row['NAMA_CABANG'],
                                                 "idCurrency" => $row['INVOICE_CURRENCY_CODE'],
+                                                "fgUangmuka" => $row['FG_UANG_MUKA'],
+                                                "uangMukadpp" => $row['UANG_MUKA_DPP'],
+                                                "uangMukappn" => $row['UANG_MUKA_PPN'],
+                                                "uangMukappnbm" => $row['UANG_MUKA_PPNBM'],
+                                                "jenisFaktur" => $tileDMFM,
                                                 "statusTransaksi" => 0,
                                                 "company_id" => $comp_id,
                                                 "company_name" => $comp_name
@@ -550,6 +560,11 @@ class H2h_staging extends CI_Controller {
                                                    "kodeBranch" => $kode_cabang,
                                                    "namaBranch" => $row['NAMA_CABANG'],
                                                    "idCurrency" => $row['INVOICE_CURRENCY_CODE'],
+                                                   "fgUangmuka" => $row['FG_UANG_MUKA'],
+                                                   "uangMukadpp" => $row['UANG_MUKA_DPP'],
+                                                   "uangMukappn" => $row['UANG_MUKA_PPN'],
+                                                   "uangMukappnbm" => $row['UANG_MUKA_PPNBM'],
+                                                   "jenisFaktur" => $tileDMFM,
                                                    "statusTransaksi" => 0,
                                                    "company_id" => $comp_id,
                                                    "company_name" => $comp_name
@@ -563,14 +578,14 @@ class H2h_staging extends CI_Controller {
                            $masa_pajak = strtoupper(get_masa_pajak($bulan_pajak));
                            $add_push_element = array();
 
-                           if ($adaEfaktur == true){
-                                  
-                                $cntarr = count($element_data_str1);   
-                                for($i=0;$i<=9;$i++){
+                           if($category == "dokumen_lain"){
+                                // data dokumen lain   
+                                $cntarr = count($element_data_str_dk);   
+                                for($i=0;$i<=1;$i++){
                                    $row_temp = array();  
-                                   $resfk = $this->import_faktur_keluaran($apifk, $element_data_str1[$i], $token_type, $utoken);
+                                   $resfk = $this->import_faktur_keluaran($apifk, $element_data_str_dk[$i], $token_type, $utoken);
                                    
-                                   $row_temp['element_data'] = $element_data_str1[$i];
+                                   $row_temp['element_data'] = $element_data_str_dk[$i];
                                    $row_temp['docNumber'] = $date;
                                    $statusmessage = str_replace("'", '', $resfk["statusMessage"]);
                                    $row_temp['statusMessage'] = $statusmessage;
@@ -582,28 +597,48 @@ class H2h_staging extends CI_Controller {
                                    $row_temp['total_baris_kirim'] =  $cntarr;
                                    $add_push_element[] = $row_temp;
                                 } 
-                                
                            } else {
-                                $cntarr = count($element_data_str);   
-                                for($i=0;$i<=9;$i++){
-                                   $resfk = $this->import_faktur_keluaran($apifk, $element_data_str[$i], $token_type, $utoken);
-                                 
-                                   $row_temp['element_data'] = $element_data_str[$i];
-                                   $row_temp['docNumber'] = $date;
-                                   $statusmessage = str_replace("'", '', $resfk["statusMessage"]);
-                                   $row_temp['statusMessage'] = $statusmessage;
-                                   $row_temp['status'] = $resfk["status"];
-                                   $row_temp['pajak_header_id'] = $pajak_header_id;
-                                   $row_temp['creditable'] = 'not_creditable';
-                                   $row_temp['pembetulan_ke'] = $pembetulan_ke;
-                                   $row_temp['kode_cabang'] =  $kode_cabang;
-                                   $row_temp['total_baris_kirim'] =  $cntarr;
-                                   $add_push_element[] = $row_temp;
-                                } 
+                                // data Faktur      
+                                if ($adaEfaktur == true){
+                                        $cntarr = count($element_data_str1);   
+                                        for($i=0;$i<=1;$i++){
+                                           $row_temp = array();  
+                                           $resfk = $this->import_faktur_keluaran($apifk, $element_data_str1[$i], $token_type, $utoken);
+                                           
+                                           $row_temp['element_data'] = $element_data_str1[$i];
+                                           $row_temp['docNumber'] = $date;
+                                           $statusmessage = str_replace("'", '', $resfk["statusMessage"]);
+                                           $row_temp['statusMessage'] = $statusmessage;
+                                           $row_temp['status'] = $resfk["status"];
+                                           $row_temp['pajak_header_id'] = $pajak_header_id;
+                                           $row_temp['creditable'] = 'not_creditable';
+                                           $row_temp['pembetulan_ke'] = $pembetulan_ke;
+                                           $row_temp['kode_cabang'] =  $kode_cabang;
+                                           $row_temp['total_baris_kirim'] =  $cntarr;
+                                           $add_push_element[] = $row_temp;
+                                        } 
+                                        
+                                   } else {
+                                        $cntarr = count($element_data_str);   
+                                        for($i=0;$i<=1;$i++){
+                                           $resfk = $this->import_faktur_keluaran($apifk, $element_data_str[$i], $token_type, $utoken);
+                                         
+                                           $row_temp['element_data'] = $element_data_str[$i];
+                                           $row_temp['docNumber'] = $date;
+                                           $statusmessage = str_replace("'", '', $resfk["statusMessage"]);
+                                           $row_temp['statusMessage'] = $statusmessage;
+                                           $row_temp['status'] = $resfk["status"];
+                                           $row_temp['pajak_header_id'] = $pajak_header_id;
+                                           $row_temp['creditable'] = 'not_creditable';
+                                           $row_temp['pembetulan_ke'] = $pembetulan_ke;
+                                           $row_temp['kode_cabang'] =  $kode_cabang;
+                                           $row_temp['total_baris_kirim'] =  $cntarr;
+                                           $add_push_element[] = $row_temp;
+                                        } 
+                                   }
                            }
-                           
-                           curl_close($ch);
 
+                           curl_close($ch);
                            $ins_log = $this->h2h->insertLog($add_push_element);
                            if($ins_log){
                                 echo '1';
@@ -704,7 +739,7 @@ class H2h_staging extends CI_Controller {
                         {
                            $j = 0;
                            foreach($data->result_array() as $row) {
-                                        
+                                       
                                 $tanggal_dokumen_lain = ($row['TANGGAL_DOKUMEN_LAIN']) ? date("d/m/Y", strtotime($row['TANGGAL_DOKUMEN_LAIN'])) : '';
                                 $tanggal_approval     = ($row['TANGGAL_DOKUMEN_LAIN']) ? date("Ymdhis", strtotime($row['TANGGAL_DOKUMEN_LAIN']))."000000" : '';
                                 $tanggal_faktur       = ($row['TANGGAL_FAKTUR_PAJAK']) ? date("Y-m-d", strtotime($row['TANGGAL_FAKTUR_PAJAK'])) : '';
@@ -754,46 +789,77 @@ class H2h_staging extends CI_Controller {
                                 $alamatNya = substr($alamatNya,0,60);
                 
                                 if($nama_pajak == "PPN MASUKAN"){
-                                   $element_data = array(
-                                        "docNumber" => $row['DOCNUMBER'],
-                                        "tahunBuku" => $row['TAHUN_PAJAK'],
-                                        "kdTransaksi" => $kd_jenis_transaksi,
-                                        "fgPengganti" => $fg_pengganti,
-                                        "nomorFaktur" => str_replace(".","", str_replace("-","",substr($row['NO_FAKTUR_PAJAK'], 3))),
-                                        "tanggalFaktur" => $tanggal_faktur,
-                                        "npwpPenjual" => $npwp,
-                                        "namaPenjual" => $row['VENDOR_NAME'],
-                                        "alamatPenjual" => $alamatNya,
-                                        "jumlahDpp" => $row['DPP'],
-                                        "jumlahPpn" => $row['JUMLAH_POTONG_PPN'],
-                                        "jumlahPpnbm" => ($row['JUMLAH_PPNBM'] != "") ? $row['JUMLAH_PPNBM'] : 0,
-                                        "masaPengkreditan" => $row['BULAN_PAJAK'],
-                                        "tahunPengkreditan" => $row['TAHUN_PAJAK'],
-                                        "referensi" => $row['REFERENSI'],
-                                        "kodeBranch" => $kode_cabang,
-                                        "namaBranch" => $row['NAMA_CABANG'],
-                                        "statusTransaksi" => 0,
-                                        "company_id" => $comp_id,
-                                        "company_name" => $comp_name
-                                   );
-                                   $element_data_str[] = json_encode($element_data);
+                                   if($category == "dokumen_lain"){
+                                        $element_data_dm = array(
+                                                "docNumber" => $row['DOCNUMBER'],
+                                                "tahunBuku" => $row['TAHUN_PAJAK'],
+                                                "kdTransaksi" => $kd_jenis_transaksi,
+                                                "fgPengganti" => $fg_pengganti,
+                                                "nomorFaktur" => str_replace(".","", str_replace("-","",substr($row['NO_FAKTUR_PAJAK'], 3))),
+                                                "tanggalFaktur" => $tanggal_faktur,
+                                                "npwpPenjual" => $npwp,
+                                                "namaPenjual" => $row['VENDOR_NAME'],
+                                                "alamatPenjual" => $alamatNya,
+                                                "jumlahDpp" => $row['DPP'],
+                                                "jumlahPpn" => $row['JUMLAH_POTONG_PPN'],
+                                                "jumlahPpnbm" => ($row['JUMLAH_PPNBM'] != "") ? $row['JUMLAH_PPNBM'] : 0,
+                                                "masaPengkreditan" => $row['BULAN_PAJAK'],
+                                                "tahunPengkreditan" => $row['TAHUN_PAJAK'],
+                                                "referensi" => $row['REFERENSI'],
+                                                "kodeBranch" => $kode_cabang,
+                                                "namaBranch" => $row['NAMA_CABANG'],
+                                                "statusTransaksi" => 0,
+                                                "isCreditable" => $row['IS_CREDITABLE'],
+                                                "company_id" => $comp_id,
+                                                "company_name" => $comp_name
+                                           );
+                                           $element_data_str_dm[] = json_encode($element_data_dm);
+                                   } else {
+                                           $element_data = array(
+                                                "docNumber" => $row['DOCNUMBER'],
+                                                "tahunBuku" => $row['TAHUN_PAJAK'],
+                                                "kdTransaksi" => $kd_jenis_transaksi,
+                                                "fgPengganti" => $fg_pengganti,
+                                                "nomorFaktur" => str_replace(".","", str_replace("-","",substr($row['NO_FAKTUR_PAJAK'], 3))),
+                                                "tanggalFaktur" => $tanggal_faktur,
+                                                "npwpPenjual" => $npwp,
+                                                "namaPenjual" => $row['VENDOR_NAME'],
+                                                "alamatPenjual" => $alamatNya,
+                                                "jumlahDpp" => $row['DPP'],
+                                                "jumlahPpn" => $row['JUMLAH_POTONG_PPN'],
+                                                "jumlahPpnbm" => ($row['JUMLAH_PPNBM'] != "") ? $row['JUMLAH_PPNBM'] : 0,
+                                                "masaPengkreditan" => $row['BULAN_PAJAK'],
+                                                "tahunPengkreditan" => $row['TAHUN_PAJAK'],
+                                                "referensi" => $row['REFERENSI'],
+                                                "kodeBranch" => $kode_cabang,
+                                                "namaBranch" => $row['NAMA_CABANG'],
+                                                "statusTransaksi" => 0,
+                                                "isCreditable" => $row['IS_CREDITABLE'],
+                                                "company_id" => $comp_id,
+                                                "company_name" => $comp_name
+                                           );
+                                           $element_data_str[] = json_encode($element_data);
+                                   }     
                                 }
                            }
-
+                           
                            $masa_pajak = strtoupper(get_masa_pajak($bulan_pajak));
                            $add_push_element = array();
                            
                            if($nama_pajak == "PPN MASUKAN"){
                               if($category == "dokumen_lain"){
-                                  $cntarr = count($element_data_str);     
-                                  for($i=0;$i<=9;$i++){      
-                                     $resfm = $this->import_faktur_masukan($apifm, $element_data_str[$i], $token_type, $utoken);
-                                     $row_temp['element_data'] = $element_data_str[$i];
+                                  $cntarr = count($element_data_str_dm);     
+                                  for($i=0;$i<=1;$i++){      
+                                     $resfm = $this->import_faktur_masukan($apifm, $element_data_str_dm[$i], $token_type, $utoken);
+                                     $row_temp['element_data'] = $element_data_str_dm[$i];
                                      $row_temp['docNumber'] = $date;
                                      $statusmessage = str_replace("'", '', $resfm["statusMessage"]);
                                      $row_temp['statusMessage'] = $statusmessage;
                                      $row_temp['status'] = $resfm["status"];
                                      $row_temp['pajak_header_id'] = $pajak_header_id;
+                                     if($creditable == "xx"){
+                                        $creditable = "not_creditable";
+                                     }
                                      $row_temp['creditable'] = $creditable;
                                      $row_temp['pembetulan_ke'] = $pembetulan_ke;
                                      $row_temp['kode_cabang'] =  $kode_cabang;
@@ -803,7 +869,7 @@ class H2h_staging extends CI_Controller {
                               }
                               else {   
                                   $cntarr = count($element_data_str);     
-                                  for($i=0;$i<=9;$i++){  
+                                  for($i=0;$i<=1;$i++){  
                                        $resfm = $this->import_faktur_masukan($apifm, $element_data_str[$i], $token_type, $utoken);
                                        $row_temp['element_data'] = $element_data_str[$i];
                                        $row_temp['docNumber'] = $date;
@@ -819,7 +885,7 @@ class H2h_staging extends CI_Controller {
                                   }
                               }
                           }
-                                
+                           
                            curl_close($ch);
                            $ins_log = $this->h2h->insertLog($add_push_element);
                            if($ins_log){
@@ -864,7 +930,7 @@ class H2h_staging extends CI_Controller {
                             $row_temp['statusMessage'] = "Data Kosong";
                             $row_temp['status'] = "K";
                             $row_temp['pajak_header_id'] = "XXXX";
-                            $row_temp['creditable'] = $creditable;
+                            $row_temp['creditable'] = "not_creditable";
                             $row_temp['pembetulan_ke'] = $pembetulan_ke;
                             $row_temp['kode_cabang'] =  $kode_cabang;
                             $row_temp['total_baris_kirim'] =  0;
@@ -1243,6 +1309,7 @@ class H2h_staging extends CI_Controller {
                         'KODE_BRANCH',
                         'NAMA_BRANCH',
                         'STATUS_TRANSAKSI',
+                        'IS_CREDITABLE',
                         'COMPANY_ID',
                         'COMPANY_NAME'
                 );
@@ -1273,6 +1340,7 @@ class H2h_staging extends CI_Controller {
                                 'KODE_BRANCH',
                                 'NAMA_BRANCH',
                                 'STATUS_TRANSAKSI',
+                                'IS_CREDITABLE',
                                 'COMPANY_ID',
                                 'COMPANY_NAME'
                         );
@@ -1361,6 +1429,7 @@ class H2h_staging extends CI_Controller {
                                             $kode_cabang,
                                             $row['NAMA_CABANG'],
                                             "0",
+                                            $row['IS_CREDITABLE'],
                                             "2",
                                             "Pelindo 2"
                                         );
@@ -1391,6 +1460,7 @@ class H2h_staging extends CI_Controller {
                                         $kode_cabang,
                                         $row['NAMA_CABANG'],
                                         "0",
+                                        $row['IS_CREDITABLE'],
                                         "2",
                                         "Pelindo 2"
                                 );
@@ -1511,8 +1581,13 @@ class H2h_staging extends CI_Controller {
                         'BRANCH',
                         'ID_CURRENCY',
                         'STATUS_TRANSAKSI',
+                        'FG_UANG_MUKA',
+                        'UANG_MUKA_DPP',
+                        'UANG_MUKA_PPN',
+                        'UANG_MUKA_PPNBM',
                         'COMPANY_ID',
-                        'COMPANY_NAME'
+                        'COMPANY_NAME',
+                        'JENIS_FAKTUR'
                 );
 
                 if($withAkun == 1){
@@ -1541,8 +1616,13 @@ class H2h_staging extends CI_Controller {
                                 'BRANCH',
                                 'ID_CURRENCY',
                                 'STATUS_TRANSAKSI',
+                                'FG_UANG_MUKA',
+                                'UANG_MUKA_DPP',
+                                'UANG_MUKA_PPN',
+                                'UANG_MUKA_PPNBM',
                                 'COMPANY_ID',
-                                'COMPANY_NAME'
+                                'COMPANY_NAME',
+                                'JENIS_FAKTUR'
                         );
                 }
 
@@ -1660,8 +1740,13 @@ class H2h_staging extends CI_Controller {
                                         $row['NAMA_CABANG'],
                                         ($row['INVOICE_CURRENCY_CODE'] != "") ? $row['INVOICE_CURRENCY_CODE'] : "-",
                                         0,
+                                        $row['FG_UANG_MUKA'],
+                                        $row['UANG_MUKA_DPP'],
+                                        $row['UANG_MUKA_PPN'],
+                                        $row['UANG_MUKA_PPNBM'],
                                         "2",
-                                        "Pelindo 2"
+                                        "Pelindo 2",
+                                        "DK"
                                     );
         
                                     if($withAkun == 1){
@@ -1694,8 +1779,13 @@ class H2h_staging extends CI_Controller {
                                                     $row['NAMA_CABANG'],
                                                     ($row['INVOICE_CURRENCY_CODE'] != "") ? $row['INVOICE_CURRENCY_CODE'] : "-",
                                                     0,
+                                                    $row['FG_UANG_MUKA'],
+                                                    $row['UANG_MUKA_DPP'],
+                                                    $row['UANG_MUKA_PPN'],
+                                                    $row['UANG_MUKA_PPNBM'],
                                                     "2",
-                                                    "Pelindo 2"
+                                                    "Pelindo 2",
+                                                    "FK"
                                             )
                                         );
                                     } else {
@@ -1724,8 +1814,13 @@ class H2h_staging extends CI_Controller {
                                                         $row['NAMA_CABANG'],
                                                         ($row['INVOICE_CURRENCY_CODE'] != "") ? $row['INVOICE_CURRENCY_CODE'] : "-",
                                                         0,
+                                                        $row['FG_UANG_MUKA'],
+                                                        $row['UANG_MUKA_DPP'],
+                                                        $row['UANG_MUKA_PPN'],
+                                                        $row['UANG_MUKA_PPNBM'],
                                                         "2",
-                                                        "Pelindo 2"
+                                                        "Pelindo 2",
+                                                        "FK"
                                                 )
                                             );
                                         }
