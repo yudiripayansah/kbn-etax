@@ -291,6 +291,7 @@ class H2h_staging_mdl extends CI_Model {
 		$uangMukappnbm 		= "null";
 		$jenisFaktur		= "null";
 		$iscreditable		= "null";
+		$fakturAsal 		= "";
 
 		$ins = true;
 		foreach($insert_data as $row_data){
@@ -311,6 +312,7 @@ class H2h_staging_mdl extends CI_Model {
 				$uangMukappn 		= ($element_data->uangMukappn) ? $element_data->uangMukappn : "null";
 				$uangMukappnbm 		= ($element_data->uangMukappnbm) ? $element_data->uangMukappnbm : "null";
 				$jenisFaktur 		= $element_data->jenisFaktur;
+				$fakturAsal 		= $element_data->nomorFakturAsal;
 			} else {
 				$npwpwp 			= $element_data->npwpPenjual;
 				$namawp 			= $element_data->namaPenjual;
@@ -318,11 +320,7 @@ class H2h_staging_mdl extends CI_Model {
 				$iscreditable 		= $element_data->isCreditable;
 				$masaPengkreditan 	= $element_data->masaPengkreditan;
 				$tahunPengkreditan 	= $element_data->tahunPengkreditan;
-				if($jenispajak != "DOKUMEN LAIN MASUKAN"){
-					$jenisFaktur 		= "FM";
-				} else {
-					$jenisFaktur 		= "DM";
-				}
+				$jenisFaktur 		= $element_data->jenisFaktur;
 			}
 			$jumlahDpp 			= $element_data->jumlahDpp;
 			$jumlahPpn 			= $element_data->jumlahPpn;
@@ -375,14 +373,15 @@ class H2h_staging_mdl extends CI_Model {
 					UANG_MUKA_DPP,
 					UANG_MUKA_PPN,
 					UANG_MUKA_PPNBM,
-					JENIS_FAKTUR
+					JENIS_FAKTUR,
+					FAKTUR_ASAL
 					) 
 					 values (
 						 '".$docNumber."',
 						 '".$jurnalNumber."',
-						 ".$tahunBuku.",
-						 ".$kdTransaksi.",
-						 ".$fgPengganti.",
+						  ".$tahunBuku.",
+						  ".$kdTransaksi.",
+						  ".$fgPengganti.",
 						 '".$nomorFaktur."',
 						 '".$tanggalFaktur."',
 						 '".$npwpwp."',
@@ -396,19 +395,20 @@ class H2h_staging_mdl extends CI_Model {
 						 '".$referensi."',
 						 '".$kodeBranch."',
 						 '".$namaBranch."',
-						 ".$statusTransaksi.",
-						 ".$company_id.",
+						  ".$statusTransaksi.",
+						  ".$company_id.",
 						 '".$company_name."',
 						 '".$status."',
 						 '".$status_message."',
 						 '".$jenispajak."',
 						 '".$idCurreny."',
-						 ".$iscreditable.",
-						 ".$fgUangmuka.",
-						 ".$uangMukadpp.",
-						 ".$uangMukappn.",
-						 ".$uangMukappnbm.",
-						 '".$jenisFaktur."'
+						  ".$iscreditable.",
+						  ".$fgUangmuka.",
+						  ".$uangMukadpp.",
+						  ".$uangMukappn.",
+						  ".$uangMukappnbm.",
+						 '".$jenisFaktur."',
+						 '".$fakturAsal."'
 					)";	
 				}
 					 					 
