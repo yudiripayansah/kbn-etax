@@ -401,23 +401,36 @@
 				return;
 			} else if (b != '' && t != '') 
 			{
-				bootbox.confirm({
-				title: "Kirim ke Staging Pajak Pelindo 3 "+pnm+" Jenis Pajak <span class='label label-danger'> "+j+" </span> Bulan <span class='label label-danger'>"+bnm+"</span> Tahun <span class='label label-danger'>"+t+"</span> Cabang <span class='label label-danger'>"+nmcbg+"</span> Pembetulan <span class='label label-danger'>"+pb+"</span>?",
-				message: "Apakah anda ingin melanjutkan?",
-				buttons: {
-					cancel: {
-						label: '<i class="fa fa-times-circle"></i> CANCEL'
-					},
-					confirm: {
-						label: '<i class="fa fa-check-circle"></i> YES'
+				$.ajax({ //start check validasi
+				url		: baseURL + 'h2h_staging/validation_staging/' + p + '/' + j + '/' + b + '/' + t + '/' + kodecbg + '/' + pb,
+				type	: "GET",
+				dataType: "json",
+				success	: function(result){
+						if (result.st==1){						
+								flashnotifnohide("info",result.data,"warning");
+								$("body").removeClass("loading");
+								return false;
+						} else {
+							bootbox.confirm({
+							title: "Kirim ke Staging Pajak Pelindo 3 "+pnm+" Jenis Pajak <span class='label label-danger'> "+j+" </span> Bulan <span class='label label-danger'>"+bnm+"</span> Tahun <span class='label label-danger'>"+t+"</span> Cabang <span class='label label-danger'>"+nmcbg+"</span> Pembetulan <span class='label label-danger'>"+pb+"</span>?",
+							message: "Apakah anda ingin melanjutkan?",
+							buttons: {
+								cancel: {
+									label: '<i class="fa fa-times-circle"></i> CANCEL'
+								},
+								confirm: {
+									label: '<i class="fa fa-check-circle"></i> YES'
+								}
+							},
+							callback: function (result) {
+								if(result) {						
+									send_to_staging();
+								} 
+							}
+							});
+						}	
 					}
-				},
-				callback: function (result) {
-					if(result) {						
-						send_to_staging();
-					} 
-				  }
-				});
+				});	//end check validasi
 			}				
 	});
 
@@ -473,6 +486,12 @@
 					$("body").removeClass("loading2");	
 					$("#message").html('');
 					flashnotifnohide('Error','Data kosong','error' );
+					empty2();
+					table.ajax.reload();
+				} else if (result == 5){
+					$("body").removeClass("loading2");	
+					$("#message").html('');
+					flashnotifnohide('Error','Status transaksi kosong','error' );
 					empty2();
 					table.ajax.reload();
 				}
