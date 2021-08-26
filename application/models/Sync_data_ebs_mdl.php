@@ -176,14 +176,27 @@ class Sync_data_ebs_mdl extends CI_Model {
 		$bulan			= $this->input->post('srcBulan');
 		$tahun			= $this->input->post('srcTahun');	
 		$jenis_trx		= $this->input->post('scrJenis');
-				
+		$date_param		= date('d');
+		$date_ref		= $date_param.'-'.$bulan.'-'.$tahun;
+		
+		$date_ref   = date("Y-m-d",strtotime($date_ref));
+		
+		$this->db->set('DATE_PROCESS',"TO_DATE('".$date_ref."', 'SYYYY-MM-DD HH24:MI:SS')",false);
+		$this->db->where('TRANSACTION_MODUL', $jenis_trx);		
+		$this->db->update("SIMTAX_LAST_PROCESS");
+
 		$DBEBS = $this->load->database('devnew',TRUE);
 		
 		$PARAMETER_1 = $bulan;
 		$PARAMETER_2 = $tahun;
-		$PARAMETER_3 = "";
+		if ($jenis_trx != "CUSTOMER" && $jenis_trx != "SUPPLIER"){
+			$PARAMETER_3 = "";
+		} else {
+			$PARAMETER_3 = $date_param;
+		}
 		$PARAMETER_4 = "";
 		$PARAMETER_5 = $jenis_trx;
+		
 		$OUT_MESSAGE = "";
 		$stid = oci_parse($DBEBS->conn_id, 'BEGIN :OUT_MESSAGE := SIMTAX_PAJAK_UTILITY_PKG.getPPh23(:PARAMETER_1,:PARAMETER_2,:PARAMETER_3, :PARAMETER_4,:PARAMETER_5); end;');
 
@@ -1133,7 +1146,8 @@ class Sync_data_ebs_mdl extends CI_Model {
 			while (($data = fgetcsv($handle, 0, ";","'","\\")) !== FALSE) {
 
 				if($row >= 0){
-							 
+						
+					/*	
 					if ($data[0] != '')
 					{
 						$sql = "
@@ -1295,6 +1309,7 @@ class Sync_data_ebs_mdl extends CI_Model {
 									return false;
 								}
 					}
+					*/
 					/*
 					$sql	="MERGE INTO simtax_master_pelanggan smp
 							  USING (SELECT '".$data[0]."' as CUSTOMER_ID,
