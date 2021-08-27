@@ -144,29 +144,42 @@ class H2h_staging_mdl extends CI_Model {
 		}
 		
 		if($is_view != ''){
-			$qsenderid = "select distinct docnumber
+		    if($kode_cabang != "" || $nama_pajak != "" || $jenis_pajak != "" || $bulan_pajak != ""){
+				$qsenderid = "select distinct docnumber
 						from simtax_h2h_staging_log
 						where 1=1 
+						and status_kirim = 'T'
 						".$wherePajakku2."
-						".$whereCabang2.$wherePajak2.$whereJnsPajak2.$whereBulan2.$whereTahun2.$wherePembetulan2."
-							and tanggal_kirim  = 
-							(
-							select max(tanggal_kirim) tgl_kirim
-							from simtax_h2h_staging_log
-							where 1=1
-							".$wherePajakku2."
-							".$whereCabang2.$wherePajak2.$whereJnsPajak2.$whereBulan2.$whereTahun2.$wherePembetulan2.
-							")";
-			$rsenderid 	= $this->db->query($qsenderid);		
-			
-			foreach($rsenderid->result_array() as $val => $vsenderid) {			
-				$valsenderid = $vsenderid['DOCNUMBER'];
-			}
+						".$whereCabang2.$wherePajak2.$whereJnsPajak2.$whereBulan2.$whereTahun2.$wherePembetulan2
+						/*
+						--	and tanggal_kirim  = 
+						--	(
+						--	select max(tanggal_kirim) tgl_kirim
+						--	from simtax_h2h_staging_log
+						--	where 1=1 
+						--	and status_kirim = 'T'
+						--	".$wherePajakku2."
+						--	".$whereCabang2.$wherePajak2.$whereJnsPajak2.$whereBulan2.$whereTahun2.$wherePembetulan2.
+						--	")"
+						*/
+						;
+				$rsenderid 	= $this->db->query($qsenderid);		
+				
+				$i=1;
+				foreach($rsenderid->result_array() as $val => $vsenderid) {			
+					$valsenderid .= "'".$vsenderid['DOCNUMBER']."',";
+					$i++;
+				}
+				if($i > 1){
+					$valsenderid = substr($valsenderid, 0, -1);
+				}
+				
+			}	
 		}
 			
 		$wheresenderid = "";
 		if($valsenderid != ""){
-			$wheresenderid = " and b.docnumber = '".$valsenderid."'";
+			$wheresenderid = " and b.docnumber in (".$valsenderid.")";
 		}
 		
 		$queryExec	= "Select a.journalnumber, 
@@ -238,7 +251,7 @@ class H2h_staging_mdl extends CI_Model {
 						WHERE rownum <=".$_POST['start']."+".$_POST['length']."
 					)
 					WHERE rnum >".$_POST['start']."";
-								
+							
 		$sql2		= $queryExec;  
 		$query2 	= $this->db->query($sql2);		
 		$rowCount	= $query2->num_rows();

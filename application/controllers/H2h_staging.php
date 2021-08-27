@@ -742,12 +742,12 @@ class H2h_staging extends CI_Controller {
                    $pajak_header_id     = ($get_pajak_header_id) ? $get_pajak_header_id->PAJAK_HEADER_ID : 0;
                    $data                = $this->h2h->get_data_tara($pajak_header_id, $kode_cabang, $nama_pajak, $bulan_pajak, $tahun_pajak, $pembetulan_ke, $category_download, $category, $creditable, $groupByInvoiceNUm);
                    $get_cabang          = $this->h2h->get_cabang_in_header_tara($kode_cabang, $nama_pajak, $bulan_pajak, $tahun_pajak, $pembetulan_ke);
-
+                   
                         if (!empty($data) && count($data->result_array())>0 ) 
-                        {
+                        {    
                            $j = 0;
                            foreach($data->result_array() as $row) {
-                                       
+                                        
                                 $tanggal_dokumen_lain = ($row['TANGGAL_DOKUMEN_LAIN']) ? date("d/m/Y", strtotime($row['TANGGAL_DOKUMEN_LAIN'])) : '';
                                 $tanggal_approval     = ($row['TANGGAL_DOKUMEN_LAIN']) ? date("Ymdhis", strtotime($row['TANGGAL_DOKUMEN_LAIN']))."000000" : '';
                                 $tanggal_faktur       = ($row['TANGGAL_FAKTUR_PAJAK']) ? date("Y-m-d", strtotime($row['TANGGAL_FAKTUR_PAJAK'])) : '';
@@ -795,13 +795,14 @@ class H2h_staging extends CI_Controller {
 
                                 $alamatNya = preg_replace("/[\r\n]+/", " ", $address);
                                 $alamatNya = substr($alamatNya,0,60);
+                                
+                                //$vstatusTransaksi = $this->checkStatusTransaksi($row['FG_PENGGANTI'],$row['NO_DOKUMEN_LAIN'],$row['NO_DOKUMEN_LAIN_GANTI'],$row['BULAN_PAJAK'],$row['TAHUN_PAJAK']);
+                                //if($vstatusTransaksi === null || $vstatusTransaksi === ""){
+                                //    echo "5";
+                                //    return;    
+                                //}
+                                $vstatusTransaksi = 0;
 
-                                $vstatusTransaksi = $this->checkStatusTransaksi($row['FG_PENGGANTI'],$row['NO_DOKUMEN_LAIN'],$row['NO_DOKUMEN_LAIN_GANTI'],$row['BULAN_PAJAK'],$row['TAHUN_PAJAK']);
-                                if($vstatusTransaksi === ""){
-                                    echo "5";
-                                    return;    
-                                }
-                
                                 if($nama_pajak == "PPN MASUKAN"){
                                    if($category == "dokumen_lain"){
                                         $element_data_dm = array(
@@ -2425,11 +2426,11 @@ class H2h_staging extends CI_Controller {
                                    $ii=0;
                                    $records  = "";
                                    foreach($data->result_array() as $row) {
-                                        if ($row['DOCNUMBER'] == "" || $row['NO_DOKUMEN_LAIN']=="" || $row['NPWP1']==""){
+                                        if ($row['DOCNUMBER'] == "" || $row['NPWP1']==""){
                                         $records .= $row['INVOICE_ID'].", " ;
                                         $fakturAda = true;
                                         }
-                                        $hasilFaktur ="Invoice ID ".$records." Doc. Number / Nomor dokumen lain / NPWP pada Efaktur masukan creditable masih kosong";
+                                        $hasilFaktur ="Invoice ID ".$records." Doc. Number / NPWP pada Efaktur masukan creditable masih kosong";
                                    }
                                 }    
                                 // faktur standar not creditable
@@ -2439,11 +2440,11 @@ class H2h_staging extends CI_Controller {
                                     $ii=0;
                                     $records  = "";
                                     foreach($datacreditable->result_array() as $row) {
-                                        if ($row['DOCNUMBER'] == "" || $row['NO_DOKUMEN_LAIN']=="" || $row['NPWP1']==""){
+                                        if ($row['DOCNUMBER'] == "" || $row['NPWP1']==""){
                                             $records .= $row['INVOICE_ID'].", " ;
                                             $fakturcAda = true;
                                         }
-                                       $hasilFakturc ="Invoice ID ".$records." Doc. Number / Nomor dokumen lain / NPWP  pada Efaktur masukan not creditable masih kosong";
+                                       $hasilFakturc ="Invoice ID ".$records." Doc. Number / NPWP  pada Efaktur masukan not creditable masih kosong";
                                     }
                                 }
                         }
@@ -2454,11 +2455,11 @@ class H2h_staging extends CI_Controller {
                                    $ii=0;
                                    $records  = "";
                                    foreach($data->result_array() as $row) {
-                                        if ($row['DOCNUMBER'] == "" || $row['NO_DOKUMEN_LAIN']=="" || $row['NPWP1']==""){
+                                        if ($row['DOCNUMBER'] == "" || $row['NPWP1']==""){
                                           $records .= $row['INVOICE_ID'].", " ;
                                            $fakturAda = true;
                                         }
-                                        $hasilFaktur ="Invoice ID ".$records." Doc. Number / Nomor dokumen lain / NPWP pada Efaktur keluaran masih kosong";
+                                        $hasilFaktur ="Invoice ID ".$records." Doc. Number / NPWP pada Efaktur keluaran masih kosong";
                                    }
                                 } 
                         }

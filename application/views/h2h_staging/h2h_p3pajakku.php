@@ -470,12 +470,6 @@
 					flashnotifnohide('Warning','- Faktur masukan creditable tidak terkirim (data kosong) <br> - Faktur masukan not creditable terkirim ','warning' );
 					empty2();
 					table.ajax.reload();
-				} else if (result == 222) {
-					$("body").removeClass("loading2");	
-					$("#message").html('');
-					flashnotifnohide('Warning','- Faktur masukan creditable (data kosong) <br> - Faktur masukan not creditable (data kosong) ','warning' );
-					empty2();
-					table.ajax.reload();
 				} else if (result== 2){	
 					$("body").removeClass("loading2");
 					$("#message").html('');
