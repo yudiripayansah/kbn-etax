@@ -410,10 +410,21 @@ class Master_mdl extends CI_Model
     {
         $q		= (isset($_POST['search']['value']))?$_POST['search']['value']:'';
         $where	= "";
-        if ($q) { //check lgsg where atau and
-            $where	= " where (upper(customer_id) like '%".strtoupper($q)."%' or upper(customer_name) like '%".strtoupper($q)."%' or  (npwp) like '%".strtoupper($q)."%') ";
+        $og_id = null;
+        if (isset($_POST['_searchCabang']) && $_POST['_searchCabang'] != "") {
+            $kode_cabang = $_POST['_searchCabang'];
+            $og_id       = $this->cabang_mdl->get_og_id($kode_cabang);
         }
-        
+        if ($q) { //check lgsg where atau and
+            $where	= " where (upper(customer_id) like '%".strtoupper($q)."%' or upper(customer_name) like '%".strtoupper($q)."%' or  (npwp) like '%".strtoupper($q)."%')";
+            if ($og_id) {
+                $where .= "and organization_id = '".$og_id."'";
+            }
+        } else {
+            if ($og_id) {
+                $where = " where organization_id = '".$og_id."'";
+            }
+        }
         $queryExec = "SELECT CUSTOMER_ID,  
 									   CUSTOMER_NAME , 
 									   ALIAS_CUSTOMER, 
@@ -1329,24 +1340,27 @@ class Master_mdl extends CI_Model
         }
 
         $sql = "SELECT						
-		VENDOR_ID,  
-		VENDOR_NAME , 
-		VENDOR_NUMBER, 
-		VENDOR_TYPE_LOOKUP_CODE,
-		NPWP,
-		OPERATING_UNIT ,
-		VENDOR_SITE_ID,
-		VENDOR_SITE_CODE ,
-		ADDRESS_LINE1, 
-		ADDRESS_LINE2,
-		ADDRESS_LINE3,
-		CITY,
-		PROVINCE,
-		COUNTRY,
-		ZIP,
-		AREA_CODE,PHONE,
-		ORGANIZATION_ID      
+		SIMTAX_MASTER_SUPPLIER.VENDOR_ID,  
+		SIMTAX_MASTER_SUPPLIER.VENDOR_NAME , 
+		SIMTAX_MASTER_SUPPLIER.VENDOR_NUMBER, 
+		SIMTAX_MASTER_SUPPLIER.VENDOR_TYPE_LOOKUP_CODE,
+		SIMTAX_MASTER_SUPPLIER.NPWP,
+        SIMTAX_MASTER_NPWP.STATUS_KSWP,
+		SIMTAX_MASTER_SUPPLIER.OPERATING_UNIT ,
+		SIMTAX_MASTER_SUPPLIER.VENDOR_SITE_ID,
+		SIMTAX_MASTER_SUPPLIER.VENDOR_SITE_CODE ,
+		SIMTAX_MASTER_SUPPLIER.ADDRESS_LINE1, 
+		SIMTAX_MASTER_SUPPLIER.ADDRESS_LINE2,
+		SIMTAX_MASTER_SUPPLIER.ADDRESS_LINE3,
+		SIMTAX_MASTER_SUPPLIER.CITY,
+		SIMTAX_MASTER_SUPPLIER.PROVINCE,
+		SIMTAX_MASTER_SUPPLIER.COUNTRY,
+		SIMTAX_MASTER_SUPPLIER.ZIP,
+		SIMTAX_MASTER_SUPPLIER.AREA_CODE,
+        SIMTAX_MASTER_SUPPLIER.PHONE,
+		SIMTAX_MASTER_SUPPLIER.ORGANIZATION_ID      
 		FROM   SIMTAX_MASTER_SUPPLIER 
+        LEFT JOIN SIMTAX_MASTER_NPWP ON SIMTAX_MASTER_NPWP.NPWP_SIMTAX = SIMTAX_MASTER_SUPPLIER.NPWP 
 		WHERE 1=1 ".$where." and organization_id = '".$og_id."' order by 1 desc";
                 
         $query = $this->db->query($sql);
@@ -1362,24 +1376,27 @@ class Master_mdl extends CI_Model
             $where	= " where (upper(customer_id) like '%".strtoupper($q)."%' or upper(customer_name) like '%".strtoupper($q)."%' or  (npwp) like '%".strtoupper($q)."%') ";
         }
         
-        $sql = "SELECT CUSTOMER_ID,  
-							CUSTOMER_NAME , 
-							ALIAS_CUSTOMER, 
-							CUSTOMER_NUMBER,
-							NPWP,
-							OPERATING_UNIT ,
-							CUSTOMER_SITE_ID,
-							CUSTOMER_SITE_NUMBER ,
-							CUSTOMER_SITE_NAME, 
-							ADDRESS_LINE1,
-							ADDRESS_LINE2,
-							ADDRESS_LINE3,
-							CITY,
-							PROVINCE,
-							COUNTRY,
-							ZIP,
-							ORGANIZATION_ID
-					FROM   SIMTAX_MASTER_PELANGGAN ".$where;
+        $sql = "SELECT SIMTAX_MASTER_PELANGGAN.CUSTOMER_ID,  
+							SIMTAX_MASTER_PELANGGAN.CUSTOMER_NAME , 
+							SIMTAX_MASTER_PELANGGAN.ALIAS_CUSTOMER, 
+							SIMTAX_MASTER_PELANGGAN.CUSTOMER_NUMBER,
+							SIMTAX_MASTER_PELANGGAN.NPWP,
+                            SIMTAX_MASTER_NPWP.STATUS_KSWP,
+							SIMTAX_MASTER_PELANGGAN.OPERATING_UNIT ,
+							SIMTAX_MASTER_PELANGGAN.CUSTOMER_SITE_ID,
+							SIMTAX_MASTER_PELANGGAN.CUSTOMER_SITE_NUMBER ,
+							SIMTAX_MASTER_PELANGGAN.CUSTOMER_SITE_NAME, 
+							SIMTAX_MASTER_PELANGGAN.ADDRESS_LINE1,
+							SIMTAX_MASTER_PELANGGAN.ADDRESS_LINE2,
+							SIMTAX_MASTER_PELANGGAN.ADDRESS_LINE3,
+							SIMTAX_MASTER_PELANGGAN.CITY,
+							SIMTAX_MASTER_PELANGGAN.PROVINCE,
+							SIMTAX_MASTER_PELANGGAN.COUNTRY,
+							SIMTAX_MASTER_PELANGGAN.ZIP,
+							SIMTAX_MASTER_PELANGGAN.ORGANIZATION_ID
+					FROM   SIMTAX_MASTER_PELANGGAN
+                    LEFT JOIN SIMTAX_MASTER_NPWP ON SIMTAX_MASTER_NPWP.NPWP_SIMTAX = SIMTAX_MASTER_PELANGGAN.NPWP 
+                    ".$where;
                 
         $query = $this->db->query($sql);
         return $query;

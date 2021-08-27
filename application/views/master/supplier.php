@@ -25,7 +25,7 @@
 					<div class="table-responsive">
 						<div class="row">
 							<div class="col-lg-10">					
-								<form role="form" id="form-import" autocomplete="off">
+								<form role="form" id="form-import" autocomplete="off" class="row no-gutters">
 									<div class="col-lg-9">	
 										<div class="form-group">
 											<label class="form-control-label">File CSV</label>
@@ -52,20 +52,22 @@
 									<button id="btnEksportCSV" class="btn btn-default btn-rounded custom-input-width btn-block" type="button" > 
 									<i class="fa fa-file-o"></i> <span>EXPORT</span></button>
 								</div>
+							</div>
+							<div class="col-xs-12 col-sm-3">
+								<?php if ($this->session->userdata('kd_cabang') == "000"): ?>
+								<div class="form-group">
+									<label class="control-label">Filter by Cabang</label>
+									<select id="cabang" name="cabang" class="form-control">
+										<?php $list_cabang = get_list_cabang(); ?>
+										<option value="">-- Pilih Cabang --</option>
+										<?php foreach ($list_cabang as $cabang):?>
+										<option value="<?php echo $cabang['KODE_CABANG'] ?>"> <?php echo $cabang['NAMA_CABANG'] ?> </option>
+										<?php endforeach?>
+									</select>
+								</div>
+								<?php endif; ?>
 							</div>	 
 						</div>
-						<?php if ($this->session->userdata('kd_cabang') == "000"): ?>
-						<div style="padding-bottom: 5px;color:#333;font-weight: 400">
-							<label>Filter by Cabang</label>
-							<select id="cabang" name="cabang">
-								<?php $list_cabang = get_list_cabang(); ?>
-		                        <option value="">-- Pilih Cabang --</option>
-		                        <?php foreach ($list_cabang as $cabang):?>
-		                        <option value="<?php echo $cabang['KODE_CABANG'] ?>"> <?php echo $cabang['NAMA_CABANG'] ?> </option>
-		                        <?php endforeach?>
-							</select>
-						</div>
-						<?php endif; ?>
 				   <table width="100%" class="display cell-border stripe hover small" id="tabledata"> 
 						<thead>
 							<tr>
@@ -207,7 +209,7 @@
 			<div class="col-sm-4">
 				<div class="form-group">
 					<label>NPWP</label>
-					<input type="text" id="djp-npwp" disabled class="form-control" data-inputmask="'mask': '99.999.999.9-999.999'">
+					<input type="text" id="djp-npwp" disabled class="form-control">
 				</div>
 			</div>
 			<div class="col-sm-4">

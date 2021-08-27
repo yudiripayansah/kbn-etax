@@ -7,14 +7,48 @@ class Djp extends CI_Controller
     {
         parent::__construct();
         $this->load->helper('djp');
+        $this->load->model('Npwp_mdl');
     }
 
-    public function index()
+    public function get_master_npwp()
     {
-        $this->template->set('title', 'DJP');
-        $data['subtitle']	= "DJP";
-        $data['activepage'] = "djp";
-        $this->template->load('template', 'djp/index', $data);
+        $list = $this->Npwp_mdl->get_datatables();
+        $data = array();
+        $no = $_POST['start'];
+        foreach ($list as $npwp) {
+            $no++;
+            $row = array();
+            $row[] = $no;
+            $row[] = $npwp->NPWP_SIMTAX;
+            $row[] = $npwp->NPWP;
+            $row[] = $npwp->NAMA;
+            $row[] = $npwp->MERK_DAGANG;
+            $row[] = $npwp->ALAMAT;
+            $row[] = $npwp->KELURAHAN;
+            $row[] = $npwp->KECAMATAN;
+            $row[] = $npwp->KABKOT;
+            $row[] = $npwp->PROVINSI;
+            $row[] = $npwp->KODE_KLU;
+            $row[] = $npwp->KLU;
+            $row[] = $npwp->TELP;
+            $row[] = $npwp->EMAIL;
+            $row[] = $npwp->JENIS_WP;
+            $row[] = $npwp->BADAN_HUKUM;
+            $row[] = $npwp->STATUS_KSWP;
+            $row[] = $npwp->USER_TYPE;
+            $row[] = '';
+ 
+            $data[] = $row;
+        }
+ 
+        $output = array(
+                        "draw" => $_POST['draw'],
+                        "recordsTotal" => $this->Npwp_mdl->count_all(),
+                        "recordsFiltered" => $this->Npwp_mdl->count_filtered(),
+                        "data" => $data,
+                );
+        //output to json format
+        echo json_encode($output);
     }
 
     public function supplier()
@@ -56,7 +90,7 @@ class Djp extends CI_Controller
             }
             $insertData = [
                 'ID' => ($latest_npwp->ID+1),
-                'NPWP' => ($dataWp->NPWP) ? (int) $dataWp->NPWP : 0,
+                'NPWP' => ($dataWp->NPWP && is_numeric($dataWp->NPWP)) ? $dataWp->NPWP : 0,
                 'NAMA' => ($dataWp->NAMA) ? $dataWp->NAMA : '-',
                 'MERK_DAGANG' => ($dataWp->MERK_DAGANG) ? $dataWp->MERK_DAGANG : '-',
                 'ALAMAT' => ($dataWp->ALAMAT) ? $dataWp->ALAMAT : '-',
