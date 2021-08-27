@@ -314,6 +314,8 @@
 			 "scrollY"			: 400, 
 			 "scrollCollapse"	: true, 
 			 "scrollX"			: true,
+			 "pageLength"		: 100,
+			 "lengthMenu"       : [[100, 250, 500, 1000], [100, 250, 500, 1000]],
 			 "ordering"			: false			
 			});
 		 });
