@@ -7,6 +7,13 @@
 		<div class="row">
 			<div class="col-md-2">
 				<div class="form-group">
+					<label>Cabang</label>
+					<select class="form-control" id="cabang_trx" name="cabang_trx" autocomplete="off">
+					</select>
+				</div>
+			</div>
+			<div class="col-md-2">
+				<div class="form-group">
 					<label>Bulan</label>
 					<select class="form-control" id="bulan" name="bulan">
 						<?php
@@ -44,6 +51,8 @@
 					</select>
 				</div>
 			 </div>
+		</div>
+		<div class="row">	 
 			 <div class="col-md-2">
 				<div class="form-group">
 					<label>Pembetulan Ke</label>
@@ -200,6 +209,19 @@
 					</div>
 				   </div>
 			 </div>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-lg-12">
+				<div id="accordion-3" class="panel panel-info animated slideInDown">
+				<div class="panel-footer">
+					<div class="row">
+						<div class="col-lg-12 text-center">
+							<button id="btnSubmit" class="btn btn-danger btn-rounded custom-input-width" type="button"><i class="fa fa-share-square-o"></i> <span>SUBMIT</span></button>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -472,6 +494,7 @@
 
 		valueAdd();
 		getSummary();
+		getSelectCabang();
 
 /* DETAIL JURNAL */
 		 Pace.track(function(){
@@ -486,6 +509,7 @@
 										d._searchTahun      = $('#tahun').val();
 										d._searchPpn        = $('#jenisPajak').val();
 										d._searchPembetulan = $("#pembetulanKe").val();
+										d._searchCabang     = $('#cabang_trx').val();
 									}
 								},
 			 "language"		: {
@@ -687,6 +711,12 @@
 		$("#btnView").on("click", function(){
 			//valueAdd();
 			//getSummary();
+			c	= $("#cabang_trx").val();
+	
+			if(c == ''){
+				alert('Mohon pilih cabang');
+				return;
+			}
 			table1.ajax.reload();
 			//errorCheck();
 		});
@@ -800,83 +830,74 @@
 		});	
 
 		$("#btnSubmit").click(function(){
+			if (table1.data().any()){
 
-			if (table1.data().any() || table2.data().any()){
-				 if(table1.data().any()){
-					data  = table1.row(0).data();
-				 }
-				 else{
-					data  = table2.row(0).data();
-				 }
+				nama_pajak	= $("#jenisPajak").val();		
+				j 	= $("#jenisPajak").val();
+				b	= $("#bulan").val();
+				t	= $("#tahun").val();
+				c	= $("#cabang_trx").val();
+	
+				if(c == ''){
+					alert('Mohon pilih cabang');
+					return;
+				} else if (b == '') {
+					alert('Mohon isi Bulan');
+					return;
+				} else if (t == '') {
+					alert('Mohon isi Tahun');
+					return;
+				}
 
-				pajak_header_id = data.pajak_header_id;
-				nama_pajak      = $("#jenisPajak").val();
-
-				$.ajax({
-					url		: baseURL + 'ppn_masa/validation_rekonsiliasi/' + pajak_header_id +'/'+nama_pajak,
-					type	: "GET",
-					dataType: "json",
-					success	: function(result){
-						if (result.st==1){						
-							flashnotifnohide("info",result.data,"warning");
-							$("body").removeClass("loading");
-							return false;
-						} else {
-							j 	= $("#jenisPajak").val();
-							b	= $("#bulan").val();
-							t	= $("#tahun").val();
-							
-							jnm	= $("#jenisPajak").find(":selected").attr("data-name");
-							bnm	= $("#bulan").find(":selected").attr("data-name");
-							pbt	= $("#pembetulanKe").find(":selected").attr("data-name");
-							
-							if (j != '' && b != '' && t != '') 
-							{ 
-								bootbox.confirm({
-								title: "Submit data <span class='label label-danger'>PPN <?php echo ($nama_pajak == "PPN MASUKAN") ? "MASUKAN" : "KELUARAN" ?></span> Bulan <span class='label label-danger'>"+bnm+"</span> Tahun <span class='label label-danger'>"+t+"</span> ?",
-								message: "Apakah anda ingin melanjutkan?",
-								buttons: {
-									cancel: {
-										label: '<i class="fa fa-times-circle"></i> CANCEL'
-									},
-									confirm: {
-										label: '<i class="fa fa-check-circle"></i> YES'
+				jnm	= $("#jenisPajak").find(":selected").attr("data-name");
+				bnm	= $("#bulan").find(":selected").attr("data-name");
+				pbt	= $("#pembetulanKe").find(":selected").attr("data-name");
+				cnm	= $("#cabang_trx").find(":selected").attr("data-name");
+				
+				if (j != '' && b != '' && t != '') 
+				{ 
+					bootbox.confirm({
+					title: "Submit data Cabang <span class='label label-danger'>"+cnm+"</span> <span class='label label-danger'>PPN <?php echo ($nama_pajak == "PPN MASUKAN") ? "MASUKAN" : "KELUARAN" ?></span> Bulan <span class='label label-danger'>"+bnm+"</span> Tahun <span class='label label-danger'>"+t+"</span> ?",
+					message: "Apakah anda ingin melanjutkan?",
+					buttons: {
+						cancel: {
+							label: '<i class="fa fa-times-circle"></i> CANCEL'
+						},
+						confirm: {
+							label: '<i class="fa fa-check-circle"></i> YES'
+						}
+					},
+					callback: function (result) {
+							if(result) {
+								$.ajax({
+									url		: baseURL + 'ppnmasa_detail_jurnal_transaksi/submit_jurnal_transaksi',
+									type	: "POST",
+									// data	: $('#form-wp').serialize(),
+									dataType: "json", 
+									data	: ({ _searchBulan : $('#bulan').val(), _searchTahun : $('#tahun').val(), _searchPpn : $('#jenisPajak').val(), _searchPembetulan : $('#pembetulanKe').val(), _searchCabang : $('#cabang_trx').val()}),
+									beforeSend	: function(){
+											$("body").addClass("loading");
+											},
+									success	: function(result){
+										if (result==1) {
+											$("body").removeClass("loading");
+											table1.draw();
+											table2.draw();
+											getSummary();
+											empty();
+											flashnotif('Sukses','Data Berhasil di Submit!','success' );
+										} else {
+											$("body").removeClass("loading");
+											table1.draw();
+											table2.draw();
+											flashnotif('Error','Data Gagal di Submit!','error' );
+										}
 									}
-								},
-								callback: function (result) {
-									if(result) {
-										$.ajax({
-											url		: baseURL + 'ppn_masa/submit_rekonsiliasi',
-											type	: "POST",
-											// data	: $('#form-wp').serialize(),
-											dataType: "json", 
-											data	: ({ _searchBulan : $('#bulan').val(), _searchTahun : $('#tahun').val(), _searchPpn : $('#jenisPajak').val(), _searchPembetulan : $('#pembetulanKe').val()}),
-											beforeSend	: function(){
-												 $("body").addClass("loading");
-												 },
-											success	: function(result){
-												if (result==1) {
-													$("body").removeClass("loading");
-													table1.draw();
-													table2.draw();
-													getSummary();
-													empty();
-													flashnotif('Sukses','Data Berhasil di Submit!','success' );
-												} else {
-													$("body").removeClass("loading");
-													table1.draw();
-													table2.draw();
-													flashnotif('Error','Data Gagal di Submit!','error' );
-												}
-											}
-										});
-									}
-								  }
 								});
 							}
 						}
-					}
-				});
+					});
+				}
 			}
 
 		});
@@ -1040,6 +1061,20 @@
 		var j = $("#jenisPajak").find(":selected").attr("data-name");
 		var b = $("#bulan").find(":selected").attr("data-name");
 		var t = $("#tahun").val();
+	}
+
+	function getSelectCabang()
+	{
+		$.ajax({
+				url		: "<?php echo site_url('tara_pajakku/load_tarra_cabang') ?>",
+				type	: "POST",
+				dataType: "html",
+				success	: function(result){
+					$("#cabang_trx").html("");					
+					$("#cabang_trx").html(result);					
+				}
+		});	
+
 	}
 
  });

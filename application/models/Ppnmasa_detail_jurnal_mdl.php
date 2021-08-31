@@ -17,10 +17,10 @@ class Ppnmasa_detail_jurnal_mdl extends CI_Model {
 		$whereCategory = "";
 
 		if($nama_pajak == "PPN MASUKAN"){
-			$qnama_pajak = " and account like '109%'";
+			$qnama_pajak = " and account = '10901601'";
 		}
 		else{
-			$qnama_pajak = " and account like '309%'";
+			$qnama_pajak = " and account = '30901601'";
 		}
 
 		if($kode_cabang != ""){
@@ -144,10 +144,10 @@ class Ppnmasa_detail_jurnal_mdl extends CI_Model {
 		$whereCategory = "";
 
 		if($nama_pajak == "PPN MASUKAN"){
-			$qnama_pajak = " and account like '109%'";
+			$qnama_pajak = " and account = '10901601'";
 		}
 		else{
-			$qnama_pajak = " and account like '309%'";
+			$qnama_pajak = " and account = '30901601'";
 		}
 
 		if($kode_cabang != ""){
@@ -200,6 +200,30 @@ class Ppnmasa_detail_jurnal_mdl extends CI_Model {
 		$query = $this->db->query($sql);
 		return $query;
 
+	}
+
+	function submit_jurnal_transaksi($nama_pajak, $bulan_pajak, $tahun_pajak, $pembetulan_ke, $cabang)
+	{
+
+		$this->db->set('STATUSDOKUMEN',"'SUBMIT'",false);
+		$this->db->where('BULAN_BUKU', $bulan_pajak);
+		$this->db->where('TAHUN_BUKU', $tahun_pajak);
+		$this->db->where('KODE_CABANG', $cabang);
+		if($nama_pajak == "PPN MASUKAN"){
+			$account = "10901601";
+		}
+		else{
+			$account = "30901601";
+		}
+		$this->db->where('ACCOUNT', $account);
+		$update = $this->db->update("SIMTAX_DETAIL_JURNAL_TRANSAKSI");
+		
+		if ($update){
+			return true;
+		} else {
+			return false;
+		}
+		
 	}
 
 }

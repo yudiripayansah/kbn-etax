@@ -365,7 +365,7 @@ class H2h_staging extends CI_Controller {
                
                 if($request['httpcode'] == 200)
                 {
-                        $result = json_decode($request, true);
+                        //$result = json_decode($request, true);
                         $token_type = "Bearer ";
                         $utoken = $el_request->token_jwt;
                         $comp_id = $el_request->company_id;
@@ -646,7 +646,7 @@ class H2h_staging extends CI_Controller {
                                    }
                            }
 
-                           curl_close($ch);
+                           //curl_close($ch);
                            $ins_log = $this->h2h->insertLog($add_push_element);
                            if($ins_log){
                                 echo '1';
@@ -695,7 +695,7 @@ class H2h_staging extends CI_Controller {
                            $row_temp['total_baris_kirim'] =  0;
                            $add_push_element[] = $row_temp;
                             
-                           curl_close($ch);
+                           //curl_close($ch);
 
                            $ins_log = $this->h2h->insertLog($add_push_element);
                            if($ins_log){
@@ -731,7 +731,7 @@ class H2h_staging extends CI_Controller {
 
                 if($request['httpcode'] == 200)
                 {
-                   $result = json_decode($request, true);
+                   //$result = json_decode($request, true);
                    $token_type = "Bearer ";
                    $utoken = $el_request->token_jwt;
                    $comp_id = $el_request->company_id;
@@ -903,7 +903,7 @@ class H2h_staging extends CI_Controller {
                               }
                           }
                            
-                           curl_close($ch);
+                           //curl_close($ch);
                            $ins_log = $this->h2h->insertLog($add_push_element);
                            if($ins_log){
                                 echo '1';
@@ -953,7 +953,7 @@ class H2h_staging extends CI_Controller {
                             $row_temp['total_baris_kirim'] =  0;
                             $add_push_element[] = $row_temp;
                             
-                            curl_close($ch);
+                            //curl_close($ch);
 
                             $ins_log = $this->h2h->insertLog($add_push_element);
                             if($ins_log){
@@ -983,7 +983,7 @@ class H2h_staging extends CI_Controller {
                 if($request['httpcode'] == 200)
                 {
 
-                   $result = json_decode($request, true);
+                   //$result = json_decode($request, true);
                    $token_type = "Bearer ";
                    $utoken = $el_request->token_jwt;
                    $comp_id = $el_request->company_id;
@@ -1044,7 +1044,7 @@ class H2h_staging extends CI_Controller {
                                 $add_push_element[] = $row_temp;
                         }
                      
-                          curl_close($ch);
+                          //curl_close($ch);
                            $ins_log = $this->h2h->insertLogJt($add_push_element);
                            if($ins_log){
                                 echo '1';
@@ -1097,7 +1097,7 @@ class H2h_staging extends CI_Controller {
                        $row_temp['total_baris_kirim'] =  0;
                        $add_push_element[] = $row_temp;
                        
-                       curl_close($ch);
+                       //curl_close($ch);
 
                        $ins_log = $this->h2h->insertLogJt($add_push_element);
                        if($ins_log){

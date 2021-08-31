@@ -25,7 +25,8 @@ class Ppnmasa_detail_jurnal_transaksi extends CI_Controller {
 	{
 
 		$nama_pajak    = $this->input->post('_searchPpn');
-		$kode_cabang   = $this->kode_cabang;
+		//$kode_cabang   = $this->kode_cabang;
+		$kode_cabang   = $this->input->post('_searchCabang');
 		$bulan_pajak   = $this->input->post('_searchBulan');
 		$tahun_pajak   = $this->input->post('_searchTahun');
 		$pembetulan_ke = $this->input->post('_searchPembetulan');
@@ -334,6 +335,26 @@ class Ppnmasa_detail_jurnal_transaksi extends CI_Controller {
 		} else {
 			convert_to_csv($dokumen_lain, 'Ekspor_DetailJurnalTransaksi_Keluaran_'.$tahun_pajak.'_'.$masa_pajak.'.csv', ';');
 		}
+	}
+
+	function submit_jurnal_transaksi()
+	{
+
+		//$kode_cabang   = $this->kode_cabang;
+		$username      = $this->session->userdata('identity');
+		
+		$nama_pajak    = $this->input->post('_searchPpn');
+		$bulan_pajak   = $this->input->post('_searchBulan');
+		$tahun_pajak   = $this->input->post('_searchTahun');
+		$pembetulan_ke = $this->input->post('_searchPembetulan');
+		$cabang = $this->input->post('_searchCabang');
+
+		if($this->ppnmasa_jurnal->submit_jurnal_transaksi($nama_pajak, $bulan_pajak, $tahun_pajak, $pembetulan_ke, $cabang)){			
+			echo '1';
+		} else {
+			echo '0';
+		}
+
 	}
 
 }
