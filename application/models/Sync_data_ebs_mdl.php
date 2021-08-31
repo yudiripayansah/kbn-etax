@@ -176,14 +176,17 @@ class Sync_data_ebs_mdl extends CI_Model {
 		$bulan			= $this->input->post('srcBulan');
 		$tahun			= $this->input->post('srcTahun');	
 		$jenis_trx		= $this->input->post('scrJenis');
-		$date_param		= date('d');
+		$date_param		=  '01';/*date('d')*/
 		$date_ref		= $date_param.'-'.$bulan.'-'.$tahun;
-		
 		$date_ref   = date("Y-m-d",strtotime($date_ref));
 		
-		$this->db->set('DATE_PROCESS',"TO_DATE('".$date_ref."', 'SYYYY-MM-DD HH24:MI:SS')",false);
-		$this->db->where('TRANSACTION_MODUL', $jenis_trx);		
-		$this->db->update("SIMTAX_LAST_PROCESS");
+		if($jenis_trx == "CUSTOMER"){
+			$trxmodul = 'SIMTAX_CUSTOMER';
+			update_last_process($trxmodul);
+		} else if($jenis_trx == "SUPPLIER"){
+			$trxmodul = 'SIMTAX_SUPPLIER';
+			update_last_process($trxmodul);
+		}
 
 		$DBEBS = $this->load->database('devnew',TRUE);
 		
@@ -1139,6 +1142,10 @@ class Sync_data_ebs_mdl extends CI_Model {
 		$handle = fopen($file_path, "r");
 		
 		$dataCsv  = array();
+
+		$userdjp = $this->h2h->getValueParameter("USERNAME_DJP");
+		$passdjp = $this->h2h->getValueParameter("PASSWORD_DJP");
+		$token = djp_get_token($userdjp, $passdjp);
 		
 		if ($jenis_trx == "CUSTOMER") 
 		{
@@ -1146,171 +1153,88 @@ class Sync_data_ebs_mdl extends CI_Model {
 			while (($data = fgetcsv($handle, 0, ";","'","\\")) !== FALSE) {
 
 				if($row >= 0){
-						
-					/*	
-					if ($data[0] != '')
-					{
-						$sql = "
-						select customer_id,customer_site_id,organization_id
-						from simtax_master_pelanggan
-						where customer_id = ".$data[0]."
-						and customer_site_id = ".$data[6]."
-						and organization_id = ".$data[16]
-						;
-						$qReq    	= $this->db->query($sql);
-						$vrow  		= $qReq->row();
-						if($vrow !== NULL)
-						{
-							if($vrow->CUSTOMER_ID != ''){
-							} else {	
-								$sqlins ="
-								insert 
-								into
-								simtax_master_pelanggan
-								(
-								 CUSTOMER_ID
-								,CUSTOMER_NAME
-								,ALIAS_CUSTOMER
-								,CUSTOMER_NUMBER
-								,NPWP
-								,OPERATING_UNIT
-								,CUSTOMER_SITE_ID
-								,CUSTOMER_SITE_NUMBER
-								,CUSTOMER_SITE_NAME
-								,ADDRESS_LINE1
-								,ADDRESS_LINE2
-								,ADDRESS_LINE3
-								,CITY
-								,PROVINCE
-								,COUNTRY
-								,ZIP
-								,ORGANIZATION_ID
-								)
-								VALUES (
-								 ".$data[0].",
-								'".$data[1]."',
-								'".$data[2]."',
-								'".$data[3]."',
-								'".$data[4]."',
-								'".$data[5]."',
-								 ".$data[6].",
-								'".$data[7]."',
-								'".$data[8]."',
-								'".$data[9]."',
-								'".$data[10]."',
-								'".$data[11]."',
-								'".$data[12]."',
-								'".$data[13]."',
-								'".$data[14]."',
-								'".$data[15]."',
-								'".$data[16]."'
-								)";
+					$npwp = preg_replace('/[^0-9]/', '', $data[4]);
+					$check_npwp = $this->db->from('SIMTAX_MASTER_NPWP')->where('NPWP_SIMTAX', $data[4])->count_all_results();
+					$latest_npwp = $this->db->from('SIMTAX_MASTER_NPWP')->limit(1)->order_by('ID', 'DESC')->get()->row();
+					$npwp_djp = null;
+					$kswp_djp = null;
+					$type = '';	
 
-								$query 	= $this->db->query($sqlins);	
-								if (!$query) {
-									return false;
-								}
-							}
-						} else {
-							$sqlins ="
-								insert 
-								into
-								simtax_master_pelanggan
-								(
-								 CUSTOMER_ID
-								,CUSTOMER_NAME
-								,ALIAS_CUSTOMER
-								,CUSTOMER_NUMBER
-								,NPWP
-								,OPERATING_UNIT
-								,CUSTOMER_SITE_ID
-								,CUSTOMER_SITE_NUMBER
-								,CUSTOMER_SITE_NAME
-								,ADDRESS_LINE1
-								,ADDRESS_LINE2
-								,ADDRESS_LINE3
-								,CITY
-								,PROVINCE
-								,COUNTRY
-								,ZIP
-								,ORGANIZATION_ID
-								)
-								VALUES (
-								 ".$data[0].",
-								'".$data[1]."',
-								'".$data[2]."',
-								'".$data[3]."',
-								'".$data[4]."',
-								'".$data[5]."',
-								 ".$data[6].",
-								'".$data[7]."',
-								'".$data[8]."',
-								'".$data[9]."',
-								'".$data[10]."',
-								'".$data[11]."',
-								'".$data[12]."',
-								'".$data[13]."',
-								'".$data[14]."',
-								'".$data[15]."',
-								'".$data[16]."'
-								)";
-
-								$query 	= $this->db->query($sqlins);	
-								if (!$query) {
-									return false;
-								}
-						}	
+					if ($check_npwp < 1) {
+						$isCustomer = $this->db->from('SIMTAX_MASTER_PELANGGAN')->where('NPWP', $data[4])->limit(1)->get()->row();
+						$type = 'CUSTOMER';
+						$npwp_djp = djp_check_npwp($token->message, $npwp);
+						$kswp_djp = djp_check_kswp($token->message, $npwp);
+						$dataWp = $npwp_djp->message->datawp;
+						$status_kswp = '-';
+						if ($kswp_djp->status == 200) {
+							$status_kswp = $kswp_djp->message->status;
+						}
+						$rowData = array(
+							'ID' => ($latest_npwp->ID+1),
+							'NPWP' => ($dataWp->NPWP && is_numeric($dataWp->NPWP)) ? $dataWp->NPWP : '-',
+							'NAMA' => ($dataWp->NAMA) ? $dataWp->NAMA : '-',
+							'MERK_DAGANG' => ($dataWp->MERK_DAGANG) ? $dataWp->MERK_DAGANG : '-',
+							'ALAMAT' => ($dataWp->ALAMAT) ? $dataWp->ALAMAT : '-',
+							'KELURAHAN' => ($dataWp->KELURAHAN) ? $dataWp->KELURAHAN : '-',
+							'KECAMATAN' => ($dataWp->KECAMATAN) ? $dataWp->KECAMATAN : '-',
+							'KABKOT' => ($dataWp->KABKOT) ? $dataWp->KABKOT : '-',
+							'PROVINSI' => ($dataWp->PROVINSI) ? $dataWp->PROVINSI : '-',
+							'KODE_KLU' => ($dataWp->KODE_KLU) ? (int) $dataWp->KODE_KLU : 0,
+							'KLU' => ($dataWp->KLU) ? $dataWp->KLU : '-',
+							'TELP' => ($dataWp->TELP) ? $dataWp->TELP : '-',
+							'EMAIL' => ($dataWp->EMAIL) ? $dataWp->EMAIL : '-',
+							'JENIS_WP' => ($dataWp->JENIS_WP) ? $dataWp->JENIS_WP : '-',
+							'BADAN_HUKUM' => ($dataWp->BADAN_HUKUM) ? $dataWp->BADAN_HUKUM : '-',
+							'STATUS_KSWP' => $status_kswp,
+							'RESPONSE_MSG_NPWP' => json_encode($npwp_djp->message),
+							'RESPONSE_MSG_KSWP' => json_encode($kswp_djp->message),
+							'RESPONSE_STATUS_CODE_NPWP' => ($npwp_djp->status) ? (int) $npwp_djp->status : 0,
+							'RESPONSE_STATUS_CODE_KSWP' => ($kswp_djp->status) ? (int) $kswp_djp->status : 0,
+							'USER_TYPE' => $type,
+							'NPWP_SIMTAX' => $this->input->post('npwp'),
+							'LAST_UPDATE' => date('Y-m-d H:i:s'),
+						);var_dump('insert',$rowData);
+						//$doInsert = $this->db->insert('SIMTAX_MASTER_NPWP', $rowData);
 					} else {
-						$sqlins ="
-								insert 
-								into
-								simtax_master_pelanggan
-								(
-								 CUSTOMER_ID
-								,CUSTOMER_NAME
-								,ALIAS_CUSTOMER
-								,CUSTOMER_NUMBER
-								,NPWP
-								,OPERATING_UNIT
-								,CUSTOMER_SITE_ID
-								,CUSTOMER_SITE_NUMBER
-								,CUSTOMER_SITE_NAME
-								,ADDRESS_LINE1
-								,ADDRESS_LINE2
-								,ADDRESS_LINE3
-								,CITY
-								,PROVINCE
-								,COUNTRY
-								,ZIP
-								,ORGANIZATION_ID
-								)
-								VALUES (
-								 ".$data[0].",
-								'".$data[1]."',
-								'".$data[2]."',
-								'".$data[3]."',
-								'".$data[4]."',
-								'".$data[5]."',
-								 ".$data[6].",
-								'".$data[7]."',
-								'".$data[8]."',
-								'".$data[9]."',
-								'".$data[10]."',
-								'".$data[11]."',
-								'".$data[12]."',
-								'".$data[13]."',
-								'".$data[14]."',
-								'".$data[15]."',
-								'".$data[16]."'
-								)";
+						$isCustomer = $this->db->from('SIMTAX_MASTER_PELANGGAN')->where('NPWP', $data[4])->limit(1)->get()->row();
+						$type = 'CUSTOMER';
 
-								$query 	= $this->db->query($sqlins);	
-								if (!$query) {
-									return false;
-								}
+						$npwp_simtax = $this->db->from('SIMTAX_MASTER_NPWP')->where('NPWP_SIMTAX', $data[4])->get()->row();
+						$npwp_djp = djp_check_npwp($token->message, $npwp);
+						$kswp_djp = djp_check_kswp($token->message, $npwp);
+						$dataWp = $npwp_djp->message->datawp;
+						$status_kswp = '-';
+						if ($kswp_djp->status == 200) {
+							$status_kswp = $kswp_djp->message->status;
+						}
+						$rowData = array(
+							'NPWP' => ($dataWp->NPWP && is_numeric($dataWp->NPWP)) ? $dataWp->NPWP : '-',
+							'NAMA' => ($dataWp->NAMA) ? $dataWp->NAMA : '-',
+							'MERK_DAGANG' => ($dataWp->MERK_DAGANG) ? $dataWp->MERK_DAGANG : '-',
+							'ALAMAT' => ($dataWp->ALAMAT) ? $dataWp->ALAMAT : '-',
+							'KELURAHAN' => ($dataWp->KELURAHAN) ? $dataWp->KELURAHAN : '-',
+							'KECAMATAN' => ($dataWp->KECAMATAN) ? $dataWp->KECAMATAN : '-',
+							'KABKOT' => ($dataWp->KABKOT) ? $dataWp->KABKOT : '-',
+							'PROVINSI' => ($dataWp->PROVINSI) ? $dataWp->PROVINSI : '-',
+							'KODE_KLU' => ($dataWp->KODE_KLU) ? (int) $dataWp->KODE_KLU : 0,
+							'KLU' => ($dataWp->KLU) ? $dataWp->KLU : '-',
+							'TELP' => ($dataWp->TELP) ? $dataWp->TELP : '-',
+							'EMAIL' => ($dataWp->EMAIL) ? $dataWp->EMAIL : '-',
+							'JENIS_WP' => ($dataWp->JENIS_WP) ? $dataWp->JENIS_WP : '-',
+							'BADAN_HUKUM' => ($dataWp->BADAN_HUKUM) ? $dataWp->BADAN_HUKUM : '-',
+							'STATUS_KSWP' => $status_kswp,
+							'RESPONSE_MSG_NPWP' => json_encode($npwp_djp->message),
+							'RESPONSE_MSG_KSWP' => json_encode($kswp_djp->message),
+							'RESPONSE_STATUS_CODE_NPWP' => ($npwp_djp->status) ? (int) $npwp_djp->status : 0,
+							'RESPONSE_STATUS_CODE_KSWP' => ($kswp_djp->status) ? (int) $kswp_djp->status : 0,
+							'USER_TYPE' => $type,
+							'NPWP_SIMTAX' => $this->input->post('npwp'),
+							'LAST_UPDATE' => date('Y-m-d H:i:s'),
+						);var_dump('update',$rowData);
+						//$doUpdate = $this->db->where('ID', $npwp_simtax->ID)->update('SIMTAX_MASTER_NPWP', $rowData);
 					}
-					*/
-					/*
+					
 					$sql	="MERGE INTO simtax_master_pelanggan smp
 							  USING (SELECT '".$data[0]."' as CUSTOMER_ID,
 											'".$data[1]."' as CUSTOMER_NAME,
@@ -1386,14 +1310,12 @@ class Sync_data_ebs_mdl extends CI_Model {
 										,b.ZIP
 										,b.ORGANIZATION_ID
 										)";
-							 
+										print_r($sql);die();		 
 					$query 		= $this->db->query($sql);	
 					if (!$query) {
 						return false;
 					}
-					*/
 				}
-
 				$row++;
 			}
 		}
@@ -2811,5 +2733,18 @@ class Sync_data_ebs_mdl extends CI_Model {
 		$result['jmlRow']			= $rowCount;		
 		return $result;		
 	}	
+
+	function update_last_process($trxmodul){
+
+		$this->db->set('DATE_PROCESS',"TO_DATE('".$date_ref."', 'SYYYY-MM-DD HH24:MI:SS')",false);
+		$this->db->where('TRANSACTION_MODUL', $trxmodul);		
+		$update = $this->db->update("SIMTAX_LAST_PROCESS");
+
+		if($update){
+			return true;
+		} else {
+			return false;
+		}
+	}
 		
 }
