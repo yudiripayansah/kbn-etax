@@ -1273,113 +1273,38 @@ class Pph21 extends CI_Controller
 	//forrmat field CSV
 	function export_format_csv()
 	{
-
 		$tipe = str_replace("%20", " ", $_REQUEST['tipe']);
-
 		$this->load->helper('csv_helper');
-		$pajak = ($_REQUEST['tax']) ? $_REQUEST['tax'] : "";
 		$date = date("Y-m-d H:i:s");
-
+		$pajak = ($_REQUEST['tax']) ? $_REQUEST['tax'] : "";
 		$export_arr = array();
-
-		if ($tipe == "BULANAN") {
-			$title = array("ID;Masa Pajak;Tahun Pajak;Pembetulan;NPWP;Nama;Kode Pajak;Jumlah Bruto;Jumlah Pph;Kode Negara");
-			//$title = array("ID,Masa Pajak,Tahun Pajak,Pembetulan,NPWP,Nama,Kode Pajak,Jumlah Bruto,Jumlah Pph,Kode Negara");
-		} else if ($tipe == "BULANAN FINAL") {
-			$title = array("ID;Masa Pajak;Tahun Pajak;Pembetulan;Nomor Bukti Potong;NPWP;NIK;Nama;Alamat;Kode Pajak;Jumlah Bruto;Tarif;Jumlah PPh;NPWP Pemotong;Nama Pemotong;Tanggal Bukti Potong");
-			//$title = array("ID,Masa Pajak,Tahun Pajak,Pembetulan,Nomor Bukti Potong,NPWP,NIK,Nama,Alamat,Kode Pajak,Jumlah Bruto,Tarif,Jumlah PPh,NPWP Pemotong,Nama Pemotong,Tanggal Bukti Potong");
-		} else {
-			$title = array("ID;Masa Pajak;Tahun Pajak;Pembetulan;Akun;Nomor Invoice;Nomor Bukti Potong;NPWP;NIK;Nama;Alamat;WP Luar Negeri;Kode Negara;Kode Pajak;Jumlah Bruto;Jumlah DPP;Tanpa NPWP;Tarif;Jumlah PPh;NPWP Pemotong;Nama Pemotong;Tanggal Bukti Potong");
-			//$title = array("ID","Masa Pajak","Tahun Pajak","Pembetulan","Nomor Bukti Potong","NPWP","NIK","Nama","Alamat","WP Luar Negeri","Kode Negara","Kode Pajak","Jumlah Bruto","Jumlah DPP","Tanpa NPWP","Tarif","Jumlah PPh","NPWP Pemotong","Nama Pemotong","Tanggal Bukti Potong");
-			//$title = array("ID,Masa Pajak,Tahun Pajak,Pembetulan,Nomor Bukti Potong,NPWP,NIK;Nama,Alamat,WP Luar Negeri,Kode Negara,Kode Pajak,Jumlah Bruto,Jumlah DPP,Tanpa NPWP,Tarif,Jumlah PPh,NPWP Pemotong,Nama Pemotong,Tanggal Bukti Potong");
-		}
-
-		array_push($export_arr, $title);
-
 		$data = $this->Pph21_mdl->get_format_csv($pajak, $tipe);
-
+		if ($tipe == "BULANAN") {
+			$title = array("ID","Masa Pajak","Tahun Pajak","Pembetulan","NPWP","Nama","Kode Pajak","Jumlah Bruto","Jumlah Pph","Kode Negara");
+		} else if ($tipe == "BULANAN FINAL") {
+			$title = array("ID","Masa Pajak","Tahun Pajak","Pembetulan","Nomor Bukti Potong","NPWP","NIK","Nama","Alamat","Kode Pajak","Jumlah Bruto","Tarif","Jumlah PPh","NPWP Pemotong","Nama Pemotong","Tanggal Bukti Potong");
+		} else {
+			$title = array("ID","Masa Pajak","Tahun Pajak","Pembetulan","Akun","Nomor Invoice","Nomor Bukti Potong","NPWP","NIK","Nama","Alamat","WP Luar Negeri","Kode Negara","Kode Pajak","Jumlah Bruto","Jumlah DPP","Tanpa NPWP","Tarif","Jumlah PPh","NPWP Pemotong","Nama Pemotong","Tanggal Bukti Potong");
+		}
+		array_push($export_arr, $title);
 		if (!empty($data)) {
 			foreach ($data->result_array() as $row) {
-
 				if ($tipe == "BULANAN") {
-
-					array_push($export_arr,
-						array(
-							$row['PAJAK_LINE_ID'],
-							$row['BULAN_PAJAK'],
-							$row['TAHUN_PAJAK'],
-							$row['PEMBETULAN_KE'],
-							$row['NPWP1'],
-							$row['FULL_NAME'],
-							//$row['NAMA_WP'],
-							$row['KODE_PAJAK'],
-							$row['DPP'],
-							$row['JUMLAH_POTONG'],
-							$row['KODE_NEGARA'],
-							//$row['KODE_CABANG'],
-
-						)
-					);
+					array_push($export_arr, array($row['PAJAK_LINE_ID'], $row['BULAN_PAJAK'], $row['TAHUN_PAJAK'], $row['PEMBETULAN_KE'], $row['NPWP1'],
+						$row['FULL_NAME'], $row['KODE_PAJAK'], $row['DPP'], $row['JUMLAH_POTONG'], $row['KODE_NEGARA']));
 				} else if ($tipe == "BULANAN FINAL") {
-
-					array_push($export_arr,
-						array(
-							$row['PAJAK_LINE_ID'],
-							$row['BULAN_PAJAK'],
-							$row['TAHUN_PAJAK'],
-							$row['PEMBETULAN_KE'],
-							$row['NO_BUKTI_POTONG'],
-							$row['NPWP1'],
-							$row['NIK'],
-							$row['NAMA_WP'],
-							$row['ALAMAT_WP'],
-							$row['KODE_PAJAK'],
-							$row['DPP'],
-							$row['TARIF'],
-							$row['JUMLAH_POTONG'],
-							$row['NPWP_PEMOTONG'],
-							$row['NAMA_PEMOTONG'],
-							$row['TGL_BUKTI_POTONG'],
-
-						)
-					);
+					array_push($export_arr, array($row['PAJAK_LINE_ID'], $row['BULAN_PAJAK'], $row['TAHUN_PAJAK'], $row['PEMBETULAN_KE'],
+						$row['NO_BUKTI_POTONG'], $row['NPWP1'], $row['NIK'], $row['NAMA_WP'], $row['ALAMAT_WP'], $row['KODE_PAJAK'],
+						$row['DPP'], $row['TARIF'], $row['JUMLAH_POTONG'], $row['NPWP_PEMOTONG'], $row['NAMA_PEMOTONG'], $row['TGL_BUKTI_POTONG']));
 				} else {
-
-					array_push($export_arr,
-						array(
-
-							$row['PAJAK_LINE_ID'],
-							$row['BULAN_PAJAK'],
-							$row['TAHUN_PAJAK'],
-							$row['PEMBETULAN_KE'],
-							$row['AKUN_PAJAK'],
-							$row['INVOICE_NUM'],
-							$row['NO_BUKTI_POTONG'],
-							$row['NPWP1'],
-							$row['NIK'],
-							$row['NAMA_WP'],
-							str_replace(',','',$row['ALAMAT_WP']),
-							"N",
-							"",
-							$row['KODE_PAJAK'],
-							$row['DPP'],
-							$row['DPP'],
-							($row['NPWP1']) ? "N" : "Y",
-							$row['TARIF'],
-							$row['JUMLAH_POTONG'],
-							$row['NPWP_PEMOTONG'],
-							$row['NAMA_PEMOTONG'],
-							$row['TGL_BUKTI_POTONG']
-
-						)
-					);
+					array_push($export_arr, array($row['PAJAK_LINE_ID'], $row['BULAN_PAJAK'], $row['TAHUN_PAJAK'], $row['PEMBETULAN_KE'], $row['AKUN_PAJAK'],
+						$row['INVOICE_NUM'], $row['NO_BUKTI_POTONG'], $row['NPWP1'], $row['NIK'], $row['NAMA_WP'], str_replace(',','',$row['ALAMAT_WP']),
+						"N", "", $row['KODE_PAJAK'], $row['DPP'], $row['DPP'], ($row['NPWP1']) ? "N" : "Y", $row['TARIF'],
+						$row['JUMLAH_POTONG'], $row['NPWP_PEMOTONG'], $row['NAMA_PEMOTONG'], $row['TGL_BUKTI_POTONG']));
 				}
-
 			}
 		}
-
 		convert_to_csv($export_arr, 'Upload CSV ' . $_REQUEST['tax'] . ' ' . $_REQUEST['tipe'] . ' ' . $date . '.csv', ';');
-		
 	}
 
 
@@ -1387,129 +1312,41 @@ class Pph21 extends CI_Controller
 
 	function export_format_csv1($pajak_header_id, $tipenya)
 	{
-
 		$tipe = str_replace("%20", " ", $tipenya);
-
 		$this->load->helper('csv_helper');
 		$date = date("Y-m-d H:i:s");
 		$export_arr = array();
 		$data = $this->Pph21_mdl->get_format_csv2($pajak_header_id, $tipe);
-
 		if ($tipe == "BULANAN") {
-
 			$title = array("Masa Pajak", "Tahun Pajak", "Pembetulan", "NPWP", "Nama", "Kode Pajak", "Jumlah Bruto", "Jumlah PPh", "Kode Negara");
-
 		} else if ($tipe == "BULANAN FINAL") {
-
-			$title = array("Masa Pajak", "Tahun Pajak", "Pembetulan", "Nomor Bukti Potong", "NPWP", "NIK", "Nama", "Alamat", "Kode Pajak", "Jumlah Bruto", "Tarif", "Jumlah PPh", "NPWP Pemotong", "Nama Pemotong", "Tanggal Bukti Potong");
-
+			$title = array("Masa Pajak", "Tahun Pajak", "Pembetulan", "Nomor Bukti Potong", "NPWP", "NIK", "Nama", "Alamat",
+				"Kode Pajak", "Jumlah Bruto", "Tarif", "Jumlah PPh", "NPWP Pemotong", "Nama Pemotong", "Tanggal Bukti Potong");
 		} else {
-
-			$title = array(
-				"Masa Pajak",
-				"Tahun Pajak",
-				"Pembetulan",
-				"Nomor Bukti Potong",
-				"NPWP",
-				"NIK",
-				"Nama",
-				"Alamat",
-				"WP Luar Negeri",
-				"Kode Negara",
-				"Kode Pajak",
-				"Jumlah Bruto",
-				"Jumlah DPP",
-				"Tanpa NPWP",
-				"Tarif",
-				"Jumlah PPh",
-				"NPWP Pemotong",
-				"Nama Pemotong",
-				"Tanggal Bukti Potong"
-			);
-
+			$title = array("Masa Pajak", "Tahun Pajak", "Pembetulan", "Nomor Bukti Potong", "NPWP", "NIK", "Nama", "Alamat",
+				"WP Luar Negeri", "Kode Negara", "Kode Pajak", "Jumlah Bruto", "Jumlah DPP", "Tanpa NPWP", "Tarif", "Jumlah PPh", "NPWP Pemotong", "Nama Pemotong", "Tanggal Bukti Potong");
 		}
 		array_push($export_arr, $title);
-
-
 		if (!empty($data)) {
 			foreach ($data->result_array() as $row) {
-
 				if ($tipe == "BULANAN") {
-
-					array_push($export_arr,
-						array(
-							$row['BULAN_PAJAK'],
-							$row['TAHUN_PAJAK'],
-							$row['PEMBETULAN_KE'],
-							$row['NPWP1'],
-							$row['FULL_NAME'],
-							//$row['NAMA_WP'],
-							$row['KODE_PAJAK'],
-							$row['DPP'],
-							$row['JUMLAH_POTONG'],
-							$row['KODE_NEGARA'],
-							//$row['KODE_CABANG'],
-
-						)
-					);
+					array_push($export_arr, array($row['BULAN_PAJAK'], $row['TAHUN_PAJAK'], $row['PEMBETULAN_KE'], $row['NPWP1'], $row['FULL_NAME'], $row['KODE_PAJAK'],
+						$row['DPP'], $row['JUMLAH_POTONG'], $row['KODE_NEGARA']));
 				} else if ($tipe == "BULANAN FINAL") {
-
-					array_push($export_arr,
-						array(
-
-							$row['BULAN_PAJAK'],
-							$row['TAHUN_PAJAK'],
-							$row['PEMBETULAN_KE'],
-							$row['NO_BUKTI_POTONG'],
-							$row['NPWP1'],
-							$row['NIK'],
-							$row['NAMA_WP'],
-							$row['ALAMAT_WP'],
-							$row['KODE_PAJAK'],
-							$row['DPP'],
-							$row['TARIF'],
-							$row['JUMLAH_POTONG'],
-							$row['NPWP_PEMOTONG'],
-							$row['NAMA_PEMOTONG'],
-							$row['TGL_BUKTI_POTONG1'],
-
-						)
-					);
+					array_push($export_arr, array($row['BULAN_PAJAK'], $row['TAHUN_PAJAK'], $row['PEMBETULAN_KE'], $row['NO_BUKTI_POTONG'], $row['NPWP1'], $row['NIK'],
+						$row['NAMA_WP'], $row['ALAMAT_WP'], $row['KODE_PAJAK'], $row['DPP'], $row['TARIF'],
+						$row['JUMLAH_POTONG'], $row['NPWP_PEMOTONG'], $row['NAMA_PEMOTONG'], $row['TGL_BUKTI_POTONG1']));
 				} else {
-
-					array_push($export_arr,
-						array(
-
-							$row['BULAN_PAJAK'],
-							$row['TAHUN_PAJAK'],
-							$row['PEMBETULAN_KE'],
-							$row['NO_BUKTI_POTONG'],
-							$row['NPWP1'],
-							$row['NIK'],
-							$row['NAMA_WP'],
-							$row['ALAMAT_WP'],
-							"N",
-							"",
-							$row['KODE_PAJAK'],
-							$row['DPP'],
-							$row['DPP'],
-							($row['NPWP1']) ? "N" : "Y",
-							$row['TARIF'],
-							$row['JUMLAH_POTONG_21'],
-							$row['NPWP_PEMOTONG'],
-							$row['NAMA_PEMOTONG'],
-							$row['TGL_BUKTI_POTONG1']
-
-						)
-					);
+					array_push($export_arr, array($row['BULAN_PAJAK'], $row['TAHUN_PAJAK'], $row['PEMBETULAN_KE'], $row['NO_BUKTI_POTONG'],
+						$row['NPWP1'], $row['NIK'], $row['NAMA_WP'], $row['ALAMAT_WP'], "N", "",
+						$row['KODE_PAJAK'], $row['DPP'], $row['DPP'], ($row['NPWP1']) ? "N" : "Y",
+						$row['TARIF'], $row['JUMLAH_POTONG_21'], $row['NPWP_PEMOTONG'], $row['NAMA_PEMOTONG'],$row['TGL_BUKTI_POTONG1']));
 				}
-
 			}
 		}
 
 		/*	echo json_encode($export_arr);
 	die();*/
-
 		//convert_to_csv($export_arr, 'CSV_PPH_PSL_21_'.$tipe.'_'.$date.'.csv', ';');
 		convert_to_csv_PPH21($export_arr, 'CSV_PPH_PSL_21_' . $tipe . '_' . $date . '.csv', ';');
 	}

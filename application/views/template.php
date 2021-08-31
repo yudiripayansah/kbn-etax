@@ -126,7 +126,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
                 $group_name = array();
 
-                if($this->session->userdata('identity') != "ADMIN"){
+                if ($this->session->userdata('identity') != "ADMIN") {
                     $count_group = count($this->session->userdata('group_id'));
                     $group_id    = ($count_group > 0) ? implode(",", $this->session->userdata('group_id')) : 0;
                     $sql         = "SELECT NAME FROM SIMTAX_GROUPS WHERE ID IN (".$group_id.")";
@@ -138,7 +138,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                     }
                 }
 
-                if($this->session->userdata('identity') == "ADMIN" || in_array("DVP PAJAK", $group_name)): ?>
+                if ($this->session->userdata('identity') == "ADMIN" || in_array("DVP PAJAK", $group_name)): ?>
                     <li class="dropdown">
                         <a class="dropdown-toggle waves-effect waves-light profile-pic" data-toggle="dropdown" href="javascript:void(0)" title="Ganti cabang"><img src="<?php echo base_url(); ?>assets/plugins/images/branch.png" alt="branch-img" width="26" class="img-circle"><b class="hidden-xs"><?php echo get_nama_cabang($this->session->userdata('kd_cabang')) ?></b></a>
                         <ul class="dropdown-menu mailbox animated bounceInDown">
@@ -150,11 +150,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
                             ?>
                             <li>
                                 <div class="message-center">
-                                    <?php 
-                                        foreach($list_cabang as $value):
+                                    <?php
+                                        foreach ($list_cabang as $value):
                                     ?>
                                     <?php
-                                        if($value['KODE_CABANG'] == $this->session->userdata('kd_cabang')):
+                                        if ($value['KODE_CABANG'] == $this->session->userdata('kd_cabang')):
                                     ?>
                                         <a href="javascript:void(0)" data-id="<?php echo $value['KODE_CABANG'] ?>" style="background-color: #ff6436">
                                             <div class="mail-contnet">
@@ -173,7 +173,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
                                     <?php
                                         endif;
-                                        endforeach; 
+                                        endforeach;
                                     ?> 
                                 </div>
                             </li>
@@ -218,11 +218,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
         <!-- Page Wrapper -->
         <div id="page-wrapper">
-            <?php echo $contents; 
-				$this->load->view('arrow-set.php');
-			?>
+            <?php echo $contents;
+                $this->load->view('arrow-set.php');
+            ?>
             <!-- .right-sidebar -->
-            <?php // $this->load->view('sidebar-right'); ?>
+            <?php // $this->load->view('sidebar-right');?>
             <!-- /.right-sidebar -->
             <footer class="footer text-center"><?php echo date('Y') ?> &copy; SIMTAX </footer>
         </div>
@@ -290,10 +290,14 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <script type="text/javascript" src="<?php echo base_url('assets/plugins/') ?>bower_components/multiselect/js/jquery.multi-select.js"></script>
     
     <!--  akhir tambahan -->
+    <!-- Input Mask -->
+    <script type="text/javascript" src="<?php echo base_url('assets/plugins/bower_components/inputmask/jquery.inputmask.min.js') ?>"></script>
+    <script type="text/javascript" src="<?php echo base_url('assets/plugins/bower_components/inputmask/bindings/inputmask.binding.js') ?>"></script>
+    <!-- End of Input Mask -->
     <script>
          $(document).ready(function() {
             $.fn.dataTable.ext.errMode = 'none';
-            <?php if($activepage != "dashboard"): ?>
+            <?php if ($activepage != "dashboard"): ?>
                 setTimeout(function(){
                      $("#home_link").removeClass("active");
                 }, 50);

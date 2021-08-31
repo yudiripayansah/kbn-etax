@@ -13,7 +13,7 @@
 					  </div>
 					  <div class="col-lg-6">
 						<div class="navbar-right">
-							<button id="btnTambah" class="btn btn-default btn-rounded custom-input-width" data-toggle="modal" data-target="#modal-tambah" type="button" ><i class="fa fa-pencil-square-o"></i> ADD</button>
+							<!-- <button id="btnTambah" class="btn btn-default btn-rounded custom-input-width" data-toggle="modal" data-target="#modal-tambah" type="button" ><i class="fa fa-pencil-square-o"></i> ADD</button> -->
 							<button type="button" id="btnEdit" class="btn btn-rounded btn-default custom-input-width" disabled data-toggle="modal" data-target="#modal-wp"><i class="fa fa-pencil"></i> EDIT</button>
 							<button type="button" id="btnHapus" class="btn btn-rounded btn-default custom-input-width " disabled data-toggle="modal" data-target="#modal-hapus"><i class="fa fa-trash-o"></i> DELETE</button>
 						</div>
@@ -25,7 +25,7 @@
 					<div class="table-responsive">
 						<div class="row">
 							<div class="col-lg-10">					
-								<form role="form" id="form-import" autocomplete="off">
+								<form role="form" id="form-import" autocomplete="off" class="row no-gutters">
 									<div class="col-lg-9">	
 										<div class="form-group">
 											<label class="form-control-label">File CSV</label>
@@ -52,20 +52,22 @@
 									<button id="btnEksportCSV" class="btn btn-default btn-rounded custom-input-width btn-block" type="button" > 
 									<i class="fa fa-file-o"></i> <span>EXPORT</span></button>
 								</div>
+							</div>
+							<div class="col-xs-12 col-sm-3">
+								<?php if ($this->session->userdata('kd_cabang') == "000"): ?>
+								<div class="form-group">
+									<label class="control-label">Filter by Cabang</label>
+									<select id="cabang" name="cabang" class="form-control">
+										<?php $list_cabang = get_list_cabang(); ?>
+										<option value="">-- Pilih Cabang --</option>
+										<?php foreach ($list_cabang as $cabang):?>
+										<option value="<?php echo $cabang['KODE_CABANG'] ?>"> <?php echo $cabang['NAMA_CABANG'] ?> </option>
+										<?php endforeach?>
+									</select>
+								</div>
+								<?php endif; ?>
 							</div>	 
 						</div>
-						<?php if($this->session->userdata('kd_cabang') == "000"): ?>
-						<div style="padding-bottom: 5px;color:#333;font-weight: 400">
-							<label>Filter by Cabang</label>
-							<select id="cabang" name="cabang">
-								<?php $list_cabang = get_list_cabang(); ?>
-		                        <option value="">-- Pilih Cabang --</option>
-		                        <?php foreach ($list_cabang as $cabang):?>
-		                        <option value="<?php echo $cabang['KODE_CABANG'] ?>"> <?php echo $cabang['NAMA_CABANG'] ?> </option>
-		                        <?php endforeach?>
-							</select>
-						</div>
-						<?php endif; ?>
 				   <table width="100%" class="display cell-border stripe hover small" id="tabledata"> 
 						<thead>
 							<tr>
@@ -75,6 +77,7 @@
 								<th>NOMOR VENDOR</th>
 								<th>KODE VENDOR </th>
 								<th>NPWP</th>
+								<th>STATUS KSWP</th>
 								<th>UNIT OPERASI</th>
 								<th>ID VENDOR</th>
 								<th>TIPE VENDOR</th>
@@ -133,7 +136,7 @@
 			<div class="col-lg-6">
 				<div class="form-group">
 					<label>NPWP</label>
-					<input type="text" class="form-control" id="edit_npwp" name="edit_npwp" placeholder="NPWP *(Tidak Boleh Kosong)" data-toggle="validator" data-error="Mohon isi NPWP" required>
+					<input type="text" class="form-control" id="edit_npwp" name="edit_npwp" placeholder="NPWP *(Tidak Boleh Kosong)" data-toggle="validator" data-error="Mohon isi NPWP" required data-inputmask="'mask': '99.999.999.9-999.999'">
 					<div class="help-block with-errors"></div>
 				</div>
 			</div>
@@ -198,6 +201,102 @@
 				</div>
 			</div>
 		</div>
+
+		<div class="row">
+			<div class="col-sm-12">
+				<h3>Data DJP</h3>
+			</div>
+			<div class="col-sm-4">
+				<div class="form-group">
+					<label>NPWP</label>
+					<input type="text" id="djp-npwp" disabled class="form-control">
+				</div>
+			</div>
+			<div class="col-sm-4">
+				<div class="form-group">
+					<label>Nama</label>
+					<input type="text" id="djp-nama" disabled class="form-control">
+				</div>
+			</div>
+			<div class="col-sm-4">
+				<div class="form-group">
+					<label>Merk Dagang</label>
+					<input type="text" id="djp-merkdagang" disabled class="form-control">
+				</div>
+			</div>
+			<div class="col-sm-4">
+				<div class="form-group">
+					<label>Alamat</label>
+					<input type="text" id="djp-alamat" disabled class="form-control">
+				</div>
+			</div>
+			<div class="col-sm-4">
+				<div class="form-group">
+					<label>Kelurahan</label>
+					<input type="text" id="djp-kelurahan" disabled class="form-control">
+				</div>
+			</div>
+			<div class="col-sm-4">
+				<div class="form-group">
+					<label>Kecamatan</label>
+					<input type="text" id="djp-kecamatan" disabled class="form-control">
+				</div>
+			</div>
+			<div class="col-sm-4">
+				<div class="form-group">
+					<label>Kabkot</label>
+					<input type="text" id="djp-kabkot" disabled class="form-control">
+				</div>
+			</div>
+			<div class="col-sm-4">
+				<div class="form-group">
+					<label>Provinsi</label>
+					<input type="text" id="djp-provinsi" disabled class="form-control">
+				</div>
+			</div>
+			<div class="col-sm-4">
+				<div class="form-group">
+					<label>Kode KLU</label>
+					<input type="text" id="djp-kodeklu" disabled class="form-control">
+				</div>
+			</div>
+			<div class="col-sm-4">
+				<div class="form-group">
+					<label>KLU</label>
+					<input type="text" id="djp-klu" disabled class="form-control">
+				</div>
+			</div>
+			<div class="col-sm-4">
+				<div class="form-group">
+					<label>Telp</label>
+					<input type="text" id="djp-telp" disabled class="form-control">
+				</div>
+			</div>
+			<div class="col-sm-4">
+				<div class="form-group">
+					<label>Email</label>
+					<input type="text" id="djp-email" disabled class="form-control">
+				</div>
+			</div>
+			<div class="col-sm-4">
+				<div class="form-group">
+					<label>Jenis WP</label>
+					<input type="text" id="djp-jeniswp" disabled class="form-control">
+				</div>
+			</div>
+			<div class="col-sm-4">
+				<div class="form-group">
+					<label>Badan Hukum</label>
+					<input type="text" id="djp-badanhukum" disabled class="form-control">
+				</div>
+			</div>
+			<div class="col-sm-4">
+				<div class="form-group">
+					<label>Status Kswp</label>
+					<input type="text" id="djp-statuskswp" disabled class="form-control">
+				</div>
+			</div>
+		</div>
 		
 		<div class="white-box boxshadow">
 			<div class="row">
@@ -231,12 +330,13 @@
 				vpropinsi           = "",
 				vnegara             = "",
 				vkode_pos           = "",
-				vtelp               = ""
+				vtelp               = "",
+				djp               = ""
 				;
 			
 		//$("#btnHapus").hide();
 		$("#edit-data").hide();
-		<?php if(($this->session->userdata('kd_cabang') == "000")): ?>
+		<?php if (($this->session->userdata('kd_cabang') == "000")): ?>
 			var conCabang = "pusat";
 		<?php else: ?>
 			var conCabang = "cabang";
@@ -272,6 +372,7 @@
 					{ "data": "vendor_number" },
 					{ "data": "vendor_type_lookup_code" },
 					{ "data": "npwp" },
+					{ "data": "status_kswp" },
 					{ "data": "operating_unit" },
 					{ "data": "vendor_site_id" },
 					{ "data": "vendor_site_code" },
@@ -336,6 +437,7 @@
 				vnegara				= "";
 				vkode_pos			= "";
 				vtelp				= "";
+				djp				= "";
 				emptyGrid();
 				$("#btnEdit,#btnHapus").attr("disabled",true);
 				//$('#modal-wp').removeAttr('id');
@@ -357,6 +459,7 @@
 				vnegara				= d.country;
 				vkode_pos			= d.zip;
 				vtelp				= d.phone;
+				djp = d.djp
 				valueGrid();
 
 				if(conCabang == "pusat"){
@@ -492,6 +595,21 @@
 		$("#edit_negara").val(vnegara);
 		$("#edit_kode_pos").val(vkode_pos);
 		$("#edit_telp").val(vtelp);
+		$("#djp-npwp").val(djp.NPWP);
+		$("#djp-nama").val(djp.NAMA);
+		$("#djp-merkdagang").val(djp.MERK_DAGANG);
+		$("#djp-alamat").val(djp.ALAMAT);
+		$("#djp-kelurahan").val(djp.KELURAHAN);
+		$("#djp-kecamatan").val(djp.KECAMATAN);
+		$("#djp-kabkot").val(djp.KABKOT);
+		$("#djp-provinsi").val(djp.PROVINSI);
+		$("#djp-kodeklu").val(djp.KODE_KLU);
+		$("#djp-klu").val(djp.KLU);
+		$("#djp-telp").val(djp.TELP);
+		$("#djp-email").val(djp.EMAIL);
+		$("#djp-jeniswp").val(djp.JENIS_WP);
+		$("#djp-badanhukum").val(djp.BADAN_HUKUM);
+		$("#djp-statuskswp").val(djp.STATUS_KSWP);
 	}
 	
 	function emptyGrid()
@@ -510,6 +628,21 @@
 		$("#edit_negara").val("");
 		$("#edit_kode_pos").val("");
 		$("#edit_telp").val("");
+		$("#djp-npwp").val("");
+		$("#djp-nama").val("");
+		$("#djp-merkdagang").val("");
+		$("#djp-alamat").val("");
+		$("#djp-kelurahan").val("");
+		$("#djp-kecamatan").val("");
+		$("#djp-kabkot").val("");
+		$("#djp-provinsi").val("");
+		$("#djp-kodeklu").val("");
+		$("#djp-klu").val("");
+		$("#djp-telp").val("");
+		$("#djp-email").val("");
+		$("#djp-jeniswp").val("");
+		$("#djp-badanhukum").val("");
+		$("#djp-statuskswp").val("");
 	}
 	
 	$("#btnHapus").click(function(){

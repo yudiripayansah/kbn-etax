@@ -1,31 +1,28 @@
 <div class="container-fluid">
-
 	<?php $this->load->view('template_top') ?>
-
-<div id="list-data">
-	<div class="row"> 
-		<div class="col-lg-12">	
-            <div class="panel panel-info">
-                <div class="panel-heading">
-							<div class="row">
-							  <div class="col-lg-6">
+	<div id="list-data">
+		<div class="row"> 
+			<div class="col-lg-12">	
+				<div class="panel panel-info">
+					<div class="panel-heading">
+						<div class="row">
+							<div class="col-lg-6">
 								DAFTAR NAMA-NAMA PELANGGAN (CUSTOMER)
-							  </div>
-							  <div class="col-lg-6">								
+							</div>
+							<div class="col-lg-6">								
 								<div class="navbar-right">
-									<button id="btnTambah" class="btn btn-default btn-rounded custom-input-width" data-toggle="modal" data-target="#modal-tambah" type="button" ><i class="fa fa-pencil-square-o"></i> ADD</button>
+									<!-- <button id="btnTambah" class="btn btn-default btn-rounded custom-input-width" data-toggle="modal" data-target="#modal-tambah" type="button" ><i class="fa fa-pencil-square-o"></i> ADD</button> -->
 									<button type="button" id="btnEdit" class="btn btn-rounded btn-default custom-input-width" disabled data-toggle="modal" data-target="#modal-cs"><i class="fa fa-pencil"></i> EDIT</button>
 									<button type="button" id="btnHapus" class="btn btn-rounded btn-default custom-input-width " disabled data-toggle="modal" data-target="#modal-cs"><i class="fa fa-trash-o"></i> DELETE</button>											
 								</div>
-							  </div>
-							</div>  						   
-						</div>
-                        <!-- /.panel-heading -->
-                        <div class="panel-body"> 
-							<div class="table-responsive">
-							<div class="row">
+							</div>
+						</div>  						   
+					</div>
+					<div class="panel-body"> 
+						<div class="table-responsive">
+						<div class="row">
 							<div class="col-lg-10">					
-								<form role="form" id="form-import" autocomplete="off">
+								<form role="form" id="form-import" autocomplete="off" class="row no-gutters">
 									<div class="col-lg-9">	
 										<div class="form-group">
 											<label class="form-control-label">File CSV</label>
@@ -47,42 +44,56 @@
 								</form>
 							</div>
 							<div class="col-lg-2">	
-									<div class="form-group">
-										<label>&nbsp;</label>
-										<button id="btnEksportCSV" class="btn btn-default btn-rounded custom-input-width btn-block" type="button" > 
-										<i class="fa fa-file-o"></i> <span>EXPORT</span></button>
-									</div>
-								</div>	 
-							</div>
-                           <table width="100%" class="display cell-border stripe hover small" id="tabledata"> 
-                                <thead>
-                                    <tr>
-										<th>NO</th>
-                                        <th>CUSTOMER ID</th>
-                                        <th>NAMA PELANGGAN</th>
-                                        <th>ALIAS PELANGGAN</th>
-                                        <th>NOMOR PELANGGAN</th>
-                                        <th>NPWP</th>
-                                        <th>OPERATING UNIT</th>
-                                        <th>CUSTOMER SITE ID</th>
-                                        <th>CUSTOMER SITE NUMBER</th>
-										<th>CUSTOMER SITE NAME</th>
-										<th>ALAMAT LINE1</th>
-										<th>ALAMAT LINE2</th>
-										<th>ALAMAT LINE3</th>
-										<th>NAMA KOTA</th>
-										<th>PROPINSI</th>
-										<th>NEGARA</th>
-										<th>KODE POS</th>
-									</tr>
-                                </thead>
-
-                            </table>
-							</div>
-                       </div>
-                    </div>
-                </div>
-            </div>
+								<div class="form-group">
+									<label>&nbsp;</label>
+									<button id="btnEksportCSV" class="btn btn-default btn-rounded custom-input-width btn-block" type="button" > 
+									<i class="fa fa-file-o"></i> <span>EXPORT</span></button>
+								</div>
+							</div>	 
+							<div class="col-xs-12 col-sm-3">
+								<?php if ($this->session->userdata('kd_cabang') == "000"): ?>
+								<div class="form-group">
+									<label class="control-label">Filter by Cabang</label>
+									<select id="cabang" name="cabang" class="form-control">
+										<?php $list_cabang = get_list_cabang(); ?>
+										<option value="">-- Pilih Cabang --</option>
+										<?php foreach ($list_cabang as $cabang):?>
+										<option value="<?php echo $cabang['KODE_CABANG'] ?>"> <?php echo $cabang['NAMA_CABANG'] ?> </option>
+										<?php endforeach?>
+									</select>
+								</div>
+								<?php endif; ?>
+							</div>	
+						</div>
+						<table width="100%" class="display cell-border stripe hover small" id="tabledata"> 
+							<thead>
+								<tr>
+									<th>NO</th>
+									<th>CUSTOMER ID</th>
+									<th>NAMA PELANGGAN</th>
+									<th>ALIAS PELANGGAN</th>
+									<th>NOMOR PELANGGAN</th>
+									<th>NPWP</th>
+									<th>STATUS KSWP</th>
+									<th>OPERATING UNIT</th>
+									<th>CUSTOMER SITE ID</th>
+									<th>CUSTOMER SITE NUMBER</th>
+									<th>CUSTOMER SITE NAME</th>
+									<th>ALAMAT LINE1</th>
+									<th>ALAMAT LINE2</th>
+									<th>ALAMAT LINE3</th>
+									<th>NAMA KOTA</th>
+									<th>PROPINSI</th>
+									<th>NEGARA</th>
+									<th>KODE POS</th>
+								</tr>
+							</thead>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
 
 <!--Form Tambah-->
@@ -127,7 +138,7 @@
 		  <div class="col-lg-6">
 			<div class="form-group">
 				<label>NPWP </label>
-				<input type="text" class="form-control" id="npwp" name="npwp" placeholder="NPWP *(Tidak Boleh Kosong)">
+				<input type="text" class="form-control" id="npwp" name="npwp" placeholder="NPWP *(Tidak Boleh Kosong)" data-inputmask="'mask': '99.999.999.9-999.999'">
 			</div>
 		  </div>
 		  </div>
@@ -208,6 +219,102 @@
 			</div>
 		  </div>
 		</div>
+
+		<div class="row">
+			<div class="col-sm-12">
+				<h3>Data DJP</h3>
+			</div>
+			<div class="col-sm-4">
+				<div class="form-group">
+					<label>NPWP</label>
+					<input type="text" id="djp-npwp" disabled class="form-control">
+				</div>
+			</div>
+			<div class="col-sm-4">
+				<div class="form-group">
+					<label>Nama</label>
+					<input type="text" id="djp-nama" disabled class="form-control">
+				</div>
+			</div>
+			<div class="col-sm-4">
+				<div class="form-group">
+					<label>Merk Dagang</label>
+					<input type="text" id="djp-merkdagang" disabled class="form-control">
+				</div>
+			</div>
+			<div class="col-sm-4">
+				<div class="form-group">
+					<label>Alamat</label>
+					<input type="text" id="djp-alamat" disabled class="form-control">
+				</div>
+			</div>
+			<div class="col-sm-4">
+				<div class="form-group">
+					<label>Kelurahan</label>
+					<input type="text" id="djp-kelurahan" disabled class="form-control">
+				</div>
+			</div>
+			<div class="col-sm-4">
+				<div class="form-group">
+					<label>Kecamatan</label>
+					<input type="text" id="djp-kecamatan" disabled class="form-control">
+				</div>
+			</div>
+			<div class="col-sm-4">
+				<div class="form-group">
+					<label>Kabkot</label>
+					<input type="text" id="djp-kabkot" disabled class="form-control">
+				</div>
+			</div>
+			<div class="col-sm-4">
+				<div class="form-group">
+					<label>Provinsi</label>
+					<input type="text" id="djp-provinsi" disabled class="form-control">
+				</div>
+			</div>
+			<div class="col-sm-4">
+				<div class="form-group">
+					<label>Kode KLU</label>
+					<input type="text" id="djp-kodeklu" disabled class="form-control">
+				</div>
+			</div>
+			<div class="col-sm-4">
+				<div class="form-group">
+					<label>KLU</label>
+					<input type="text" id="djp-klu" disabled class="form-control">
+				</div>
+			</div>
+			<div class="col-sm-4">
+				<div class="form-group">
+					<label>Telp</label>
+					<input type="text" id="djp-telp" disabled class="form-control">
+				</div>
+			</div>
+			<div class="col-sm-4">
+				<div class="form-group">
+					<label>Email</label>
+					<input type="text" id="djp-email" disabled class="form-control">
+				</div>
+			</div>
+			<div class="col-sm-4">
+				<div class="form-group">
+					<label>Jenis WP</label>
+					<input type="text" id="djp-jeniswp" disabled class="form-control">
+				</div>
+			</div>
+			<div class="col-sm-4">
+				<div class="form-group">
+					<label>Badan Hukum</label>
+					<input type="text" id="djp-badanhukum" disabled class="form-control">
+				</div>
+			</div>
+			<div class="col-sm-4">
+				<div class="form-group">
+					<label>Status Kswp</label>
+					<input type="text" id="djp-statuskswp" disabled class="form-control">
+				</div>
+			</div>
+		</div>
 		
 		
 		<div class="white-box boxshadow">			
@@ -244,11 +351,13 @@
 				vcity 				= "",
 				vprovince			= "",
 				vcountry 			= "",
-				vzip 				= "";		
+				vzip 				= "",
+				djp = "";		
 		
 		//$("#btnHapus").hide();		
 		$("#edit-data").hide();			
 		
+		filter_by = $("#cabang").val();
 		 Pace.track(function(){  
 		   $('#tabledata').removeAttr('width').DataTable({
 			"serverSide"	: true,
@@ -260,6 +369,9 @@
 								 "type" 		: "POST",
 								 "beforeSend"	: function () {
 										
+									},
+									"data"	: function (d) {		
+										d._searchCabang = filter_by;
 									}
 							  },
 			 "language"		: {
@@ -275,6 +387,7 @@
 					{ "data": "alias_customer" },
 					{ "data": "customer_number" },
 					{ "data": "npwp" },
+					{ "data": "status_kswp" },
 					{ "data": "operating_unit" },
 					{ "data": "customer_site_id" },
 					{ "data": "customer_site_number" },
@@ -313,7 +426,10 @@
 		table = $('#tabledata').DataTable();
 		
 		 /*fungsi tombol x */
-		
+		$("#cabang").on("change", function(){
+			filter_by = $("#cabang").val();
+			table.ajax.reload(null, false);
+		});
 		$("input[type=search]").addClear();
 		$('.dataTables_filter input[type="search"]').attr('placeholder','Search NAMA customer / NPWP / ID customer ...').css({'width':'230px','display':'inline-block'}).addClass('form-control input-sm');		
 		
@@ -344,6 +460,7 @@
 				vprovince			= "";
 				vcountry 			= "";
 				vzip 				= "";
+				djp = "";
 				$("#btnEdit,#btnHapus").attr("disabled",true);
 			} else {
 				table.$('tr.selected').removeClass('selected');
@@ -364,7 +481,8 @@
 				vcity 				= d.city;
 				vprovince			= d.province;
 				vcountry 			= d.country;
-				vzip 				= d.zip;					
+				vzip 				= d.zip;		
+				djp = d.djp;			
 				$("#btnEdit,#btnHapus").removeAttr('disabled');
 				valueGrid();
 			}			
@@ -420,7 +538,22 @@
 		$("#city")				.val(vcity);
 		$("#province")			.val(vprovince);
 		$("#country")			.val(vcountry);
-		$("#zip")				.val(vzip);							
+		$("#zip")				.val(vzip);		
+		$("#djp-npwp").val(djp.NPWP);
+		$("#djp-nama").val(djp.NAMA);
+		$("#djp-merkdagang").val(djp.MERK_DAGANG);
+		$("#djp-alamat").val(djp.ALAMAT);
+		$("#djp-kelurahan").val(djp.KELURAHAN);
+		$("#djp-kecamatan").val(djp.KECAMATAN);
+		$("#djp-kabkot").val(djp.KABKOT);
+		$("#djp-provinsi").val(djp.PROVINSI);
+		$("#djp-kodeklu").val(djp.KODE_KLU);
+		$("#djp-klu").val(djp.KLU);
+		$("#djp-telp").val(djp.TELP);
+		$("#djp-email").val(djp.EMAIL);
+		$("#djp-jeniswp").val(djp.JENIS_WP);
+		$("#djp-badanhukum").val(djp.BADAN_HUKUM);
+		$("#djp-statuskswp").val(djp.STATUS_KSWP);					
 	}
 	
 	function emptyGrid()
@@ -440,7 +573,22 @@
 		$("#city")				.val("");
 		$("#province")			.val("");
 		$("#country")			.val("");
-		$("#zip")				.val("");							
+		$("#zip")				.val("");		
+		$("#djp-npwp").val("");
+		$("#djp-nama").val("");
+		$("#djp-merkdagang").val("");
+		$("#djp-alamat").val("");
+		$("#djp-kelurahan").val("");
+		$("#djp-kecamatan").val("");
+		$("#djp-kabkot").val("");
+		$("#djp-provinsi").val("");
+		$("#djp-kodeklu").val("");
+		$("#djp-klu").val("");
+		$("#djp-telp").val("");
+		$("#djp-email").val("");
+		$("#djp-jeniswp").val("");
+		$("#djp-badanhukum").val("");
+		$("#djp-statuskswp").val("");					
 	}	
 	
 	<!--hapus-->
