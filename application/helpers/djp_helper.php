@@ -7,11 +7,11 @@ defined('BASEPATH') or exit('No direct script access allowed');
       function djp_get_token($user, $pwd)
       {
           $url = 'https://api-eservice.indonesiaport.co.id/api_djp/v1/getToken.php/wsdl?user='.$user.'&pwd='.$pwd.'&base_url=https://ws.pajak.go.id/djp/';
-          $payload = [
+          $payload = array(
             'user' => $user,
             'pwd' => $pwd,
             'base_url' => 'https://ws.pajak.go.id/djp/',
-          ];
+          );
           $type = 'POST';
           return djp_curl($url, $type, $payload);
       }
@@ -20,15 +20,15 @@ defined('BASEPATH') or exit('No direct script access allowed');
       function djp_check_kswp($token, $npwp, $kdizin=1)
       {
           $url = 'https://api-eservice.indonesiaport.co.id/api_djp/v1/getKswp.php/wsdl?auth='.$token.'&npwp='.$npwp.'&kdizin='.$kdizin.'&base_url=https://ws.pajak.go.id/djp/';
-          $payload = [
+          $payload = array(
             'npwp' => $npwp,
             'kdizin' => $kdizin,
             'base_url' => 'https://ws.pajak.go.id/djp/',
-          ];
+          );
           $type = 'POST';
-          $header = [
+          $header = array(
             'Authorization' => $token
-          ];
+          );
           return djp_curl($url, $type, $payload, $header);
       }
   }
@@ -36,14 +36,14 @@ defined('BASEPATH') or exit('No direct script access allowed');
       function djp_check_npwp($token, $npwp)
       {
           $url = 'https://api-eservice.indonesiaport.co.id/api_djp/v1/getNpwp.php/wsdl?auth='.$token.'&npwp='.$npwp.'&base_url=https://ws.pajak.go.id/djp/';
-          $payload = [
+          $payload = array(
             'npwp' => $npwp,
             'base_url' => 'https://ws.pajak.go.id/djp/',
-          ];
+          );
           $type = 'POST';
-          $header = [
+          $header = array(
             'Authorization' => $token
-          ];
+          );
           return djp_curl($url, $type, $payload, $header);
       }
   }
@@ -63,4 +63,18 @@ defined('BASEPATH') or exit('No direct script access allowed');
       $response = json_decode(curl_exec($curl));
       curl_close($curl);
       return $response;
+  }
+
+  if ( ! function_exists('get_value_param')){
+
+    function get_value_param($param){
+  
+      $CI = get_instance();
+      $CI->load->model('h2h_staging_mdl');
+  
+      $value = $CI->h2h_staging_mdl->getValueParameter($param);
+  
+      return $value;
+    }
+
   }

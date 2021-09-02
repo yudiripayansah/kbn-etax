@@ -176,16 +176,16 @@ class Sync_data_ebs_mdl extends CI_Model {
 		$bulan			= $this->input->post('srcBulan');
 		$tahun			= $this->input->post('srcTahun');	
 		$jenis_trx		= $this->input->post('scrJenis');
-		$date_param		=  '01';/*date('d')*/
+		$date_param		=  '1';/*date('d')*/
 		$date_ref		= $date_param.'-'.$bulan.'-'.$tahun;
 		$date_ref   = date("Y-m-d",strtotime($date_ref));
 		
 		if($jenis_trx == "CUSTOMER"){
 			$trxmodul = 'SIMTAX_CUSTOMER';
-			update_last_process($trxmodul);
+			$this->update_last_process($trxmodul,$date_ref);
 		} else if($jenis_trx == "SUPPLIER"){
 			$trxmodul = 'SIMTAX_SUPPLIER';
-			update_last_process($trxmodul);
+			$this->update_last_process($trxmodul,$date_ref);
 		}
 
 		$DBEBS = $this->load->database('devnew',TRUE);
@@ -1138,18 +1138,24 @@ class Sync_data_ebs_mdl extends CI_Model {
   }	
 
   function do_process_ref($file_path,$jenis_trx) {
+	    $this->load->helper('djp_helper');
 		$row = 0;
 		$handle = fopen($file_path, "r");
 		
 		$dataCsv  = array();
 
-		$userdjp = $this->h2h->getValueParameter("USERNAME_DJP");
-		$passdjp = $this->h2h->getValueParameter("PASSWORD_DJP");
-		$token = djp_get_token($userdjp, $passdjp);
-		
 		if ($jenis_trx == "CUSTOMER") 
 		{
+			$userdjp = get_value_param("USERNAME_DJP");
+			$passdjp = get_value_param("PASSWORD_DJP");
+			$token = djp_get_token($userdjp, $passdjp);
+
+			var_dump($userdjp,$passdjp,$response);die();
 			
+			if($token == ""){
+				return false;
+			}
+
 			while (($data = fgetcsv($handle, 0, ";","'","\\")) !== FALSE) {
 
 				if($row >= 0){
@@ -1194,7 +1200,7 @@ class Sync_data_ebs_mdl extends CI_Model {
 							'USER_TYPE' => $type,
 							'NPWP_SIMTAX' => $this->input->post('npwp'),
 							'LAST_UPDATE' => date('Y-m-d H:i:s'),
-						);var_dump('insert',$rowData);
+						);var_dump('insert',$rowData);die();
 						//$doInsert = $this->db->insert('SIMTAX_MASTER_NPWP', $rowData);
 					} else {
 						$isCustomer = $this->db->from('SIMTAX_MASTER_PELANGGAN')->where('NPWP', $data[4])->limit(1)->get()->row();
@@ -1231,7 +1237,7 @@ class Sync_data_ebs_mdl extends CI_Model {
 							'USER_TYPE' => $type,
 							'NPWP_SIMTAX' => $this->input->post('npwp'),
 							'LAST_UPDATE' => date('Y-m-d H:i:s'),
-						);var_dump('update',$rowData);
+						);var_dump('update',$rowData);die();
 						//$doUpdate = $this->db->where('ID', $npwp_simtax->ID)->update('SIMTAX_MASTER_NPWP', $rowData);
 					}
 					
@@ -2734,7 +2740,7 @@ class Sync_data_ebs_mdl extends CI_Model {
 		return $result;		
 	}	
 
-	function update_last_process($trxmodul){
+	function update_last_process($trxmodul,$date_ref){
 
 		$this->db->set('DATE_PROCESS',"TO_DATE('".$date_ref."', 'SYYYY-MM-DD HH24:MI:SS')",false);
 		$this->db->where('TRANSACTION_MODUL', $trxmodul);		
