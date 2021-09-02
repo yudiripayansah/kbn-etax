@@ -71,7 +71,7 @@
 					</select> 
 				</div>
 			 </div>
-			 <div class="col-md-3">
+			 <div class="col-md-3" id="divjnspajak">
 				<div class="form-group">
 					<label>Jenis Pajak</label>
 					<select class="form-control" id="jenisPajak" name="jenisPajak">
@@ -324,11 +324,17 @@
 
 		var valueSelected = $("#pajak :selected").val();
 		if(valueSelected == 'PPNMASA'){
+			$("#jenisPajak option[value='PPN MASUKAN']").show();
+			$("#jenisPajak option[value='PPN KELUARAN']").show();
 			$("#jenisPajak option[value='DOKUMEN LAIN MASUKAN']").show();
 			$("#jenisPajak option[value='DOKUMEN LAIN KELUARAN']").show();
+			$("#divjnspajak").show();
 		} else {
+			$("#divjnspajak").hide();
 			$("#jenisPajak option[value='DOKUMEN LAIN MASUKAN']").hide();
 			$("#jenisPajak option[value='DOKUMEN LAIN KELUARAN']").hide();
+			$("#jenisPajak option[value='PPN MASUKAN']").hide();
+			$("#jenisPajak option[value='PPN KELUARAN']").hide();
 		}
 
 	});
@@ -375,6 +381,9 @@
 			var t	= $("#tahun").val();	
 			var bnm	= $("#bulan").find(":selected").attr("data-name");	
 			var pb 	= $("#pembetulanKe").val();
+			if (p == 'DETAILJT'){
+				j = "DETAILJT";
+			}
 			if (kodecbg == ''){
 				alert('Mohon pilih Cabang');
 				return;
@@ -390,7 +399,7 @@
 			} else if (p != 'PPNMASA' && p != 'DETAILJT'){
 				alert('Mohon maaf untuk sementara pajak '+p+' belum bisa kirim ke Staging');
 				return;
-			} else if (j === '') {
+			} else if (j === '' && p != 'DETAILJT') {
 				alert('Mohon pilih Jenis Pajak');
 				return;
 			} else if (j === 'ADVANCE PAYMENT') {
@@ -512,6 +521,10 @@
 		var kode_cabang = $("#cabang_trx").val();
 		var vpembetulan = $("#pembetulanKe").val();
 
+		if(p == 'DETAILJT'){
+			j = "DETAILJT";
+		}
+
 		if (kode_cabang == ''){
 			alert('Mohon pilih Cabang');
 			return;
@@ -528,7 +541,7 @@
 			alert('Mohon maaf untuk sementara pajak '+p+' belum bisa di download');
 			return;
 		}
-		if (j === '') {
+		if (j === '' &&  p != 'DETAILJT') {
 			alert('Mohon pilih Jenis Pajak');
 			return;
 		}

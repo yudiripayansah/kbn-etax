@@ -128,7 +128,8 @@ class Ppnmasa_detail_jurnal_transaksi extends CI_Controller {
 						'detail_jurnal_id'      => $row['DETAIL_JURNAL_ID'],
 						'nomorinvoice'      	=> $row['NOMORINVOICE'],
 						'tanggalinvoice'      	=> $tgl_invoice,
-						'statusdokumen'      	=> $row['STATUSDOKUMEN']
+						'statusdokumen'      	=> $row['STATUSDOKUMEN'],
+						'invoice_id'      		=> $row['INVOICE_ID']
                         );      
             }
 

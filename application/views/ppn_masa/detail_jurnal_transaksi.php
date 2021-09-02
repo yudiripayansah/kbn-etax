@@ -66,7 +66,7 @@
 			 </div>
 			 <div class="col-md-2">
 				<div class="form-group">
-					<label>Jenis Pajak</label>
+					<!--<label>Jenis Pajak</label>-->
 						<select class="form-control" id="jenisPajak" name="jenisPajak">
 							<option value="PPN MASUKAN" selected>PPN MASUKAN</option>
 							<option value="PPN KELUARAN">PPN KELUARAN</option>
@@ -161,6 +161,7 @@
 									<th>TANGGAL INVOICE</th>
 									<th>CABANG</th>
 									<th>STATUS DOKUMEN</th>
+									<th>INVOICE ID</th>
 	                            </tr>
 	                        </thead>
 	                    </table>
@@ -491,6 +492,7 @@
 		$("#amount").number(true,2);
 		//$("#d-FormCsv").hide();
 		$("#tambah-data").hide();
+		$("#jenisPajak").hide();
 
 		valueAdd();
 		getSummary();
@@ -546,7 +548,8 @@
 					{ "data": "nomorinvoice", "class":"text-left"},
 					{ "data": "tanggalinvoice", "class":"text-center"},
 					{ "data": "kode_cabang", "class":"text-center"},
-					{ "data": "statusdokumen", "class":"text-center"}
+					{ "data": "statusdokumen", "class":"text-center"},
+					{ "data": "invoice_id", "class":"text-center"}
 				],
 			"columnDefs": [
 				{
@@ -857,7 +860,7 @@
 				if (j != '' && b != '' && t != '') 
 				{ 
 					bootbox.confirm({
-					title: "Submit data Cabang <span class='label label-danger'>"+cnm+"</span> <span class='label label-danger'>PPN <?php echo ($nama_pajak == "PPN MASUKAN") ? "MASUKAN" : "KELUARAN" ?></span> Bulan <span class='label label-danger'>"+bnm+"</span> Tahun <span class='label label-danger'>"+t+"</span> ?",
+					title: "Submit data Detail Jurnal Transaksi Cabang <span class='label label-danger'>"+cnm+"</span>  Bulan <span class='label label-danger'>"+bnm+"</span> Tahun <span class='label label-danger'>"+t+"</span> ?",
 					message: "Apakah anda ingin melanjutkan?",
 					buttons: {
 						cancel: {
@@ -882,14 +885,14 @@
 										if (result==1) {
 											$("body").removeClass("loading");
 											table1.draw();
-											table2.draw();
-											getSummary();
+											//table2.draw();
+											//getSummary();
 											empty();
 											flashnotif('Sukses','Data Berhasil di Submit!','success' );
 										} else {
 											$("body").removeClass("loading");
 											table1.draw();
-											table2.draw();
+											//table2.draw();
 											flashnotif('Error','Data Gagal di Submit!','error' );
 										}
 									}

@@ -2298,7 +2298,8 @@ class H2h_staging extends CI_Controller {
                 'TANGGALPO',
                 'CABANG',
                 'NOMORINVOICE',
-                'TANGGALINVOICE'
+                'TANGGALINVOICE',
+                'INVOICE_ID'
         );
 
     	array_push($dokumen_lain, $title_dokumen_lain);
@@ -2307,6 +2308,8 @@ class H2h_staging extends CI_Controller {
                 if (!empty($data)) {
 
                         foreach($data->result_array() as $row)	{
+                                $descsubledger = str_replace(',', '',$row['DESCSUBLEDGER']);
+                                $referenceline = str_replace(',', '',$row['REFERENCELINE']);
                                 array_push($dokumen_lain,
                                         array(
                                                 $row['LEDGER_ID'],
@@ -2324,9 +2327,9 @@ class H2h_staging extends CI_Controller {
                                                 $row['AMOUNT'],
                                                 $row['SUBLEDGER'],
                                                 $row['CODESUBLEDGER'],
-                                                $row['DESCSUBLEDGER'],
+                                                $descsubledger,
                                                 $row['DESCRIPTIONHEADER'],
-                                                $row['REFERENCELINE'],
+                                                $referenceline,
                                                 $row['PROFITCENTER'],
                                                 $row['PROFITCENTERDESC'],
                                                 $row['COSTCENTER'],
@@ -2335,7 +2338,8 @@ class H2h_staging extends CI_Controller {
                                                 $row['TANGGALPO'],
                                                 $row['KODE_CABANG'],
                                                 $row['NOMORINVOICE'],
-                                                $row['TANGGALINVOICE']
+                                                $row['TANGGALINVOICE'],
+                                                $row['INVOICE_ID']
                                         )
                                 );
                         }
@@ -2390,12 +2394,6 @@ class H2h_staging extends CI_Controller {
 
         function validation_staging($pajak, $nama_pajak, $bulan_pajak, $tahun_pajak, $kode_cabang, $pembetulan_ke)
 	{
-                //$bulan_pajak = $this->input->post('bulan');
-                //$tahun_pajak = $this->input->post('tahun');
-                //$pajak = $this->input->post('pajak');
-                //$nama_pajak = $this->input->post('jenisPajak');
-                //$kode_cabang   = $this->input->post('cabang_trx');
-                //$pembetulan_ke = $this->input->post('pembetulanKe');
                 $creditable = "xx";
                 $withAkun = "";
                 $masihKosong = true;
@@ -2515,8 +2513,10 @@ class H2h_staging extends CI_Controller {
                                         $records .= $row['INVOICE_ID'].", " ;
                                         $detailJurnal = true;
                                     }
-                                    $hasilJurnal ="Invoice ID ".$records." Doc. Number masih kosong";
                                 }
+                                $records = rtrim($records," ");
+                                $records = rtrim($records,",");
+                                $hasilJurnal ="Invoice ID ( ".$records." ) Doc. Number masih kosong";
                             }
 
                         if($detailJurnal == true){

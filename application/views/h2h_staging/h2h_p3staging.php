@@ -379,11 +379,15 @@
 
 		var valueSelected = $("#pajak :selected").val();
 		if(valueSelected == 'PPNMASA'){
+			$("#jenisPajak option[value='PPN MASUKAN']").show();
+			$("#jenisPajak option[value='PPN KELUARAN']").show();
 			$("#jenisPajak option[value='DOKUMEN LAIN MASUKAN']").show();
 			$("#jenisPajak option[value='DOKUMEN LAIN KELUARAN']").show();
 		} else {
 			$("#jenisPajak option[value='DOKUMEN LAIN MASUKAN']").hide();
 			$("#jenisPajak option[value='DOKUMEN LAIN KELUARAN']").hide();
+			$("#jenisPajak option[value='PPN MASUKAN']").hide();
+			$("#jenisPajak option[value='PPN KELUARAN']").hide();
 		}
 
 	});

@@ -15,14 +15,14 @@ class Ppnmasa_detail_jurnal_mdl extends CI_Model {
 		ini_set('memory_limit', '-1');
 		$where         = "";
 		$whereCategory = "";
-
+		/*
 		if($nama_pajak == "PPN MASUKAN"){
 			$qnama_pajak = " and account = '10901601'";
 		}
 		else{
 			$qnama_pajak = " and account = '30901601'";
 		}
-
+		*/
 		if($kode_cabang != ""){
 			$whereCabang = " and kode_cabang = '".$kode_cabang."'";
 		}
@@ -76,10 +76,11 @@ class Ppnmasa_detail_jurnal_mdl extends CI_Model {
 							DETAIL_JURNAL_ID,
 							NOMORINVOICE,
 							TANGGALINVOICE,
-							STATUSDOKUMEN
+							STATUSDOKUMEN,
+							INVOICE_ID
                             FROM SIMTAX_DETAIL_JURNAL_TRANSAKSI
 					        WHERE 1=1
-						".$where.$qnama_pajak.$whereCabang.$whereBulan.$whereTahun;
+						".$where.$whereCabang.$whereBulan.$whereTahun;
 				
 		$sql		= "SELECT * FROM (
 						SELECT rownum rnum, a.* FROM ( ".$mainQuery." ) a 
@@ -209,6 +210,7 @@ class Ppnmasa_detail_jurnal_mdl extends CI_Model {
 		$this->db->where('BULAN_BUKU', $bulan_pajak);
 		$this->db->where('TAHUN_BUKU', $tahun_pajak);
 		$this->db->where('KODE_CABANG', $cabang);
+		/*
 		if($nama_pajak == "PPN MASUKAN"){
 			$account = "10901601";
 		}
@@ -216,6 +218,7 @@ class Ppnmasa_detail_jurnal_mdl extends CI_Model {
 			$account = "30901601";
 		}
 		$this->db->where('ACCOUNT', $account);
+		*/
 		$update = $this->db->update("SIMTAX_DETAIL_JURNAL_TRANSAKSI");
 		
 		if ($update){
