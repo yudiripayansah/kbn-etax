@@ -406,7 +406,7 @@ class H2h_staging extends CI_Controller {
                            
                            foreach($data->result_array() as $row) {
                                 
-                                $tanggal_dokumen_lain = ($row['TANGGAL_DOKUMEN_LAIN']) ? date("d/m/Y", strtotime($row['TANGGAL_DOKUMEN_LAIN'])) : '';
+                                $tanggal_dokumen_lain = ($row['TANGGAL_DOKUMEN_LAIN']) ? date("Y-m-d", strtotime($row['TANGGAL_DOKUMEN_LAIN'])) : '';
                                 $tanggal_approval     = ($row['TANGGAL_DOKUMEN_LAIN']) ? date("Ymdhis", strtotime($row['TANGGAL_DOKUMEN_LAIN']))."000000" : '';
                                 $tanggal_faktur       = ($row['TANGGAL_FAKTUR_PAJAK']) ? date("Y-m-d", strtotime($row['TANGGAL_FAKTUR_PAJAK'])) : '';
                                 
@@ -592,7 +592,7 @@ class H2h_staging extends CI_Controller {
                            if($category == "dokumen_lain"){
                                 // data dokumen lain   
                                 $cntarr = count($element_data_str_dk);   
-                                for($i=0;$i<=($cntarr-1);$i++){
+                                for($i=0;$i<=($cntarr-1);$i++){     
                                    $row_temp = array();  
                                    $resfk = $this->import_faktur_keluaran($apifk, $element_data_str_dk[$i], $token_type, $utoken);
                                    
