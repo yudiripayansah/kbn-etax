@@ -472,7 +472,10 @@ class H2h_staging extends CI_Controller {
                                 $address = trim(preg_replace('/\s\s+/', ' ', $address));
         
                                 $alamatNya = preg_replace("/[\r\n]+/", " ", $address);
-                                $alamatNya = substr($alamatNya,0,60);
+                                //$alamatNya = substr($alamatNya,0,60);
+
+                                $no_faktur = ($row['NO_FAKTUR_PAJAK'] != "") ? str_replace(".","", str_replace("-","",substr($row['NO_FAKTUR_PAJAK'], 3))) : $row['NO_DOKUMEN_LAIN']; 
+                                $vtanggal_faktur = ($tanggal_faktur != "") ? $tanggal_faktur : $tanggal_dokumen_lain;
                                 
                                 $vstatusTransaksi = $this->checkStatusTransaksi($row['FG_PENGGANTI'],$row['NO_DOKUMEN_LAIN'],$row['NO_DOKUMEN_LAIN_GANTI'],$row['BULAN_PAJAK'],$row['TAHUN_PAJAK']);
                                 if($vstatusTransaksi === ""){
@@ -485,8 +488,8 @@ class H2h_staging extends CI_Controller {
                                                 "tahunBuku" => $row['TAHUN_PAJAK'],
                                                 "kdTransaksi" => $kd_jenis_transaksi,
                                                 "fgPengganti" => $fg_pengganti,
-                                                "nomorFaktur" => str_replace(".","", str_replace("-","",substr($row['NO_FAKTUR_PAJAK'], 3))),
-                                                "tanggalFaktur" => $tanggal_faktur,
+                                                "nomorFaktur" => $no_faktur,
+                                                "tanggalFaktur" => $vtanggal_faktur,
                                                 "npwpPembeli" => $npwp,
                                                 "namaPembeli" => $row['VENDOR_NAME'],
                                                 "alamatPembeli" => $alamatNya,
@@ -518,8 +521,8 @@ class H2h_staging extends CI_Controller {
                                                 "tahunBuku" => $row['TAHUN_PAJAK'],
                                                 "kdTransaksi" => $kd_jenis_transaksi,
                                                 "fgPengganti" => $fg_pengganti,
-                                                "nomorFaktur" => str_replace(".","", str_replace("-","",substr($row['NO_FAKTUR_PAJAK'], 3))),
-                                                "tanggalFaktur" => $tanggal_faktur,
+                                                "nomorFaktur" => $no_faktur,
+                                                "tanggalFaktur" => $vtanggal_faktur,
                                                 "npwpPembeli" => $npwp,
                                                 "namaPembeli" => $row['VENDOR_NAME'],
                                                 "alamatPembeli" => $alamatNya,
@@ -554,8 +557,8 @@ class H2h_staging extends CI_Controller {
                                                    "tahunBuku" => $row['TAHUN_PAJAK'],
                                                    "kdTransaksi" => $kd_jenis_transaksi,
                                                    "fgPengganti" => $fg_pengganti,
-                                                   "nomorFaktur" => str_replace(".","", str_replace("-","",substr($row['NO_FAKTUR_PAJAK'], 3))),
-                                                   "tanggalFaktur" => $tanggal_faktur,
+                                                   "nomorFaktur" => $no_faktur,
+                                                   "tanggalFaktur" => $vtanggal_faktur,
                                                    "npwpPembeli" => $npwp,
                                                    "namaPembeli" => $row['VENDOR_NAME'],
                                                    "alamatPembeli" => $alamatNya,
@@ -783,7 +786,10 @@ class H2h_staging extends CI_Controller {
                 
                                 $npwp = format_npwp($row['NPWP1']);
                                 $no_dokumen_lain_ganti = ($row['NO_DOKUMEN_LAIN_GANTI'] != "") ? $row['NO_DOKUMEN_LAIN_GANTI'] : $row['FAKTUR_ASAL'];
-        
+
+                                $no_faktur = ($row['NO_FAKTUR_PAJAK'] != "") ? str_replace(".","", str_replace("-","",substr($row['NO_FAKTUR_PAJAK'], 3))) : $row['NO_DOKUMEN_LAIN']; 
+                                $vtanggal_faktur = ($tanggal_faktur != "") ? $tanggal_faktur : $tanggal_dokumen_lain;
+
                                 $address = utf8_encode($row['ADDRESS_LINE1']);
                                 $address = str_replace(' ',' ',$address);
                                 $address = str_replace('\'','',$address);
@@ -794,7 +800,7 @@ class H2h_staging extends CI_Controller {
                                 $alamatNya = preg_replace("/[\r\n]+/", " ", $address);
 
                                 $alamatNya = preg_replace("/[\r\n]+/", " ", $address);
-                                $alamatNya = substr($alamatNya,0,60);
+                                //$alamatNya = substr($alamatNya,0,60);
                                 
                                 //$vstatusTransaksi = $this->checkStatusTransaksi($row['FG_PENGGANTI'],$row['NO_DOKUMEN_LAIN'],$row['NO_DOKUMEN_LAIN_GANTI'],$row['BULAN_PAJAK'],$row['TAHUN_PAJAK']);
                                 //if($vstatusTransaksi === null || $vstatusTransaksi === ""){
@@ -810,8 +816,8 @@ class H2h_staging extends CI_Controller {
                                                 "tahunBuku" => $row['TAHUN_PAJAK'],
                                                 "kdTransaksi" => $kd_jenis_transaksi,
                                                 "fgPengganti" => $fg_pengganti,
-                                                "nomorFaktur" => str_replace(".","", str_replace("-","",substr($row['NO_FAKTUR_PAJAK'], 3))),
-                                                "tanggalFaktur" => $tanggal_faktur,
+                                                "nomorFaktur" => $no_faktur,
+                                                "tanggalFaktur" => $vtanggal_faktur,
                                                 "npwpPenjual" => $npwp,
                                                 "namaPenjual" => $row['VENDOR_NAME'],
                                                 "alamatPenjual" => $alamatNya,
@@ -836,8 +842,8 @@ class H2h_staging extends CI_Controller {
                                                 "tahunBuku" => $row['TAHUN_PAJAK'],
                                                 "kdTransaksi" => $kd_jenis_transaksi,
                                                 "fgPengganti" => $fg_pengganti,
-                                                "nomorFaktur" => str_replace(".","", str_replace("-","",substr($row['NO_FAKTUR_PAJAK'], 3))),
-                                                "tanggalFaktur" => $tanggal_faktur,
+                                                "nomorFaktur" => $no_faktur,
+                                                "tanggalFaktur" => $vtanggal_faktur,
                                                 "npwpPenjual" => $npwp,
                                                 "namaPenjual" => $row['VENDOR_NAME'],
                                                 "alamatPenjual" => $alamatNya,
@@ -1427,6 +1433,9 @@ class H2h_staging extends CI_Controller {
                                 $address = trim(preg_replace('/\s\s+/', ' ', $address));
                                 $alamatNya = preg_replace("/[\r\n]+/", " ", $address);
 
+                                $no_faktur = ($row['NO_FAKTUR_PAJAK'] != "") ? str_replace(".","", str_replace("-","",substr($row['NO_FAKTUR_PAJAK'], 3))) : $row['NO_DOKUMEN_LAIN']; 
+                                $vtanggal_faktur = ($tanggal_faktur != "") ? $tanggal_faktur : $tanggal_dokumen_lain;
+
                                 if($pushDokLain){
         
                                         $arrDokumenLain = array(
@@ -1435,8 +1444,8 @@ class H2h_staging extends CI_Controller {
                                             $row['TAHUN_PAJAK'],
                                             $kd_jenis_transaksi,
                                             $fg_pengganti,
-                                            $row['NO_FAKTUR_PAJAK'],
-                                            $tanggal_faktur,
+                                            $no_faktur,
+                                            $vtanggal_faktur,
                                             $npwp,
                                             $nama_vendor,
                                             $alamatNya,
@@ -1467,8 +1476,8 @@ class H2h_staging extends CI_Controller {
                                         $row['TAHUN_PAJAK'],
                                         $kd_jenis_transaksi,
                                         $fg_pengganti,
-                                        $row['NO_FAKTUR_PAJAK'],
-                                        $tanggal_faktur,
+                                        $no_faktur,
+                                        $vtanggal_faktur,
                                         $npwp,
                                         $nama_vendor,
                                         $alamatNya,
@@ -1742,6 +1751,9 @@ class H2h_staging extends CI_Controller {
                                 $address = trim(preg_replace('/\s\s+/', ' ', $address));
 
                                 $alamatNya = preg_replace("/[\r\n]+/", " ", $address);
+
+                                $no_faktur = ($row['NO_FAKTUR_PAJAK'] != "") ? str_replace(".","", str_replace("-","",substr($row['NO_FAKTUR_PAJAK'], 3))) : $row['NO_DOKUMEN_LAIN']; 
+                                $vtanggal_faktur = ($tanggal_faktur != "") ? $tanggal_faktur : $tanggal_dokumen_lain;
         
                                 if($pushDokLain){
                                     $arrDokumenLain = array(
@@ -1750,8 +1762,8 @@ class H2h_staging extends CI_Controller {
                                         $row['TAHUN_PAJAK'],
                                         $kd_jenis_transaksi,
                                         $fg_pengganti,
-                                        $row['NO_FAKTUR_PAJAK'],
-                                        $tanggal_faktur,
+                                        $no_faktur,
+                                        $vtanggal_faktur,
                                         $npwp,
                                         $row['VENDOR_NAME'],
                                         $alamatNya,
@@ -1790,8 +1802,8 @@ class H2h_staging extends CI_Controller {
                                                     $row['TAHUN_PAJAK'],
                                                     $kd_jenis_transaksi,
                                                     $fg_pengganti,
-                                                    $row['NO_FAKTUR_PAJAK'],
-                                                    $tanggal_faktur,
+                                                    $no_faktur,
+                                                    $vtanggal_faktur,
                                                     $npwp,
                                                     $row['VENDOR_NAME'],
                                                     $alamatNya,
@@ -1826,8 +1838,8 @@ class H2h_staging extends CI_Controller {
                                                         $row['TAHUN_PAJAK'],
                                                         $kd_jenis_transaksi,
                                                         $fg_pengganti,
-                                                        $row['NO_FAKTUR_PAJAK'],
-                                                        $tanggal_faktur,
+                                                        $no_faktur,
+                                                        $vtanggal_faktur,
                                                         $npwp,
                                                         $row['VENDOR_NAME'],
                                                         $alamatNya,
