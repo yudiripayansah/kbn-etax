@@ -751,7 +751,7 @@ class H2h_staging extends CI_Controller {
                            $j = 0;
                            foreach($data->result_array() as $row) {
                                         
-                                $tanggal_dokumen_lain = ($row['TANGGAL_DOKUMEN_LAIN']) ? date("d/m/Y", strtotime($row['TANGGAL_DOKUMEN_LAIN'])) : '';
+                                $tanggal_dokumen_lain = ($row['TANGGAL_DOKUMEN_LAIN']) ? date("Y-m-d", strtotime($row['TANGGAL_DOKUMEN_LAIN'])) : '';
                                 $tanggal_approval     = ($row['TANGGAL_DOKUMEN_LAIN']) ? date("Ymdhis", strtotime($row['TANGGAL_DOKUMEN_LAIN']))."000000" : '';
                                 $tanggal_faktur       = ($row['TANGGAL_FAKTUR_PAJAK']) ? date("Y-m-d", strtotime($row['TANGGAL_FAKTUR_PAJAK'])) : '';
                                 
