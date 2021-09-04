@@ -145,23 +145,26 @@ class H2h_staging_mdl extends CI_Model {
 		
 		if($is_view != ''){
 		    if($kode_cabang != "" || $nama_pajak != "" || $jenis_pajak != "" || $bulan_pajak != ""){
+				/*
 				$qsenderid = "select distinct docnumber
 						from simtax_h2h_staging_log
 						where 1=1 
 						and status_kirim = 'T'
 						".$wherePajakku2."
 						".$whereCabang2.$wherePajak2.$whereJnsPajak2.$whereBulan2.$whereTahun2.$wherePembetulan2
-						/*
-						--	and tanggal_kirim  = 
-						--	(
-						--	select max(tanggal_kirim) tgl_kirim
-						--	from simtax_h2h_staging_log
-						--	where 1=1 
-						--	and status_kirim = 'T'
-						--	".$wherePajakku2."
-						--	".$whereCabang2.$wherePajak2.$whereJnsPajak2.$whereBulan2.$whereTahun2.$wherePembetulan2.
-						--	")"
-						*/
+						;
+				*/
+				$qsenderid = "select DOCNUMBER
+								from
+								(
+								select distinct docnumber, row_number() over (order by docnumber desc) as rn
+								   from simtax_h2h_staging_log
+								  where 1=1 
+								    and status_kirim = 'T'           
+									".$wherePajakku2."
+								     ".$whereCabang2.$wherePajak2.$whereJnsPajak2.$whereBulan2.$whereTahun2.$wherePembetulan2."      
+								) 
+								where rn = 1"
 						;
 				$rsenderid 	= $this->db->query($qsenderid);		
 				
@@ -988,16 +991,18 @@ class H2h_staging_mdl extends CI_Model {
 		if($kode_cabang != ""){
 			$whereCabang	= " and kode_cabang = '".$kode_cabang."'";
 		}
-		/*
+		
 		if($nama_pajak != ""){
-			$wherePajak	= " and pajak = '".$nama_pajak."'";
+			
 			if ($nama_pajak == 'PPN MASUKAN'){
 				$whereAccount = " and account = '10901601'";
-			} else {
+			} else if ($nama_pajak == 'PPN KELUARAN') {
 				$whereAccount = " and account = '30901601'";
+			} else {
+				$whereAccount = "";
 			}
 		}
-		*/
+
 		if($jenis_pajak != ""){
 			$whereJnsPajak	= " and jenis_pajak = '".$jenis_pajak."'";
 		}
@@ -1041,7 +1046,7 @@ class H2h_staging_mdl extends CI_Model {
 					FROM  
 					SIMTAX_DETAIL_JURNAL_TRANSAKSI
 					WHERE 1=1 and (amount is not null or amount > 0)
-					".$whereCabang.$whereBulan.$whereTahun."
+					".$whereAccount.$whereCabang.$whereBulan.$whereTahun."
 				";
 		$query = $this->db->query($mainQuery);
 		return $query;
@@ -1054,14 +1059,16 @@ class H2h_staging_mdl extends CI_Model {
 		$where         = "";
 		$whereCategory = "";
 
-		/*
+		
 		if($nama_pajak == "PPN MASUKAN"){
 			$qnama_pajak = " and account = '10901601'";
 		}
-		else{
+		else if ($nama_pajak == "PPN KELUARAN"){
 			$qnama_pajak = " and account = '30901601'";
+		} else {
+			$qnama_pajak = "";
 		}
-		*/
+		
 		if($kode_cabang != ""){
 			$whereCabang = " and kode_cabang = '".$kode_cabang."'";
 		}
@@ -1108,7 +1115,7 @@ class H2h_staging_mdl extends CI_Model {
 							INVOICE_ID
                             FROM SIMTAX_DETAIL_JURNAL_TRANSAKSI
 					        WHERE 1=1 and (amount is not null or amount > 0)
-						".$where.$whereCabang.$whereBulan.$whereTahun;
+						".$where.$qnama_pajak.$whereCabang.$whereBulan.$whereTahun;
 
 		$query = $this->db->query($sql);
 		return $query;

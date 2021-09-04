@@ -76,6 +76,7 @@
 					<label>Jenis Pajak</label>
 					<select class="form-control" id="jenisPajak" name="jenisPajak">
 						<option value="" data-name="" >Pilih Jenis Pajak</option>
+						<option value="ALLJURNAL" data-name="ALLJURNAL" > ALL JURNAL </option>
 						<option value="PPN MASUKAN" data-name="PPN MASUKAN" > eFAKTUR PPN MASUKAN </option>
 						<option value="PPN KELUARAN" data-name="PPN KELUARAN" > eFAKTUR PPN KELUARAN </option>
 						<option value="DOKUMEN LAIN MASUKAN" data-name="DOKUMEN LAIN MASUKAN" > DOKUMEN LAIN MASUKAN </option>
@@ -328,13 +329,11 @@
 			$("#jenisPajak option[value='PPN KELUARAN']").show();
 			$("#jenisPajak option[value='DOKUMEN LAIN MASUKAN']").show();
 			$("#jenisPajak option[value='DOKUMEN LAIN KELUARAN']").show();
-			$("#divjnspajak").show();
+			$("#jenisPajak option[value='ALLJURNAL']").hide();
 		} else {
-			$("#divjnspajak").hide();
 			$("#jenisPajak option[value='DOKUMEN LAIN MASUKAN']").hide();
 			$("#jenisPajak option[value='DOKUMEN LAIN KELUARAN']").hide();
-			$("#jenisPajak option[value='PPN MASUKAN']").hide();
-			$("#jenisPajak option[value='PPN KELUARAN']").hide();
+			$("#jenisPajak option[value='ALLJURNAL']").show();
 		}
 
 	});
@@ -381,9 +380,17 @@
 			var t	= $("#tahun").val();	
 			var bnm	= $("#bulan").find(":selected").attr("data-name");	
 			var pb 	= $("#pembetulanKe").val();
-			if (p == 'DETAILJT'){
-				j = "DETAILJT";
+
+			if (p == 'DETAILJT' && (j == 'DOKUMEN LAIN MASUKAN' || j == 'DOKUMEN LAIN MASUKAN')){
+				alert('Mohon maaf untuk sementara JURNAL TRANSAKSI dan jenis pajak '+j+' belum bisa kirim ke Staging');
+				return;
 			}
+
+			if(p == 'PPNMASA' && j == 'ALLJURNAL'){
+				alert('Mohon maaf untuk sementara '+p+' '+j+' belum bisa kirim ke Staging');
+				return;
+			}
+
 			if (kodecbg == ''){
 				alert('Mohon pilih Cabang');
 				return;
@@ -521,8 +528,14 @@
 		var kode_cabang = $("#cabang_trx").val();
 		var vpembetulan = $("#pembetulanKe").val();
 
-		if(p == 'DETAILJT'){
-			j = "DETAILJT";
+		if (p == 'DETAILJT' && (j == 'DOKUMEN LAIN MASUKAN' || j == 'DOKUMEN LAIN MASUKAN')){
+			alert('Mohon maaf untuk sementara JURNAL TRANSAKSI dan jenis pajak '+j+' belum bisa di download');
+			return;
+		}
+
+		if (p == 'PPNMASA' && j == 'ALLJURNAL'){
+			alert('Mohon maaf untuk sementara '+p+' '+j+' belum bisa di download');
+			return;
 		}
 
 		if (kode_cabang == ''){
