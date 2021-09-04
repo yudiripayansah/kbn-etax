@@ -78,8 +78,8 @@
 					<select class="form-control" id="jenisPajak" name="jenisPajak">
 						<option value="" data-name="" >Pilih Jenis Pajak</option>
 						<option value="ALLJURNAL" data-name="ALLJURNAL" > ALL JURNAL </option>
-						<option value="PPN MASUKAN" data-name="PPN MASUKAN" > eFAKTUR PPN MASUKAN </option>
-						<option value="PPN KELUARAN" data-name="PPN KELUARAN" > eFAKTUR PPN KELUARAN </option>
+						<option value="PPN MASUKAN" data-name="PPN MASUKAN" > PPN MASUKAN </option>
+						<option value="PPN KELUARAN" data-name="PPN KELUARAN" > PPN KELUARAN </option>
 						<?php if($nama_pajak != "DETAIL JURNAL"){ ?>
 						<option value="DOKUMEN LAIN MASUKAN" data-name="DOKUMEN LAIN MASUKAN" > DOKUMEN LAIN MASUKAN </option>
 						<option value="DOKUMEN LAIN KELUARAN" data-name="DOKUMEN LAIN KELUARAN" > DOKUMEN LAIN KELUARAN </option>
