@@ -413,8 +413,8 @@ class Ppn_masa_mdl extends CI_Model {
 
 		}
 
-		$mainQuery	= "SELECT SPL.IS_CHEKLIST, SPL.DL_FS, SPL.KD_JENIS_TRANSAKSI, SPL.NO_DOKUMEN_LAIN, SPL.NO_FAKTUR_PAJAK,
-						spl.akun_pajak, spl.dpp,
+		$mainQuery	= "SELECT distinct SPL.PAJAK_LINE_ID, SPL.IS_CHEKLIST, SPL.DL_FS, SPL.KD_JENIS_TRANSAKSI, SPL.NO_DOKUMEN_LAIN, SPL.NO_FAKTUR_PAJAK,
+						spl.akun_pajak, spl.dpp, INVOICE_NUM,
 						".$nvl_wp."
 						NVL(".$alias.".NPWP,SPL.NPWP) NPWP1
 					        FROM SIMTAX_PAJAK_LINES SPL
