@@ -337,6 +337,13 @@ class H2h_staging_mdl extends CI_Model {
 				$masaPengkreditan 	= $element_data->masaPengkreditan;
 				$tahunPengkreditan 	= $element_data->tahunPengkreditan;
 				$jenisFaktur 		= $element_data->jenisFaktur;
+				if($jenispajak == "DOKUMEN LAIN MASUKAN"){
+					 if($row_data['creditable'] == 'not_creditable'){
+						 $iscreditable = 0;
+					 } else {
+						$iscreditable = 1;
+					 }
+				}
 			}
 			$jumlahDpp 			= $element_data->jumlahDpp;
 			$jumlahPpn 			= $element_data->jumlahPpn;
