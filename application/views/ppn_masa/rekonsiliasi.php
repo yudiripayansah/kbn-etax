@@ -1,6 +1,5 @@
 <div class="container-fluid">
-	
-    <?php $this->load->view('template_top') ?>
+<?php $this->load->view('template_top') ?>
 
  <div id="list-data">
 	 <div class="white-box boxshadow">
@@ -516,7 +515,8 @@
 				<div class="panel-footer">
 					<div class="row">
 						<div class="col-lg-12 text-center">
-							<button id="btnSubmit" class="btn btn-danger btn-rounded custom-input-width" type="button"><i class="fa fa-share-square-o"></i> <span>SUBMIT</span></button>
+							<button id="btnValidasi" class="btn btn-success btn-rounded" type="button" data-toggle="modal" data-target="#modal-validasi-kswp"><i class="fa fa-check"></i> Validasi Status KSWP</button>
+							<button id="btnSubmit" class="btn btn-danger btn-rounded custom-input-width" type="button" disabled><i class="fa fa-share-square-o"></i> <span>SUBMIT</span></button>
 						</div>
 					</div>
 				</div>
@@ -1005,8 +1005,193 @@
 	</div>
 </div>
 
-
+<div id="modal-validasi-kswp" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+			  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<h4 class="modal-title">Validasi KSWP dan NPWP Ke DJP</h4>
+			</div>
+			<div class="modal-body">
+			  <div class="alert alert-info" id="djp-msgProses">Memproses <span class="djp-counter">0</span> data dari total <span class="djp-total">0</span> data</div>
+				<div id="daftarValidasi" style="max-height:500px;overflow:auto;">
+					
+				</div>
+				<div class="w-100 text-center" style="margin-top:15px;">
+					<button class="btn btn-success" type="button" id="btn-mulaiValidasi">Mulai Validasi</button>
+          <button type="button" class="btn btn-secondary hidden" data-dismiss="modal" aria-label="Close" id="btn-tutupValidasi">Tutup</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
 <script>
+	let counter = 0;
+  let token = null
+  let resKswp = null
+  let resNpwp = null
+	let status_validasi = false
+	async function checkDjp(npwp){
+    resKswp = null
+    resNpwp = null
+    console.log(counter)
+		let scrollTo = counter * 57
+		$('#daftarValidasi').animate({
+        scrollTop: scrollTo
+    }, 500);
+		$(`#daftar-validasi-${counter} .djp-statusKswp`).text('Loading...')
+    let aNpwp = npwp.shift()
+      if(aNpwp){
+    		$('.djp-counter').html(counter+1)
+        theNpwp = aNpwp.replace(/\D/g, "")
+        let fKswp = null
+        let fNpwp = null
+        let fToken = null
+        if(token){
+          fKswp = await checkKswp(token,theNpwp,aNpwp)
+          fNpwp = await checkNpwp(token,theNpwp,aNpwp)
+          if(fKswp.message == 'Token tidak valid'){
+            fToken = await getToken()
+            if(fToken){
+              fKswp = await checkKswp(fToken.message,theNpwp,aNpwp)
+              fNpwp = await checkNpwp(fToken.message,theNpwp,aNpwp)
+            }
+          }
+        } else {
+          fToken = await getToken()
+          if(fToken){
+            fKswp = await checkKswp(fToken.message,theNpwp,aNpwp)
+            fNpwp = await checkNpwp(fToken.message,theNpwp,aNpwp)
+            if(fKswp.message == 'Token tidak valid'){
+              
+            }
+          }
+        }
+        if(fKswp){
+          let status_kswp = 'Tidak ada respon'
+					if(fKswp && fKswp.message){
+						status_kswp = fKswp.message
+						if(fKswp.message.status){
+							status_kswp = `Status KSWP [${fKswp.message.status}]`	
+						}
+					}
+					$(`#daftar-validasi-${counter} .djp-statusKswp`).text(`Success, dengan respon KSWP = ${status_kswp}`)
+					$(`#daftar-validasi-${counter}`).addClass('alert-success').removeClass('alert-info')
+    			counter++
+          checkDjp(npwp)
+        } else {
+          $(`#daftar-validasi-${counter} .djp-statusKswp`).text('Error : Terlalu lama menunggu respon dari server')
+					$(`#daftar-validasi-${counter}`).addClass('alert-danger').removeClass('alert-info')
+    			counter++
+					checkDjp(npwp)
+        }
+      } else {
+				$('#djp-msgProses').html('Proses validasi selesai')
+				$('#btn-mulaiValidasi').addClass('hidden')
+        $('#btn-tutupValidasi').removeClass('hidden')
+				$('#btnSubmit').prop('disabled',false)
+				$('#btnSubmit').removeAttr('disabled')
+				status_validasi = true
+			}
+  }
+  function getToken(){
+    let user = 'pelindo2'
+    let pwd = 'Cvn0fj2489'
+    let base_url = 'https://ws.pajak.go.id/djp/'
+    let payload = {
+      user: user,
+      pwd: pwd,
+      base_url: base_url
+    }
+    let res = $.ajax({
+      url : `https://api-eservice.indonesiaport.co.id/api_djp/v1/getToken.php/wsdl?user=${user}&pwd=${pwd}&base_url=${base_url}`,
+      type: 'POST',
+      dataType: 'json',
+      data: payload,
+			timeout: 30000,
+      success: (res) => {
+        token = res.message
+      },
+      error: () => {
+        console.log('Getting token failed')
+      }
+    })
+    return res
+  }
+  function checkKswp(token,knpwp,sknpwp){
+    let kdizin = 1
+    let base_url = 'https://ws.pajak.go.id/djp/'
+    let payload = {
+      token: token,
+      npwp: knpwp,
+      kdizin: kdizin,
+      base_url: base_url
+    }
+    return $.ajax({
+      url : `https://api-eservice.indonesiaport.co.id/api_djp/v1/getKswp.php/wsdl?auth=${token}&npwp=${knpwp}&kdizin=${kdizin}&base_url=${base_url}`,
+      type: 'POST',
+      dataType: 'json',
+      data: payload,
+			timeout: 30000,
+      success: (res) => {
+        let kswpPayload = {
+          npwp_simtax: sknpwp,
+          npwp: knpwp,
+          res: res
+        }
+        saveKswp(kswpPayload)
+      },
+      error: () => {
+        console.log('Getting token failed')
+      }
+    })
+  }
+  function checkNpwp(token,nnpwp,snnpwp){
+    let kdizin = 1
+    let base_url = 'https://ws.pajak.go.id/djp/'
+    let payload = {
+      token: token,
+      npwp: nnpwp,
+      kdizin: kdizin,
+      base_url: base_url
+    }
+    return $.ajax({
+      url : `https://api-eservice.indonesiaport.co.id/api_djp/v1/getNpwp.php/wsdl?auth=${token}&npwp=${nnpwp}&kdizin=${kdizin}&base_url=${base_url}`,
+      type: 'POST',
+      dataType: 'json',
+      data: payload,
+			timeout: 30000,
+      success: (res) => {
+        let npwpPayload = {
+          npwp_simtax: snnpwp,
+          npwp: nnpwp,
+          res: res
+        }
+        saveNpwp(npwpPayload)
+      },
+      error: () => {
+        console.log('Getting token failed')
+      }
+    })
+  }
+  function saveKswp(payload){
+    $.ajax({
+      url : `<?php echo base_url('/djp/saveKswp'); ?>`,
+      type: 'POST',
+      dataType: 'json',
+      data: payload,
+			timeout: 30000,
+    })
+  }
+  function saveNpwp(payload){
+    $.ajax({
+      url : `<?php echo base_url('/djp/saveNpwp'); ?>`,
+      type: 'POST',
+      dataType: 'json',
+      data: payload,
+			timeout: 30000,
+    })
+  }
 $(document).ready(function() {
 	var table1                 = "",
 	table2                     = "",
@@ -1071,8 +1256,26 @@ $(document).ready(function() {
 	tidak_terutang_ppn         = 0,
 	terutang_ppn               = 0,
 	terutang_tidak_terutang    = 0,
-	z_percent                  = 0;
-	
+	z_percent                  = 0,
+	npwpValidasi 							 = [];
+	$('#btnValidasi').click(() => {
+		$('#btn-tutupValidasi').addClass('hidden')
+		$('#btn-mulaiValidasi').removeClass('hidden')
+		$('#djp-msgProses').html('Memproses <span class="djp-counter">0</span> data dari total <span class="djp-total">0</span> data')
+		$('.djp-total').text(npwpValidasi.length)
+		let listTemplate = ''
+		npwpValidasi.map((x,i) => {
+			listTemplate += `<div class="alert alert-info mb-0" style="margin-bottom:5px" id="daftar-validasi-${i}">
+												<span>${i+1}. Npwp : <b class="djp-noNpwp">${x}</b></span>
+												<span>Status KSWP : <b class="djp-statusKswp">-</b></span>
+											</div>`
+		})
+		$('#daftarValidasi').html(listTemplate)
+	})
+	$('#btn-mulaiValidasi').click(() => {
+		$('#btn-mulaiValidasi').addClass('hidden')
+		checkDjp(npwpValidasi)
+	})
 	$("#dpp, #jumlahpotong, #saldoAwal").number(true,2);
 	$("#d-FormCsv").hide();
 	$("#tambah-data").hide();
@@ -1103,7 +1306,17 @@ $(document).ready(function() {
 																																							d._searchPembetulan = $("#pembetulanKe").val();
 																																							d._category         = 'faktur_standar';
 																																							d._orderby          = orderby1;
-																																						}
+																																						},
+																							"dataSrc" : function(res) {
+																								if(res.allNpwp){
+																									res.allNpwp.map((x) => {
+																										if(x && x != 'null' && x!=null && x != '-'){
+																											npwpValidasi.push(x)
+																										}
+																									})
+																								}
+																								return res.data
+																							}
 																		},
 																		"language"		: {
 																											"emptyTable"	: "<span class='label label-danger'>Data Tidak Ditemukan!</span>",
@@ -1187,7 +1400,7 @@ $(document).ready(function() {
 		table1.search('').column().search('').draw();
 	});
 	
-	table1.on( 'draw', function () {
+	table1.on( 'draw', function (res) {
 		$(".checklist-1").on("click", function(){
 			vlinse_id 		= $(this).data("id");
 			vcheckbox_id 	= $(this).attr("id"); 
@@ -1332,7 +1545,17 @@ $(document).ready(function() {
 									d._searchPembetulan = $("#pembetulanKe").val();
 									d._category         = 'dokumen_lain';
 									d._orderby          = orderby2;
-								}
+								},
+								"dataSrc" : function(res) {
+																								if(res.allNpwp){
+																									res.allNpwp.map((x) => {
+																										if(x && x != 'null' && x!=null && x != '-'){
+																											npwpValidasi.push(x)
+																										}
+																									})
+																								}
+																								return res.data
+																							}
 							},
 
 			"language"		: {
@@ -1958,6 +2181,9 @@ $(document).ready(function() {
 	})
 	
 	$("#btnView").on("click", function(){
+		npwpValidasi = []
+		$('#btnSubmit').prop('disabled',true)
+		$('#btnSubmit').attr('disabled',true)
 		valueAdd();
 		getSummary();
 		table1.ajax.reload();
@@ -1973,29 +2199,43 @@ $(document).ready(function() {
 		if (e.isDefaultPrevented()) {
 		}
 		else {
-				$.ajax({
-			url		: baseURL + 'ppn_masa/save_rekonsiliasi',
-			type	: "POST",
-			data	: $('#form-wp').serialize(),
-			beforeSend	: function(){
-					$("body").addClass("loading");
-					},
-			success	: function(result){
-				if (result==true) {
-					table1.ajax.reload(null, false);
-					table2.ajax.reload(null, false);
-					$("body").removeClass("loading");
-					$("#list-data").slideDown(700);
-					$("#tambah-data").slideUp(700);
-					flashnotif('Sukses','Data Berhasil di Simpan!','success' );
-					getSummary();
-					empty();
-				} else {
-						$("body").removeClass("loading");
-						flashnotif('Error', result,'error' );
-				}
+			let dpp = Number($('#dpp').val())
+			let ppn = Number($('#jumlahpotong').val())
+			let noFaktur = $('#nofakturpajak').val().replace(/[^0-9]/g,'')
+			let ok = true
+			if(ppn != (dpp*10/100)){
+				ok = false
+				flashnotif('Error', 'Nilai PPN belum 10% dari Nilai DPP','error' );
 			}
-		});
+			if(noFaktur.length != 16){
+				ok = false
+				flashnotif('Error', 'No Faktur Pajak Tidak Sesuai','error' );
+			}
+			if(ok) {
+				$.ajax({
+					url		: baseURL + 'ppn_masa/save_rekonsiliasi',
+					type	: "POST",
+					data	: $('#form-wp').serialize(),
+					beforeSend	: function(){
+							$("body").addClass("loading");
+							},
+					success	: function(result){
+						if (result==true) {
+							table1.ajax.reload(null, false);
+							table2.ajax.reload(null, false);
+							$("body").removeClass("loading");
+							$("#list-data").slideDown(700);
+							$("#tambah-data").slideUp(700);
+							flashnotif('Sukses','Data Berhasil di Simpan!','success' );
+							getSummary();
+							empty();
+						} else {
+								$("body").removeClass("loading");
+								flashnotif('Error', result,'error' );
+						}
+					}
+				});
+			}
 		}
 		e.preventDefault();
 	});
