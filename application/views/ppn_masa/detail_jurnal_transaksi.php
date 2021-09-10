@@ -19,13 +19,6 @@
 						<?php
 							$namaBulan = list_month();
 							$bln       = date('m');
-							/*if ($bln > 1){
-								$bln     = $bln - 1;
-								$tahun_n = 0;
-							} else {
-								$bln     = 12;
-								$tahun_n = 1;
-							}*/
 							for ($i=1;$i< count($namaBulan);$i++){
 								$selected = ($i==$bln)?"selected":"";
 								echo "<option value='".$i."' data-name='".$namaBulan[$i]."' ".$selected." >".$namaBulan[$i]."</option>";
@@ -51,28 +44,18 @@
 					</select>
 				</div>
 			 </div>
-		</div>
-		<div class="row">	 
 			 <div class="col-md-2">
 				<div class="form-group">
-					<label>Pembetulan Ke</label>
-					<select class="form-control" id="pembetulanKe" name="pembetulanKe">
-						<option value="0" selected >0</option> 
-						<option value="1">1</option>
-						<option value="2">2</option>
-						<option value="3">3</option>
-					</select>
-				</div>
-			 </div>
-			 <div class="col-md-2">
-				<div class="form-group">
-					<!--<label>Jenis Pajak</label>-->
+						<label>Jenis Pajak</label>
 						<select class="form-control" id="jenisPajak" name="jenisPajak">
-							<option value="PPN MASUKAN" selected>PPN MASUKAN</option>
-							<option value="PPN KELUARAN">PPN KELUARAN</option>
+						<option value="ALLJURNAL" data-name="ALLJURNAL" > ALL JURNAL </option>
+						<option value="PPN MASUKAN" data-name="PPN MASUKAN" > PPN MASUKAN </option>
+						<option value="PPN KELUARAN" data-name="PPN KELUARAN" > PPN KELUARAN </option>
 					</select>	
 				</div>
 			 </div>
+		</div>
+		<div class="row">	 
 			 <div class="col-md-2">
 				<div class="form-group">
 				<label>&nbsp;</label>
@@ -87,30 +70,6 @@
 			</div>
 		</div>
 	 </div>
-
-	 <!--
-	<div id="d-FormCsv">
-		 <div class="white-box boxshadow">
-			<div class="row">
-				<div class="col-md-4">
-					<div class="form-group">
-						<label class="form-control-label">EXPORT CSV</label>
-						<select class="form-control" id="kategori_eksport" name="kategori_dokumen">
-							<option value="ppnmasuk" selected>PPN MASUKAN</option>
-							<option value="ppnkeluaran">PPN KELUARAN</option>
-						</select>	
-					</div>
-				</div>
-				<div class="col-md-4">
-					<div class="form-group">
-						<label>&nbsp;</label>
-						<button id="btnExportCSV" class="btn btn-success btn-rounded btn-block" type="button" ><i class="fa fa-download fa-fw"></i> <span>EXPORT CSV</span></button>
-					</div>
-			  </div>
-			</div>
-	 	</div>
-	</div>
-	-->
 	<div id="table-1" class="row">
         <div class="col-lg-12">
             <div class="panel panel-info boxshadow animated slideInDown">
@@ -492,7 +451,6 @@
 		$("#amount").number(true,2);
 		//$("#d-FormCsv").hide();
 		$("#tambah-data").hide();
-		$("#jenisPajak").hide();
 
 		valueAdd();
 		getSummary();
