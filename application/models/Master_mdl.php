@@ -34,6 +34,9 @@ class Master_mdl extends CI_Model
     {
         $q		= (isset($_POST['search']['value']))?$_POST['search']['value']:'';
         $where	= "";
+        $whereStatusKswp = "";
+        $filterStatusKswp = "";
+
         if ($q) {
             $where	= " and (upper(vendor_id) like '%".strtoupper($q)."%' or upper(vendor_name) like '%".strtoupper($q)."%' or  (npwp) like '%".strtoupper($q)."%') ";
         }
@@ -44,29 +47,47 @@ class Master_mdl extends CI_Model
         } else {
             $og_id = $this->cabang_mdl->get_og_id($this->kode_cabang);
         }
+        if (isset($_POST['_searchStatusKswp']) && $_POST['_searchStatusKswp'] != "") {
+            $filterStatusKswp = $_POST['_searchStatusKswp'];
+        }
+
+        if($where){
+            if ($filterStatusKswp !='SEMUA'){
+                $whereStatusKswp = "";
+                $whereStatusKswp = " and smn.status_kswp = '".$filterStatusKswp."'";
+            }
+        } else  {
+            if($filterStatusKswp != 'SEMUA'){
+                $whereStatusKswp = " and smn.status_kswp = '".$filterStatusKswp."'";
+            }            
+        }
         
         $queryExec = "SELECT						
-						   VENDOR_ID,  
-						   VENDOR_NAME , 
-						   VENDOR_NUMBER, 
-						   VENDOR_TYPE_LOOKUP_CODE,
-						   NPWP,
-						   OPERATING_UNIT ,
-						   VENDOR_SITE_ID,
-						   VENDOR_SITE_CODE ,
-						   ADDRESS_LINE1, 
-						   ADDRESS_LINE2,
-						   ADDRESS_LINE3,
-						   CITY,
-						   PROVINCE,
-						   COUNTRY,
-						   ZIP,
-						   AREA_CODE,PHONE,
-						   ORGANIZATION_ID      
-					FROM   SIMTAX_MASTER_SUPPLIER 
-					WHERE 1=1 ".$where." and organization_id = '".$og_id."' order by 1 desc";
+						   SMS.VENDOR_ID,  
+						   SMS.VENDOR_NAME , 
+						   SMS.VENDOR_NUMBER, 
+						   SMS.VENDOR_TYPE_LOOKUP_CODE,
+						   SMS.NPWP,
+						   SMS.OPERATING_UNIT ,
+						   SMS.VENDOR_SITE_ID,
+						   SMS.VENDOR_SITE_CODE ,
+						   SMS.ADDRESS_LINE1, 
+						   SMS.ADDRESS_LINE2,
+						   SMS.ADDRESS_LINE3,
+						   SMS.CITY,
+						   SMS.PROVINCE,
+						   SMS.COUNTRY,
+						   SMS.ZIP,
+						   SMS.AREA_CODE,PHONE,
+						   SMS.ORGANIZATION_ID,
+                           SMN.STATUS_KSWP      
+					FROM   SIMTAX_MASTER_SUPPLIER SMS
+                    LEFT JOIN SIMTAX_MASTER_NPWP SMN ON SMN.NPWP_SIMTAX = SMS.NPWP
+					WHERE 1=1 ".$where.$whereStatusKswp." and organization_id = '".$og_id."' order by 1 desc";
         $queryCount = "SELECT count(1) JML      
-						 FROM SIMTAX_MASTER_SUPPLIER where 1=1 ".$where." and organization_id = '".$og_id."' order by 1 desc";
+						 FROM SIMTAX_MASTER_SUPPLIER SMS
+                         LEFT JOIN SIMTAX_MASTER_NPWP SMN ON SMN.NPWP_SIMTAX = SMS.NPWP 
+                         where 1=1 ".$where.$whereStatusKswp." and organization_id = '".$og_id."' order by 1 desc";
         
         $sql		="SELECT * FROM (
 						SELECT rownum rnum, a.* 
@@ -88,7 +109,8 @@ class Master_mdl extends CI_Model
             $ii	=	0;
             foreach ($query->result_array() as $row) {
                 $djp_npwp = $this->db->from('SIMTAX_MASTER_NPWP')->where('NPWP_SIMTAX', $row['NPWP'])->get()->row();
-                $status_kswp = ($djp_npwp->STATUS_KSWP) ? $djp_npwp->STATUS_KSWP : '-';
+                //$status_kswp = ($djp_npwp->STATUS_KSWP) ? $djp_npwp->STATUS_KSWP : '-';
+                $status_kswp = ($row['STATUS_KSWP']) ? $row['STATUS_KSWP'] : '-';
                 $ii++;
                 $result['data'][] = array(
                             'no'						=> $row['RNUM'],
@@ -97,7 +119,7 @@ class Master_mdl extends CI_Model
                             'vendor_number'				=> $row['VENDOR_NUMBER'],
                             'vendor_type_lookup_code'	=> $row['VENDOR_TYPE_LOOKUP_CODE'],
                             'npwp'						=> $row['NPWP'],
-                            'status_kswp'						=> $status_kswp,
+                            'status_kswp'				=> $status_kswp,
                             'operating_unit'			=> $row['OPERATING_UNIT'],
                             'vendor_site_id'			=> $row['VENDOR_SITE_ID'],
                             'vendor_site_code'			=> $row['VENDOR_SITE_CODE'],
@@ -410,11 +432,17 @@ class Master_mdl extends CI_Model
     {
         $q		= (isset($_POST['search']['value']))?$_POST['search']['value']:'';
         $where	= "";
+        $whereStatusKswp = "";
+        $filterStatusKswp = "";
         $og_id = null;
         if (isset($_POST['_searchCabang']) && $_POST['_searchCabang'] != "") {
             $kode_cabang = $_POST['_searchCabang'];
             $og_id       = $this->cabang_mdl->get_og_id($kode_cabang);
         }
+        if (isset($_POST['_searchStatusKswp']) && $_POST['_searchStatusKswp'] != "") {
+            $filterStatusKswp = $_POST['_searchStatusKswp'];
+        }
+        
         if ($q) { //check lgsg where atau and
             $where	= " where (upper(customer_id) like '%".strtoupper($q)."%' or upper(customer_name) like '%".strtoupper($q)."%' or  (npwp) like '%".strtoupper($q)."%')";
             if ($og_id) {
@@ -425,26 +453,41 @@ class Master_mdl extends CI_Model
                 $where = " where organization_id = '".$og_id."'";
             }
         }
-        $queryExec = "SELECT CUSTOMER_ID,  
-									   CUSTOMER_NAME , 
-									   ALIAS_CUSTOMER, 
-									   CUSTOMER_NUMBER,
-									   NPWP,
-									   OPERATING_UNIT ,
-									   CUSTOMER_SITE_ID,
-									   CUSTOMER_SITE_NUMBER ,
-									   CUSTOMER_SITE_NAME, 
-									   ADDRESS_LINE1,
-									   ADDRESS_LINE2,
-									   ADDRESS_LINE3,
-									   CITY,
-									   PROVINCE,
-									   COUNTRY,
-									   ZIP
-								FROM   SIMTAX_MASTER_PELANGGAN ".$where;
+        if($where){
+            if ($filterStatusKswp !='SEMUA'){
+                $whereStatusKswp = "";
+                $whereStatusKswp = " and smn.status_kswp = '".$filterStatusKswp."'";
+            }
+        } else  {
+            if($filterStatusKswp != 'SEMUA'){
+                $whereStatusKswp = " where smn.status_kswp = '".$filterStatusKswp."'";
+            }            
+        }
+        $queryExec = "SELECT SMP.CUSTOMER_ID,  
+									   SMP.CUSTOMER_NAME , 
+									   SMP.ALIAS_CUSTOMER, 
+									   SMP.CUSTOMER_NUMBER,
+									   SMP.NPWP,
+									   SMP.OPERATING_UNIT ,
+									   SMP.CUSTOMER_SITE_ID,
+									   SMP.CUSTOMER_SITE_NUMBER ,
+									   SMP.CUSTOMER_SITE_NAME, 
+									   SMP.ADDRESS_LINE1,
+									   SMP.ADDRESS_LINE2,
+									   SMP.ADDRESS_LINE3,
+									   SMP.CITY,
+									   SMP.PROVINCE,
+									   SMP.COUNTRY,
+									   SMP.ZIP,
+                                       SMN.STATUS_KSWP
+								FROM   SIMTAX_MASTER_PELANGGAN SMP 
+                                LEFT JOIN SIMTAX_MASTER_NPWP SMN ON SMN.NPWP_SIMTAX = SMP.NPWP "
+                                .$where.$whereStatusKswp;
 
         $queryCount = "SELECT count(1) JML      
-						 FROM SIMTAX_MASTER_PELANGGAN ".$where;
+						 FROM SIMTAX_MASTER_PELANGGAN SMP
+                         LEFT JOIN SIMTAX_MASTER_NPWP SMN ON SMN.NPWP_SIMTAX = SMP.NPWP
+                         ".$where.$whereStatusKswp;
                                 
         $sql		="SELECT * FROM (
 						SELECT rownum rnum, a.* 
@@ -480,7 +523,7 @@ class Master_mdl extends CI_Model
                             'alias_customer'		=> $row['ALIAS_CUSTOMER'],
                             'customer_number'		=> $row['CUSTOMER_NUMBER'],
                             'npwp'					=> $row['NPWP'],
-                            'status_kswp'						=> $status_kswp,
+                            'status_kswp'			=> $status_kswp,
                             'operating_unit'		=> $row['OPERATING_UNIT'],
                             'customer_site_id'		=> $row['CUSTOMER_SITE_ID'],
                             'customer_site_number'	=> $row['CUSTOMER_SITE_NUMBER'],
@@ -492,7 +535,7 @@ class Master_mdl extends CI_Model
                             'province'				=> $row['PROVINCE'],
                             'country'				=> $row['COUNTRY'],
                             'zip'					=> $row['ZIP'],
-                                                        'djp' => $djp_npwp,
+                            'djp' => $djp_npwp,
                         );
             }
             

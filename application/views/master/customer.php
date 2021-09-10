@@ -63,7 +63,20 @@
 									</select>
 								</div>
 								<?php endif; ?>
-							</div>	
+							</div>
+							<div class="col-xs-3">
+								<div class="form-group" style="margin-bottom: 0;">
+									<label for="filter-status-kswp" class="control-label">by Status KSWP</label>
+									<select id="filter-status-kswp" class="form-control">
+										<option value="SEMUA">SEMUA</option>
+										<?php
+										foreach ($status_kswp as $key => $sk) {
+											echo '<option value="'.$sk->STATUS_KSWP.'">'.$sk->STATUS_KSWP.'</option>';
+										}
+										?>
+									</select>
+								</div>
+							</div>
 						</div>
 						<table width="100%" class="display cell-border stripe hover small" id="tabledata"> 
 							<thead>
@@ -358,6 +371,7 @@
 		$("#edit-data").hide();			
 		
 		filter_by = $("#cabang").val();
+		filter_status_kswp = $("#filter-status-kswp").val();
 		 Pace.track(function(){  
 		   $('#tabledata').removeAttr('width').DataTable({
 			"serverSide"	: true,
@@ -372,6 +386,7 @@
 									},
 									"data"	: function (d) {		
 										d._searchCabang = filter_by;
+										d._searchStatusKswp = filter_status_kswp;
 									}
 							  },
 			 "language"		: {
@@ -428,6 +443,10 @@
 		 /*fungsi tombol x */
 		$("#cabang").on("change", function(){
 			filter_by = $("#cabang").val();
+			table.ajax.reload(null, false);
+		});
+		$("#filter-status-kswp").on("change", function(){
+			filter_status_kswp = $("#filter-status-kswp").val();
 			table.ajax.reload(null, false);
 		});
 		$("input[type=search]").addClear();

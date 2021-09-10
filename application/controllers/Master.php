@@ -46,6 +46,7 @@ class Master extends CI_Controller
         $this->template->set('title', 'Master Supplier');
         $data['subtitle']	= "Master Supplier";
         $data['activepage'] = "master_data";
+        $data['status_kswp'] = $this->Npwp_mdl->get_status_kswp();
         $this->template->load('template', 'master/supplier', $data);
     }
     
@@ -125,6 +126,7 @@ class Master extends CI_Controller
         $this->template->set('title', 'Master Customer');
         $data['subtitle']	= "Master Customer";
         $data['activepage'] = "master_data";
+        $data['status_kswp'] = $this->Npwp_mdl->get_status_kswp();
         $this->template->load('template', 'master/customer', $data);
     }
     
