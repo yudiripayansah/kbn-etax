@@ -12,6 +12,7 @@ class Master extends CI_Controller
 
         $this->load->model('cabang_mdl');
         $this->load->model('Master_mdl');
+        $this->load->model('Npwp_mdl');
         $this->kode_cabang = $this->session->userdata('kd_cabang');
     }
     
@@ -864,7 +865,17 @@ class Master extends CI_Controller
         $this->template->set('title', 'Master NPWP dari DJP');
         $data['subtitle']	= "Master NPWP dari DJP";
         $data['activepage'] = "npwp_djp";
+        $data['status_kswp'] = $this->Npwp_mdl->get_status_kswp();
+        $data['user_type'] = $this->Npwp_mdl->get_user_type();
         $this->template->load('template', 'master/npwp_djp', $data);
+    }
+
+    public function master_npwp()
+    {
+        $this->template->set('title', 'Master NPWP');
+        $data['subtitle']	= "Master NPWP";
+        $data['activepage'] = "master_npwp";
+        $this->template->load('template', 'master/master_npwp', $data);
     }
 
     // end import customer

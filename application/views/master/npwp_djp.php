@@ -19,18 +19,32 @@
             <div class="row d-flex align-items-end" style="display:flex;align-items:flex-end;margin-bottom: 25px;">
               <div class="col-xs-3">
                 <div class="form-group" style="margin-bottom: 0;">
-                  <label for="sync-target" class="control-label">Pilih Tipe Data</label>
-                  <select id="sync-target" class="form-control">
-                    <option value="PELANGGAN">CUSTOMER</option>
-                    <option value="SUPPLIER">SUPPLIER</option>
+                  <label for="filter-status-kswp" class="control-label">Status KSWP</label>
+                  <select id="filter-status-kswp" class="form-control">
+                    <option value="SEMUA">SEMUA</option>
+                    <?php
+                      foreach ($status_kswp as $key => $sk) {
+                          echo '<option value="'.$sk->STATUS_KSWP.'">'.$sk->STATUS_KSWP.'</option>';
+                      }
+                    ?>
                   </select>
                 </div>
               </div>
-              <div class="col-xs-9">
-                <button class="btn btn-info" id="sync-button">Sync NPWP and KSWP to DJP</button>
-                <div class="alert alert-info hidden" id="sync-info" style="margin:0;">
-                  Processing data <span id="sync-name"></span> to sync with DJP <b class="djp-counter"></b> data out of <b class="djp-total"></b>
+              <div class="col-xs-3">
+                <div class="form-group" style="margin-bottom: 0;">
+                  <label for="filter-tipe-user" class="control-label">Tipe User</label>
+                  <select id="filter-tipe-user" class="form-control">
+                    <option value="SEMUA">SEMUA</option>
+                    <?php
+                      foreach ($user_type as $key => $sk) {
+                          echo '<option value="'.$sk->USER_TYPE.'">'.$sk->USER_TYPE.'</option>';
+                      }
+                    ?>
+                  </select>
                 </div>
+              </div>
+              <div class="col-xs-6">
+                <button class="btn btn-info" id="btnValidasi" data-toggle="modal" data-target="#modal-validasi-kswp">Validasi Status KSWP ke DJP</button>
               </div>
             </div>
             <div class="table-responsive">
@@ -38,6 +52,8 @@
                 <thead>
                   <tr>
                     <th>No</th>
+                    <th>Action</th>
+                    <th>Status KSWP</th>
                     <th>NPWP Simtax</th>
                     <th>NPWP DJP</th>
                     <th>Nama</th>
@@ -53,13 +69,31 @@
                     <th>Email</th>
                     <th>Jenis WP</th>
                     <th>Badan Hukum</th>
-                    <th>Status KSWP</th>
                     <th>User Type</th>
-                    <th>Action</th>
                   </tr>
                 </thead>
               </table>
             </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="modal-validasi-kswp" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+          <h4 class="modal-title">Validasi KSWP dan NPWP Ke DJP</h4>
+        </div>
+        <div class="modal-body">
+          <div class="alert alert-info" id="djp-msgProses">Memproses <span class="djp-counter">0</span> data dari total <span class="djp-total">0</span> data</div>
+          <div id="daftarValidasi" style="max-height:500px;overflow:auto;">
+            
+          </div>
+          <div class="w-100 text-center" style="margin-top:15px;">
+            <button class="btn btn-success" type="button" id="btn-mulaiValidasi">Mulai Validasi</button>
+            <button type="button" class="btn btn-secondary hidden" data-dismiss="modal" aria-label="Close" id="btn-tutupValidasi">Tutup</button>
           </div>
         </div>
       </div>
@@ -69,9 +103,17 @@
 <script>
   let dataRes = []
   let counter = 0;
+  let npwpValidasi = [];
+  let token = null
+  let resKswp = null
+  let resNpwp = null
+  let tablePayload = {
+    user_type : null,
+    status_kswp : null,
+  }
   $(document).ready(function(){
     // get data with ajax
-    $('.table-datatable').DataTable( {
+    let dataTable = $('.table-datatable').DataTable( {
         "processing": true,
         "serverSide": true,
         "scrollY": "300px",
@@ -80,11 +122,15 @@
         "order": [],
         "ajax": {
             "url": '<?php echo base_url("/djp/get_master_npwp"); ?>',
-            "type": "POST"
+            "type": "POST",
+            "data": (d) => {
+              d.user_type = $('#filter-tipe-user').val()
+              d.status_kswp = $('#filter-status-kswp').val()
+            },
         },
         "columnDefs": [
           { 
-              "targets": [ 0, 18 ], //first column / numbering column
+              "targets": [ 0, 1 ], //first column / numbering column
               "orderable": false, //set not orderable
           },
         ],
@@ -96,75 +142,232 @@
 					"processing"	:' <img src="<?php echo base_url('assets/vendor/simtax/css/images/loading2.gif'); ?>">',
 					"search"		: "_INPUT_"
 				},
-        "columns": [
-					{ "name": "NO", "class":"text-center" },
-					{ "name": "NPWP_SIMTAX", "class":"" },
-					{ "name": "NPWP", "class":"" },
-					{ "name": "NAMA", "class":"" },
-					{ "name": "MERK_DAGANG", "class":"" },
-					{ "name": "ALAMAT", "class":"" },
-					{ "name": "KELURAHAN", "class":"" },
-					{ "name": "KECAMATAN", "class":"" },
-					{ "name": "KABKOT", "class":"" },
-					{ "name": "PROVINSI", "class":"" },
-					{ "name": "KODE_KLU", "class":"" },
-					{ "name": "KLU", "class":"" },
-					{ "name": "TELP", "class":"" },
-					{ "name": "EMAIL", "class":"" },
-					{ "name": "JENIS_WP", "class":"" },
-					{ "name": "BADAN_HUKUM", "class":"" },
-					{ "name": "STATUS_KSWP", "class":"" },
-					{ "name": "USER_TYPE", "class":"" },
-					{ "name": "ACTION", "class":"text-center" },
-				],
+        // "columns": [
+				// 	{ "name": "NO", "class":"text-center" },
+				// 	{ "name": "ACTION", "class":"text-center" },
+				// 	{ "name": "STATUS_KSWP", "class":"" },
+				// 	{ "name": "NPWP_SIMTAX", "class":"" },
+				// 	{ "name": "NPWP", "class":"" },
+				// 	{ "name": "NAMA", "class":"" },
+				// 	{ "name": "MERK_DAGANG", "class":"" },
+				// 	{ "name": "ALAMAT", "class":"" },
+				// 	{ "name": "KELURAHAN", "class":"" },
+				// 	{ "name": "KECAMATAN", "class":"" },
+				// 	{ "name": "KABKOT", "class":"" },
+				// 	{ "name": "PROVINSI", "class":"" },
+				// 	{ "name": "KODE_KLU", "class":"" },
+				// 	{ "name": "KLU", "class":"" },
+				// 	{ "name": "TELP", "class":"" },
+				// 	{ "name": "EMAIL", "class":"" },
+				// 	{ "name": "JENIS_WP", "class":"" },
+				// 	{ "name": "BADAN_HUKUM", "class":"" },
+				// 	{ "name": "USER_TYPE", "class":"" },
+				// ],
     } );
-    $('#sync-button').click(() => {
-      let target = $('#sync-target').val();
-      let name = (target == 'PELANGGAN') ? 'CUSTOMER' : target
-      $('#sync-name').text(name)
-      $('#sync-button').addClass('hidden')
-      $('#sync-info').removeClass('hidden')
-      fetchData(target.toLowerCase()).then((res) => {
-        $('.djp-total').html(res.length)
-        res.map((x,i) => {
-          dataRes.push(x.NPWP)
-        })
-        checkDjp(dataRes,target)
+    $('#btnValidasi').click(() => {
+      counter = 0;
+      npwpValidasi = []
+      $('#btn-tutupValidasi').addClass('hidden')
+      $('#daftarValidasi').html('')
+      $('#djp-msgProses').html('Mengambil data mohon menunggu...')
+          $('#btn-mulaiValidasi').addClass('hidden')
+      $.ajax({
+        url: '<?php echo base_url('/djp/get_npwp_validasi'); ?>',
+        data: {
+          user_type: $('#filter-tipe-user').val(),
+          status_kswp: $('#filter-status-kswp').val()
+        },
+        dataType: 'json',
+        type: 'POST',
+        success: (res) => {
+          res.data.map((x)=>{
+            npwpValidasi.push(x.NPWP_SIMTAX)
+          })
+          $('#btn-mulaiValidasi').removeClass('hidden')
+          $('#djp-msgProses').html('Memproses <span class="djp-counter">0</span> data dari total <span class="djp-total">0</span> data')
+          $('.djp-total').text(npwpValidasi.length)
+          let listTemplate = ''
+          npwpValidasi.map((x,i) => {
+            listTemplate += `<div class="alert alert-info mb-0" style="margin-bottom:5px" id="daftar-validasi-${i}">
+                              <span>${i+1}. Npwp : <b class="djp-noNpwp">${x}</b></span>
+                              <span>Status KSWP : <b class="djp-statusKswp">-</b></span>
+                            </div>`
+          })
+          $('#daftarValidasi').html(listTemplate)
+        },
+        error: () => {
+
+        }
       })
     })
+    $('#btn-mulaiValidasi').click(() => {
+      $('#btn-mulaiValidasi').addClass('hidden')
+      checkDjp(npwpValidasi)
+    })
+    $('#filter-status-kswp,#filter-tipe-user').change(() => {
+      dataTable.ajax.reload()
+    })
   })
-  function checkDjp(npwp,target){
-    counter++
-    $('.djp-counter').html(counter)
-    let checkNpwp = npwp.pop()
-      if(checkNpwp){
-        let payload = {
-          npwp: checkNpwp,
-          type: target
+  async function checkDjp(npwp){
+    resKswp = null
+    resNpwp = null
+    console.log(counter)
+		let scrollTo = counter * 57
+		$('#daftarValidasi').animate({
+        scrollTop: scrollTo
+    }, 500);
+		$(`#daftar-validasi-${counter} .djp-statusKswp`).text('Loading...')
+    let aNpwp = npwp.shift()
+      if(aNpwp){
+    		$('.djp-counter').html(counter+1)
+        theNpwp = aNpwp.replace(/\D/g, "")
+        let fKswp = null
+        let fNpwp = null
+        let fToken = null
+        if(theNpwp){
+          if(token){
+            fKswp = await checkKswp(token,theNpwp,aNpwp)
+            fNpwp = await checkNpwp(token,theNpwp,aNpwp)
+            if(fKswp.message == 'Token tidak valid'){
+              fToken = await getToken()
+              console.log(fToken,aNpwp,token,'Token ini tidak valid')
+              if(fToken){
+                fKswp = await checkKswp(fToken.message,theNpwp,aNpwp)
+                fNpwp = await checkNpwp(fToken.message,theNpwp,aNpwp)
+              }
+            }
+          } else {
+            fToken = await getToken()
+            if(fToken){
+              console.log(fToken,aNpwp,'membuat token baru')
+              fKswp = await checkKswp(fToken.message,theNpwp,aNpwp)
+              fNpwp = await checkNpwp(fToken.message,theNpwp,aNpwp)
+              if(fKswp.message == 'Token tidak valid'){
+                
+              }
+            }
+          }
         }
-        $.ajax({
-          url: '<?php echo base_url(); ?>/djp/checkDjp',
-          type: 'POST',
-          dataType: 'json',
-          data: payload
-        }).success(() => {
+        if(fKswp){
+          let status_kswp = 'Tidak ada respon'
+					if(fKswp && fKswp.message){
+						status_kswp = fKswp.message
+						if(fKswp.message.status){
+							status_kswp = `Status KSWP [${fKswp.message.status}]`	
+						}
+					}
+					$(`#daftar-validasi-${counter} .djp-statusKswp`).text(`Success, dengan respon KSWP = ${status_kswp}`)
+					$(`#daftar-validasi-${counter}`).addClass('alert-success').removeClass('alert-info')
+    			counter++
           checkDjp(npwp)
-        })
+        } else {
+          $(`#daftar-validasi-${counter} .djp-statusKswp`).text('Error : Terlalu lama menunggu respon dari server')
+					$(`#daftar-validasi-${counter}`).addClass('alert-danger').removeClass('alert-info')
+    			counter++
+					checkDjp(npwp)
+        }
       } else {
-        $('#sync-info').addClass('hidden')
-      $('#sync-button').removeClass('hidden')
-      }
+				$('#djp-msgProses').html('Proses validasi selesai')
+				$('#btn-mulaiValidasi').addClass('hidden')
+        $('#btn-tutupValidasi').removeClass('hidden')
+			}
   }
-  async function fetchData(type){
-    let ajax =  new Promise((resolve,reject) => {
-                  $.ajax({
-                    url: '<?php echo base_url(); ?>/djp/'+type,
-                    type: 'GET',
-                    dataType: 'json'
-                  }).success((res) => {
-                    resolve(res.data)
-                  })
-                })
-    return ajax
+  function getToken(){
+    let user = 'pelindo2'
+    let pwd = 'Cvn0fj2489'
+    let base_url = 'https://ws.pajak.go.id/djp/'
+    let payload = {
+      user: user,
+      pwd: pwd,
+      base_url: base_url
+    }
+    let res = $.ajax({
+      url : `https://api-eservice.indonesiaport.co.id/api_djp/v1/getToken.php/wsdl?user=${user}&pwd=${pwd}&base_url=${base_url}`,
+      type: 'POST',
+      dataType: 'json',
+      data: payload,
+			timeout: 30000,
+      success: (res) => {
+        token = res.message
+      },
+      error: () => {
+        getToken()
+      }
+    })
+    return res
+  }
+  function checkKswp(token,knpwp,sknpwp){
+    let kdizin = 1
+    let base_url = 'https://ws.pajak.go.id/djp/'
+    let payload = {
+      token: token,
+      npwp: knpwp,
+      kdizin: kdizin,
+      base_url: base_url
+    }
+    return $.ajax({
+      url : `https://api-eservice.indonesiaport.co.id/api_djp/v1/getKswp.php/wsdl?auth=${token}&npwp=${knpwp}&kdizin=${kdizin}&base_url=${base_url}`,
+      type: 'POST',
+      dataType: 'json',
+      data: payload,
+			timeout: 30000,
+      success: (res) => {
+        let kswpPayload = {
+          npwp_simtax: sknpwp,
+          npwp: knpwp,
+          res: res
+        }
+        saveKswp(kswpPayload)
+      },
+      error: () => {
+        console.log('Check Kswp failed')
+      }
+    })
+  }
+  function checkNpwp(token,nnpwp,snnpwp){
+    let kdizin = 1
+    let base_url = 'https://ws.pajak.go.id/djp/'
+    let payload = {
+      token: token,
+      npwp: nnpwp,
+      kdizin: kdizin,
+      base_url: base_url
+    }
+    return $.ajax({
+      url : `https://api-eservice.indonesiaport.co.id/api_djp/v1/getNpwp.php/wsdl?auth=${token}&npwp=${nnpwp}&kdizin=${kdizin}&base_url=${base_url}`,
+      type: 'POST',
+      dataType: 'json',
+      data: payload,
+			timeout: 30000,
+      success: (res) => {
+        let npwpPayload = {
+          npwp_simtax: snnpwp,
+          npwp: nnpwp,
+          res: res
+        }
+        saveNpwp(npwpPayload)
+      },
+      error: () => {
+        console.log('Check Npwp failed')
+      }
+    })
+  }
+  function saveKswp(payload){
+    $.ajax({
+      url : `<?php echo base_url('/djp/saveKswp'); ?>`,
+      type: 'POST',
+      dataType: 'json',
+      data: payload,
+			timeout: 30000,
+    })
+  }
+  function saveNpwp(payload){
+    $.ajax({
+      url : `<?php echo base_url('/djp/saveNpwp'); ?>`,
+      type: 'POST',
+      dataType: 'json',
+      data: payload,
+			timeout: 30000,
+    })
   }
 </script>
