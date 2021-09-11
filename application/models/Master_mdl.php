@@ -38,7 +38,7 @@ class Master_mdl extends CI_Model
         $filterStatusKswp = "";
 
         if ($q) {
-            $where	= " and (upper(vendor_id) like '%".strtoupper($q)."%' or upper(vendor_name) like '%".strtoupper($q)."%' or  (npwp) like '%".strtoupper($q)."%') ";
+            $where	= " and (upper(SMS.vendor_id) like '%".strtoupper($q)."%' or upper(SMS.vendor_name) like '%".strtoupper($q)."%' or  (SMS.npwp) like '%".strtoupper($q)."%') ";
         }
 
         if (isset($_POST['_searchCabang']) && $_POST['_searchCabang'] != "") {
@@ -83,11 +83,11 @@ class Master_mdl extends CI_Model
                            SMN.STATUS_KSWP      
 					FROM   SIMTAX_MASTER_SUPPLIER SMS
                     LEFT JOIN SIMTAX_MASTER_NPWP SMN ON SMN.NPWP_SIMTAX = SMS.NPWP
-					WHERE 1=1 ".$where.$whereStatusKswp." and organization_id = '".$og_id."' order by 1 desc";
+					WHERE 1=1 ".$where.$whereStatusKswp." and SMS.organization_id = '".$og_id."' order by 1 desc";
         $queryCount = "SELECT count(1) JML      
 						 FROM SIMTAX_MASTER_SUPPLIER SMS
                          LEFT JOIN SIMTAX_MASTER_NPWP SMN ON SMN.NPWP_SIMTAX = SMS.NPWP 
-                         where 1=1 ".$where.$whereStatusKswp." and organization_id = '".$og_id."' order by 1 desc";
+                         where 1=1 ".$where.$whereStatusKswp." and SMS.organization_id = '".$og_id."' order by 1 desc";
         
         $sql		="SELECT * FROM (
 						SELECT rownum rnum, a.* 
@@ -133,7 +133,7 @@ class Master_mdl extends CI_Model
                             'area_code'					=> $row['AREA_CODE'],
                             'phone'						=> $row['PHONE'],
                             'organization_id'			=> $row['ORGANIZATION_ID'],
-                                                        'djp' => $djp_npwp,
+                            'djp' => $djp_npwp,
 
                           );
             }
@@ -444,13 +444,13 @@ class Master_mdl extends CI_Model
         }
         
         if ($q) { //check lgsg where atau and
-            $where	= " where (upper(customer_id) like '%".strtoupper($q)."%' or upper(customer_name) like '%".strtoupper($q)."%' or  (npwp) like '%".strtoupper($q)."%')";
+            $where	= " where (upper(SMP.customer_id) like '%".strtoupper($q)."%' or upper(SMP.customer_name) like '%".strtoupper($q)."%' or  (SMP.npwp) like '%".strtoupper($q)."%')";
             if ($og_id) {
-                $where .= "and organization_id = '".$og_id."'";
+                $where .= "and SMP.organization_id = '".$og_id."'";
             }
         } else {
             if ($og_id) {
-                $where = " where organization_id = '".$og_id."'";
+                $where = " where SMP.organization_id = '".$og_id."'";
             }
         }
         if($where){

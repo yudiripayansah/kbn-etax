@@ -482,20 +482,21 @@ class Master extends CI_Controller
 														VENDOR_NUMBER       	= '".trim($data[2], '"')."',
 														VENDOR_TYPE_LOOKUP_CODE = '".trim($data[3], '"')."',
 														NPWP                	= '".trim($data[4], '"')."',
-														OPERATING_UNIT      	= '".trim($data[5], '"')."',
-														VENDOR_SITE_CODE    	= '".trim($data[7], '"')."',
-														ADDRESS_LINE1       	= '".trim($data[8], '"')."',
-														ADDRESS_LINE2       	= '".trim($data[9], '"')."',
-														ADDRESS_LINE3       	= '".trim($data[10], '"')."',
-														CITY                	= '".trim($data[1], '"')."',
-														PROVINCE            	= '".trim($data[12], '"')."',
-														COUNTRY             	= '".trim($data[13], '"')."',
-														ZIP                 	= '".trim($data[14], '"')."',
-														AREA_CODE           	= '".trim($data[15], '"')."',
-														PHONE               	= '".trim($data[16], '"')."',
-														ORGANIZATION_ID     	= ".trim($data[17], '"')."
+														OPERATING_UNIT      	= '".trim($data[6], '"')."',
+														VENDOR_SITE_CODE    	= '".trim($data[8], '"')."',
+														ADDRESS_LINE1       	= '".trim($data[9], '"')."',
+														ADDRESS_LINE2       	= '".trim($data[10], '"')."',
+														ADDRESS_LINE3       	= '".trim($data[11], '"')."',
+														CITY                	= '".trim($data[12], '"')."',
+														PROVINCE            	= '".trim($data[13], '"')."',
+														COUNTRY             	= '".trim($data[14], '"')."',
+														ZIP                 	= '".trim($data[15], '"')."',
+														AREA_CODE           	= '".trim($data[16], '"')."',
+														PHONE               	= '".trim($data[17], '"')."',
+														ORGANIZATION_ID     	= ".trim($data[18], '"')."
 													WHERE VENDOR_ID = ".$data[0];
                                 } else {
+                                    /*
                                     $sql = "insert 
 													INTO SIMTAX_MASTER_SUPPLIER 
 													(VENDOR_ID
@@ -538,8 +539,13 @@ class Master extends CI_Controller
 													,".trim($data[17], '"')."
 													)
 											";
+                                     */
+                                    $result['st'] =0;
+                                    echo json_encode($result);
+                                    die();       
                                 }
                             } else {
+                                /*
                                 $sql = "insert 
 										INTO SIMTAX_MASTER_SUPPLIER
 										(VENDOR_ID
@@ -582,6 +588,10 @@ class Master extends CI_Controller
 												,".trim($data[17], '"')."
 												)
 										";
+                                        */
+                                $result['st'] =0;
+                                echo json_encode($result);
+                                die();
                             }
                                                  
                             $query 		= $this->db->query($sql);
@@ -743,20 +753,21 @@ class Master extends CI_Controller
 											   ALIAS_CUSTOMER       	= '".trim($data[2], '"')."',
 											   CUSTOMER_NUMBER 			= '".trim($data[3], '"')."',
 											   NPWP                		= '".trim($data[4], '"')."',
-											   OPERATING_UNIT      		= '".trim($data[5], '"')."',
-											   CUSTOMER_SITE_ID    		= '".trim($data[6], '"')."',
-											   CUSTOMER_SITE_NUMBER     = '".trim($data[7], '"')."',
-											   CUSTOMER_SITE_NAME       = '".trim($data[8], '"')."',
-											   ADDRESS_LINE1       		= '".trim($data[9], '"')."',
-											   ADDRESS_LINE2            = '".trim($data[10], '"')."',
-											   ADDRESS_LINE3            = '".trim($data[11], '"')."',
-											   CITY             		= '".trim($data[12], '"')."',
-											   PROVINCE                 = '".trim($data[13], '"')."',
-											   COUNTRY           		= '".trim($data[14], '"')."',
-											   ZIP               		= '".trim($data[15], '"')."',
-											   ORGANIZATION_ID          = ".trim($data[16], '"')."
+											   OPERATING_UNIT      		= '".trim($data[6], '"')."',
+											   CUSTOMER_SITE_ID    		= '".trim($data[7], '"')."',
+											   CUSTOMER_SITE_NUMBER     = '".trim($data[8], '"')."',
+											   CUSTOMER_SITE_NAME       = '".trim($data[9], '"')."',
+											   ADDRESS_LINE1       		= '".trim($data[10], '"')."',
+											   ADDRESS_LINE2            = '".trim($data[11], '"')."',
+											   ADDRESS_LINE3            = '".trim($data[12], '"')."',
+											   CITY             		= '".trim($data[13], '"')."',
+											   PROVINCE                 = '".trim($data[14], '"')."',
+											   COUNTRY           		= '".trim($data[15], '"')."',
+											   ZIP               		= '".trim($data[16], '"')."',
+											   ORGANIZATION_ID          = ".trim($data[17], '"')."
 										   WHERE CUSTOMER_ID = ".$data[0];
                                 } else {
+                                    /*
                                     $sql = "insert into SIMTAX_MASTER_PELANGGAN  ( 
 												customer_id,
 												customer_name,
@@ -795,8 +806,13 @@ class Master extends CI_Controller
 										   ,".trim($data[16], '"')."
 										   )
 								   ";
+                                   */
+                                    $result['st'] =0;
+                                    echo json_encode($result);
+                                    die();
                                 }
                             } else {
+                               /* 
                                 $sql = "insert into SIMTAX_MASTER_PELANGGAN  ( 
 										customer_id,
 										customer_name,
@@ -835,6 +851,10 @@ class Master extends CI_Controller
 										,".trim($data[16], '"')."
 										)
 								";
+                              */
+                                $result['st'] =0;
+                                echo json_encode($result);
+                                die();  
                             }
                 
                             $query 		= $this->db->query($sql);

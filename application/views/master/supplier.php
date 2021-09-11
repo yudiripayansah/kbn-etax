@@ -69,7 +69,7 @@
 							</div>
 							<div class="col-xs-3">
 								<div class="form-group" style="margin-bottom: 0;">
-									<label for="filter-status-kswp" class="control-label">by Status KSWP</label>
+									<label for="filter-status-kswp" id="lbl-filter-kswp"class="control-label">by Status KSWP</label>
 									<select id="filter-status-kswp" class="form-control">
 										<option value="SEMUA">SEMUA</option>
 										<?php
@@ -351,8 +351,10 @@
 		$("#edit-data").hide();
 		<?php if (($this->session->userdata('kd_cabang') == "000")): ?>
 			var conCabang = "pusat";
+			$("#lbl-filter-kswp").text('by Status KSWP');
 		<?php else: ?>
 			var conCabang = "cabang";
+			$("#lbl-filter-kswp").text('Filter by Status KSWP');
 		<?php endif; ?>
 
 		filter_by = $("#cabang").val();
@@ -363,7 +365,7 @@
 		 Pace.track(function(){
 		   $('#tabledata').removeAttr('width').DataTable({
 			"serverSide"	: true,
-			"processing"	: true,
+			//"processing"	: true,
 			"pageLength"	: 100,
 			"lengthMenu"    : [[100, 250, 500, 1000], [100, 250, 500, 1000]],			
 			"ajax"			: {
@@ -433,6 +435,17 @@
 		
 		table.on( 'draw', function () {
 			$("#btnEdit,#btnHapus").attr("disabled",true);
+				if(conCabang == "pusat"){
+					$("#btnEdit,#btnHapus").removeAttr('disabled');
+				}
+				else{
+					if(d.vendor_id >= '5000000'){
+						$("#btnEdit,#btnHapus").removeAttr('disabled');
+					}
+					else{
+						$("#btnEdit").attr('disabled');
+					}
+				}
 		} );
 
 		 $('#tabledata tbody').on( 'click', 'tr', function () {
