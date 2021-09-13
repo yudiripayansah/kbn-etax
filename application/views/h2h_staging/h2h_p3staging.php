@@ -77,7 +77,9 @@
 					<label>Jenis Pajak</label>
 					<select class="form-control" id="jenisPajak" name="jenisPajak">
 						<option value="" data-name="" >Pilih Jenis Pajak</option>
+						<?php if($nama_pajak != "PPN MASA"){ ?>
 						<option value="ALLJURNAL" data-name="ALLJURNAL" > ALL JURNAL </option>
+						<?php } ?>
 						<option value="PPN MASUKAN" data-name="PPN MASUKAN" > PPN MASUKAN </option>
 						<option value="PPN KELUARAN" data-name="PPN KELUARAN" > PPN KELUARAN </option>
 						<?php if($nama_pajak != "DETAIL JURNAL"){ ?>

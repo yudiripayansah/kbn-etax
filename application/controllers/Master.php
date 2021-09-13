@@ -68,6 +68,7 @@ class Master extends CI_Controller
             $this->form_validation->set_rules('edit_vendor_name', 'NAMA SUPPLIER', 'required');
             $this->form_validation->set_rules('edit_npwp', 'NPWP', 'required');
             $this->form_validation->set_rules('edit_alamat_vendor_satu', 'ALAMAT LINE 1', 'required');
+            $this->form_validation->set_rules('len_npwp', 'NPWP', 'trim|required|min_length[15]|max_length[15]');
 
             if ($this->form_validation->run() === true) {
                 $vendor_name = $this->input->post('edit_vendor_name');
@@ -476,6 +477,11 @@ class Master extends CI_Controller
                                 $vrows  	= $qReq->row();
                                 $vcntsupp  	= $vrows->CNT_SUPPLIER;
                                 if ($vcntsupp > 0) {
+                                    if($data[7] != ""){
+                                        $wupdate_vendor_site_id = " AND VENDOR_SITE_ID = ".$data[7];
+                                    } else {
+                                        $wupdate_vendor_site_id = " AND VENDOR_SITE_ID is null ";
+                                    }
                                     $sql = "update SIMTAX_MASTER_SUPPLIER 
 													SET
 														VENDOR_NAME         	= '".trim($data[1], '"')."',
@@ -494,7 +500,10 @@ class Master extends CI_Controller
 														AREA_CODE           	= '".trim($data[16], '"')."',
 														PHONE               	= '".trim($data[17], '"')."',
 														ORGANIZATION_ID     	= ".trim($data[18], '"')."
-													WHERE VENDOR_ID = ".$data[0];
+													WHERE VENDOR_ID = ".$data[0].
+                                                    $wupdate_vendor_site_id.
+                                                    " AND ORGANIZATION_ID = ".$data[18]
+                                                    ;
                                 } else {
                                     /*
                                     $sql = "insert 
@@ -681,7 +690,7 @@ class Master extends CI_Controller
         $title = array('CUSTOMER_ID','CUSTOMER_NAME','ALIAS_CUSTOMER','CUSTOMER_NUMBER','NPWP','STATUS_KSWP','OPERATING_UNIT','CUSTOMER_SITE_ID','CUSTOMER_SITE_NUMBER','CUSTOMER_SITE_NAME',
                         'ADDRESS_LINE1','ADDRESS_LINE2','ADDRESS_LINE3','CITY','PROVINCE','COUNTRY','ZIP','ORGANIZATION_ID');
         array_push($export_arr, $title);
-        
+
         if (!empty($data)) {
             foreach ($data->result_array() as $row) {
                 //$npwp = str_replace(".","",$row['NPWP']);
@@ -747,6 +756,11 @@ class Master extends CI_Controller
                                 $vrows  	= $qReq->row();
                                 $vcntcust  	= $vrows->CNT_CUST;
                                 if ($vcntcust > 0) {
+                                    if($data[7] != ""){
+                                        $wupdate_cust_site_id = " AND CUSTOMER_SITE_ID = ".$data[7];
+                                    } else {
+                                        $wupdate_cust_site_id = " AND CUSTOMER_SITE_ID is null ";
+                                    }
                                     $sql = "update SIMTAX_MASTER_PELANGGAN 
 										   SET
 										   	   CUSTOMER_NAME         	= '".trim($data[1], '"')."',
@@ -765,7 +779,10 @@ class Master extends CI_Controller
 											   COUNTRY           		= '".trim($data[15], '"')."',
 											   ZIP               		= '".trim($data[16], '"')."',
 											   ORGANIZATION_ID          = ".trim($data[17], '"')."
-										   WHERE CUSTOMER_ID = ".$data[0];
+										   WHERE CUSTOMER_ID = ".$data[0]
+                                           .$wupdate_cust_site_id.
+                                           " AND ORGANIZATION_ID = ".$data[17]
+                                           ;
                                 } else {
                                     /*
                                     $sql = "insert into SIMTAX_MASTER_PELANGGAN  ( 

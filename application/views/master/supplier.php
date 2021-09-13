@@ -132,6 +132,7 @@
 					<input type="hidden" class="form-control" id="edit_vendor_site_id" name="edit_vendor_site_id">
 					<input type="hidden" class="form-control" id="edit_organization_id" name="edit_organization_id">
 					<input type="hidden" class="form-control" id="isNewRecord" name="isNewRecord">
+					<input type="hidden" class="form-control" id="len_npwp" name="len_npwp">
 					<label>NAMA SUPPLIER</label>
 					<input type="text" class="form-control" id="edit_vendor_name" name="edit_vendor_name" placeholder="Nama Supplier *(Tidak Boleh Kosong)" data-toggle="validator" data-error="Mohon isi Nama Supplier" required>
 					<div class="help-block with-errors"></div>
@@ -157,7 +158,7 @@
 			<div class="col-lg-6">
 				<div class="form-group">
 					<label>ALAMAT LINE 1</label>
-					<input type="text" class="form-control" id="edit_alamat_vendor_satu" name="edit_alamat_vendor_satu" placeholder="Alamat Supplier *(Tidak Boleh Kosong)" data-toggle="validator" data-error="Mohon isi NPWP" required>
+					<input type="text" class="form-control" id="edit_alamat_vendor_satu" name="edit_alamat_vendor_satu" placeholder="Alamat Supplier *(Tidak Boleh Kosong)" data-toggle="validator" data-error="Mohon isi Alamat Line 1" required>
 					<div class="help-block with-errors"></div>
 				</div>
 			</div>
@@ -545,6 +546,10 @@
 		})
 */
 		$('#form-wp').validator().on('submit', function(e) {
+			vedit_npwp = $("#edit_npwp").val();
+			vedit_npwp = vedit_npwp.replace(/-|_/g,'').split('.').join("");
+			vedit_npwp_len = vedit_npwp.length;
+			$("#len_npwp").val(vedit_npwp);
 			if (e.isDefaultPrevented()) {
 				console.log('tidak valid');
 			}
@@ -763,7 +768,13 @@
 	$("#btnEksportCSV").on("click", function(){		
 			var urlnya  = "<?php echo site_url(); ?>master/export_format_csv_supplier";
 			var vcabang      = $("#cabang").val();
-			window.open(urlnya+'?vcabang='+vcabang, '_blank');
+			var vstatus_kswp    = $("#filter-status-kswp").val();
+
+			if(vcabang == undefined){
+				vcabang = "";
+			}
+
+			window.open(urlnya+'?vcabang='+vcabang+'&vstatus_kswp='+vstatus_kswp, '_blank');
 			window.focus(); 	
 	});
 	

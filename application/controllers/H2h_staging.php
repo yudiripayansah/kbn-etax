@@ -1002,6 +1002,7 @@ class H2h_staging extends CI_Controller {
                    {
                         $j = 0;
                         foreach($data->result_array() as $row) {
+                                $tanggal_po     = ($row['TANGGALPO']) ? date("Y-m-d", strtotime($row['TANGGALPO'])) : '';
                                 $element_data = array(
                                     "docNumber" => $row['DOCNUMBER'],
                                     "bulanBuku" => $row['BULAN_BUKU'],
@@ -1023,7 +1024,7 @@ class H2h_staging extends CI_Controller {
                                     "costCenterId" => $row['COSTCENTER'],
                                     "costCenterDesc" => $row['COSTCENTERDESC'],
                                     "poNumber" => $row['PONUMBER'],
-                                    "tanggalPo" => date("Y-m-d", strtotime($row['TANGGALPO'])),
+                                    "tanggalPo" => $tanggal_po,
                                     "company_id" => $comp_id,
                                     "company_name" => $comp_name
                                 );

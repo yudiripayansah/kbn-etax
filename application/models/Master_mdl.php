@@ -316,6 +316,13 @@ class Master_mdl extends CI_Model
 				  )"
                      ;
         } else {
+            $wheresiteid = "";
+            $whereorgid = "";
+            if($vendor_site_id != ""){
+                $wheresiteid = " and VENDOR_SITE_ID = '".$vendor_site_id."' ";
+            } else {
+                $wheresiteid = " and VENDOR_SITE_ID IS NULL";
+            }
             $sql	="Update SIMTAX_MASTER_SUPPLIER
 						 set VENDOR_NAME='".$vendor_name."', 
 						     VENDOR_NUMBER='".$vendor_number."',
@@ -328,13 +335,12 @@ class Master_mdl extends CI_Model
 							 COUNTRY='".$negara."',
 							 ZIP='".$kode_pos."',
 							 PHONE='".$telp."'
-					   where VENDOR_ID ='".$vendor_id."'
-						 and VENDOR_SITE_ID = '".$vendor_site_id."'
-						 and ORGANIZATION_ID = '".$organization_id."'"
+					     where VENDOR_ID ='".$vendor_id."'"
+						 .$wheresiteid.
+						 " and ORGANIZATION_ID = '".$organization_id."' "
                          ;
         }
-        
-        
+              
         $query	= $this->db->query($sql);
         
         if ($query) {
@@ -438,6 +444,8 @@ class Master_mdl extends CI_Model
         if (isset($_POST['_searchCabang']) && $_POST['_searchCabang'] != "") {
             $kode_cabang = $_POST['_searchCabang'];
             $og_id       = $this->cabang_mdl->get_og_id($kode_cabang);
+        }else {
+            $og_id = $this->cabang_mdl->get_og_id($this->kode_cabang);
         }
         if (isset($_POST['_searchStatusKswp']) && $_POST['_searchStatusKswp'] != "") {
             $filterStatusKswp = $_POST['_searchStatusKswp'];
@@ -488,7 +496,7 @@ class Master_mdl extends CI_Model
 						 FROM SIMTAX_MASTER_PELANGGAN SMP
                          LEFT JOIN SIMTAX_MASTER_NPWP SMN ON SMN.NPWP_SIMTAX = SMP.NPWP
                          ".$where.$whereStatusKswp;
-                                
+                              
         $sql		="SELECT * FROM (
 						SELECT rownum rnum, a.* 
 						FROM(
@@ -497,7 +505,7 @@ class Master_mdl extends CI_Model
 						WHERE rownum <=".$_POST['start']."+".$_POST['length']."
 					)
 					WHERE rnum >".$_POST['start']."";
-        
+       
         $sql2		= $queryExec;
         $query2 	= $this->db->query($sql2);
 
@@ -1371,6 +1379,8 @@ class Master_mdl extends CI_Model
     {
         $q		= (isset($_REQUEST['search']['value']))?$_REQUEST['search']['value']:'';
         $where	= "";
+        $vstatus_kswp = "";
+        $where_status_kswp = "";
         if ($q) {
             $where	= " and (upper(vendor_id) like '%".strtoupper($q)."%' or upper(vendor_name) like '%".strtoupper($q)."%' or  (npwp) like '%".strtoupper($q)."%') ";
         }
@@ -1380,6 +1390,17 @@ class Master_mdl extends CI_Model
             $og_id       = $this->cabang_mdl->get_og_id($kode_cabang);
         } else {
             $og_id = $this->cabang_mdl->get_og_id($this->kode_cabang);
+        }
+
+        if (isset($_REQUEST['vstatus_kswp']) && $_REQUEST['vstatus_kswp'] != "SEMUA") {
+            $vstatus_kswp = $_REQUEST['vstatus_kswp'];
+        }
+        if($where){
+            $where_status_kswp = " and SIMTAX_MASTER_NPWP.STATUS_KSWP = '".$vstatus_kswp."' ";
+        } else {
+            if($vstatus_kswp){
+                $where_status_kswp = " where SIMTAX_MASTER_NPWP.STATUS_KSWP = '".$vstatus_kswp."' ";
+            }
         }
 
         $sql = "SELECT						
@@ -1404,7 +1425,7 @@ class Master_mdl extends CI_Model
 		SIMTAX_MASTER_SUPPLIER.ORGANIZATION_ID      
 		FROM   SIMTAX_MASTER_SUPPLIER 
         LEFT JOIN SIMTAX_MASTER_NPWP ON SIMTAX_MASTER_NPWP.NPWP_SIMTAX = SIMTAX_MASTER_SUPPLIER.NPWP 
-		WHERE 1=1 ".$where." and organization_id = '".$og_id."' order by 1 desc";
+		WHERE 1=1 ".$where.$where_status_kswp." and organization_id = '".$og_id."' order by 1 desc";
                 
         $query = $this->db->query($sql);
         return $query;
@@ -1415,9 +1436,39 @@ class Master_mdl extends CI_Model
         ini_set('memory_limit', '-1');
         $q		= (isset($_REQUEST['search']['value']))?$_REQUEST['search']['value']:'';
         $where	= "";
+        $where_og_id = "";
+        $vstatus_kswp = "";
+        $where_status_kswp = "";
+
         if ($q) { //check lgsg where atau and
             $where	= " where (upper(customer_id) like '%".strtoupper($q)."%' or upper(customer_name) like '%".strtoupper($q)."%' or  (npwp) like '%".strtoupper($q)."%') ";
         }
+
+        if (isset($_REQUEST['vcabang']) && $_REQUEST['vcabang'] != "") {
+            $kode_cabang = $_REQUEST['vcabang'];
+            $og_id       = $this->cabang_mdl->get_og_id($kode_cabang);
+        } else {
+            $og_id = $this->cabang_mdl->get_og_id($this->kode_cabang);
+        }
+
+        if (isset($_REQUEST['vstatus_kswp']) && $_REQUEST['vstatus_kswp'] != "SEMUA") {
+           $vstatus_kswp = $_REQUEST['vstatus_kswp'];
+        }
+
+        if($where){
+            if($og_id){
+                $where_og_id = " and organization_id = '".$og_id."' ";
+            }
+            if($vstatus_kswp){
+                $where_status_kswp = " and SIMTAX_MASTER_NPWP.STATUS_KSWP = '".$vstatus_kswp."' ";
+            }
+        } else {
+            $where_og_id = " where organization_id = '".$og_id."' ";
+            if($vstatus_kswp){
+                $where_status_kswp = " and SIMTAX_MASTER_NPWP.STATUS_KSWP = '".$vstatus_kswp."' ";
+            }
+        }
+        
         
         $sql = "SELECT SIMTAX_MASTER_PELANGGAN.CUSTOMER_ID,  
 							SIMTAX_MASTER_PELANGGAN.CUSTOMER_NAME , 
@@ -1439,8 +1490,8 @@ class Master_mdl extends CI_Model
 							SIMTAX_MASTER_PELANGGAN.ORGANIZATION_ID
 					FROM   SIMTAX_MASTER_PELANGGAN
                     LEFT JOIN SIMTAX_MASTER_NPWP ON SIMTAX_MASTER_NPWP.NPWP_SIMTAX = SIMTAX_MASTER_PELANGGAN.NPWP 
-                    ".$where;
-                
+                    ".$where.$where_og_id.$where_status_kswp." order by 1 desc";
+               
         $query = $this->db->query($sql);
         return $query;
     }

@@ -66,7 +66,7 @@
 							</div>
 							<div class="col-xs-3">
 								<div class="form-group" style="margin-bottom: 0;">
-									<label for="filter-status-kswp" class="control-label">by Status KSWP</label>
+									<label for="filter-status-kswp"  id="lbl-filter-kswp" class="control-label">by Status KSWP</label>
 									<select id="filter-status-kswp" class="form-control">
 										<option value="SEMUA">SEMUA</option>
 										<?php
@@ -368,7 +368,12 @@
 				djp = "";		
 		
 		//$("#btnHapus").hide();		
-		$("#edit-data").hide();			
+		$("#edit-data").hide();
+		<?php if (($this->session->userdata('kd_cabang') == "000")): ?>
+			$("#lbl-filter-kswp").text('by Status KSWP');
+		<?php else: ?>
+			$("#lbl-filter-kswp").text('Filter by Status KSWP');
+		<?php endif; ?>			
 		
 		filter_by = $("#cabang").val();
 		filter_status_kswp = $("#filter-status-kswp").val();
@@ -680,7 +685,14 @@
 
 	$("#btnEksportCSV").on("click", function(){		
 			var urlnya  = "<?php echo site_url(); ?>master/export_format_csv_customer";
-			window.open(urlnya, '_blank');
+			var vcabang      	= $("#cabang").val();
+			var vstatus_kswp    = $("#filter-status-kswp").val();
+
+			if(vcabang == undefined){
+				vcabang = "";
+			}
+
+			window.open(urlnya+'?vcabang='+vcabang+'&vstatus_kswp='+vstatus_kswp, '_blank');
 			window.focus(); 	
 	});
 
