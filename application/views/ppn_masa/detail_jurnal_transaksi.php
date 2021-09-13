@@ -49,8 +49,8 @@
 						<label>Jenis Pajak</label>
 						<select class="form-control" id="jenisPajak" name="jenisPajak">
 						<option value="ALLJURNAL" data-name="ALLJURNAL" > ALL JURNAL </option>
-						<option value="PPN MASUKAN" data-name="PPN MASUKAN" > PPN MASUKAN </option>
-						<option value="PPN KELUARAN" data-name="PPN KELUARAN" > PPN KELUARAN </option>
+						<option value="PPN MASUKAN" data-name="PPN MASUKAN" > EFAKTUR PPN MASUKAN </option>
+						<option value="PPN KELUARAN" data-name="PPN KELUARAN" > EFAKTUR PPN KELUARAN </option>
 					</select>	
 				</div>
 			 </div>
@@ -470,6 +470,14 @@
 										d._searchPpn        = $('#jenisPajak').val();
 										d._searchPembetulan = $("#pembetulanKe").val();
 										d._searchCabang     = $('#cabang_trx').val();
+									},
+									"dataSrc" : function(res) {
+											if(res.isdoksubmit){
+												$("#btnSubmit").attr("disabled",true);
+											} else {
+												$("#btnSubmit").attr("disabled",false);
+											}
+											return res.data
 									}
 								},
 			 "language"		: {
@@ -574,8 +582,13 @@
 				val_tanggal_invoice        	= d.tanggalinvoice;
 				valueGrid();
 				showHide();
-				$("#btnEdit1").removeAttr('disabled');
-				$("#btnDelete1").removeAttr('disabled');
+				if(d.statusdokumen != 'SUBMIT'){
+					$("#btnEdit1").removeAttr('disabled');
+					$("#btnDelete1").removeAttr('disabled');
+				} else {
+					$("#btnEdit1").attr("disabled",true);
+					$("#btnDelete1").attr("disabled",true);
+				}
 			}
 
 		} ).on("dblclick", "tr", function () {
@@ -611,10 +624,16 @@
 				val_tanggal_invoice        	= d.tanggalinvoice;
 			valueGrid();
 			showHide();
-			$("#btnEdit1").removeAttr('disabled');
-			$("#list-data").slideUp(700);
-			$("#tambah-data").slideDown(700);
-			$("#capAdd").html("<span class='label label-danger'>Edit Data "+val_nama_pajak+" Bulan "+ monthsname[val_bulan_buku]+" Tahun "+val_tahun_buku+"</span>");
+			//$("#btnEdit1").removeAttr('disabled');
+			if(d.statusdokumen != 'SUBMIT'){
+				$("#list-data").slideUp(700);
+				$("#tambah-data").slideDown(700);
+				$("#capAdd").html("<span class='label label-danger'>Edit Data "+val_nama_pajak+" Bulan "+ monthsname[val_bulan_buku]+" Tahun "+val_tahun_buku+"</span>");
+			} else {
+				$("#btnEdit1").attr("disabled",true);
+				$("#btnDelete1").attr("disabled",true);
+			}
+			
 		} );
 
 /* DETAIL JURNAL END */

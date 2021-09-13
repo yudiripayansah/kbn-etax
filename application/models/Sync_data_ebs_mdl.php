@@ -1061,6 +1061,11 @@ class Sync_data_ebs_mdl extends CI_Model {
 
 			if ($jenis_trx === 'GLJE') 
 			{ 
+				if($data[27] != "") {
+					$invoice_id = $data[27];
+				} else {
+					$invoice_id = 'null';
+				}
 				$sql = " insert into simtax_detail_jurnal_transaksi (
 					LEDGER_ID, 
 					PERIOD_NAME, 
@@ -1110,7 +1115,7 @@ class Sync_data_ebs_mdl extends CI_Model {
 					'".$data[13]."',  
 					'".$data[14]."', 
 					'".str_replace("'", "", $data[15])."', 
-					'".$data[16]."', 
+					'".str_replace("'", "", $data[16])."',
 					'".str_replace("'", "", $data[17])."', 
 					'".$data[18]."', 
 					'".$data[19]."', 
@@ -1122,7 +1127,7 @@ class Sync_data_ebs_mdl extends CI_Model {
 					'".$data[25]."',
 					'".$data[26]."',
 					'DRAFT',
-					 ".$data[27]."
+					 ".$invoice_id."
 					)";
 			}
         }

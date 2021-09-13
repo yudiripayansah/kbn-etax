@@ -11,7 +11,7 @@ class Ppnmasa_detail_jurnal_transaksi extends CI_Controller {
 		{
 			redirect('dashboard', 'refresh');
 		}
-
+		$this->load->helper('simtax');
 		$this->load->model('ppnmasa_detail_jurnal_mdl', 'ppnmasa_jurnal');
 		$this->load->model('cabang_mdl', 'cabang');
 		$this->load->model('supplier_mdl', 'suplier');
@@ -53,6 +53,7 @@ class Ppnmasa_detail_jurnal_transaksi extends CI_Controller {
 
             $dlChecked = "";
             $fsChecked = "";
+			$isDokSubmit = true;
 
             foreach($query->result_array() as $row)	{
 
@@ -130,7 +131,10 @@ class Ppnmasa_detail_jurnal_transaksi extends CI_Controller {
 						'tanggalinvoice'      	=> $tgl_invoice,
 						'statusdokumen'      	=> $row['STATUSDOKUMEN'],
 						'invoice_id'      		=> $row['INVOICE_ID']
-                        );      
+                        );   
+				if($row['STATUSDOKUMEN'] != 'SUBMIT'){
+					$isDokSubmit = false;
+				}		   
             }
 
             $query->free_result();
@@ -139,6 +143,7 @@ class Ppnmasa_detail_jurnal_transaksi extends CI_Controller {
             $result['draw']            = $draw;
             $result['recordsTotal']    = $rowCount;
             $result['recordsFiltered'] = $rowCount;
+			$result['isdoksubmit']	   = $isDokSubmit;
             
             
         }
@@ -332,10 +337,16 @@ class Ppnmasa_detail_jurnal_transaksi extends CI_Controller {
         }
 
 		if($nama_pajak == "PPN MASUKAN"){
-			convert_to_csv($dokumen_lain, 'Ekspor_DetailJurnalTransaksi_Masukan_'.$tahun_pajak.'_'.$masa_pajak.'.csv', ';');
+			$file_name = "EFAKTUR PPN MASUKAN";
+		} else if ($nama_pajak == "PPN KELUARAN") {
+			$file_name = "EFAKTUR PPN KELUARAN";
 		} else {
-			convert_to_csv($dokumen_lain, 'Ekspor_DetailJurnalTransaksi_Keluaran_'.$tahun_pajak.'_'.$masa_pajak.'.csv', ';');
+			$file_name = "ALL JURNAL";
 		}
+		$masa_pajak = get_masa_pajak($bulan_pajak,'id',true);
+		
+		convert_to_csv($dokumen_lain, 'Ekspor_JurnalTransaksi_'.$file_name.'_'.$tahun_pajak.'_'.$masa_pajak.'.csv', ';');
+	
 	}
 
 	function submit_jurnal_transaksi()

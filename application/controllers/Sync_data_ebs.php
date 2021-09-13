@@ -61,7 +61,24 @@ class Sync_data_ebs extends CI_Controller {
 
 		$qReqID     = $this->db->query($sql);
 		$row        = $qReqID->row();       	
-		$isAdaData  = $row->ADA_DATA; 
+		$isAdaData  = $row->ADA_DATA;
+		
+		if($jenis_trx == 'GLJE'){
+			$sql	="  select count(1) ADA_DATA 
+					  from simtax_detail_jurnal_transaksi
+					 where BULAN_BUKU = '".$bulan."'
+					   and TAHUN_BUKU = '".$tahun."'
+					   and KODE_CABANG = '".$kode_cabang."'
+					   and STATUSDOKUMEN not in ('DRAFT')
+					  ";		
+
+			$qReqID     = $this->db->query($sql);
+			$row        = $qReqID->row();       	
+			$isAdaData  = $row->ADA_DATA;
+			if($isAdaData > 0){
+				$isAdaData = 1;
+			}
+		}
 
 		// end validasi
 		set_time_limit(0);
