@@ -522,7 +522,8 @@ class Master_mdl extends CI_Model
             $ii	=	0;
             foreach ($query->result_array() as $row) {
                 $djp_npwp = $this->db->from('SIMTAX_MASTER_NPWP')->where('NPWP_SIMTAX', $row['NPWP'])->get()->row();
-                $status_kswp = ($djp_npwp->STATUS_KSWP) ? $djp_npwp->STATUS_KSWP : '-';
+                //$status_kswp = ($djp_npwp->STATUS_KSWP) ? $djp_npwp->STATUS_KSWP : '-';
+                $status_kswp = ($row['STATUS_KSWP']) ? $row['STATUS_KSWP'] : '-';
                 $ii++;
                 $result['data'][] = array(
                             'no'					=> $row['RNUM'],
