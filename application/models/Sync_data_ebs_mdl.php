@@ -1172,76 +1172,78 @@ class Sync_data_ebs_mdl extends CI_Model {
 					if ($check_npwp < 1) {
 						$isCustomer = $this->db->from('SIMTAX_MASTER_PELANGGAN')->where('NPWP', $data[4])->limit(1)->get()->row();
 						$type = $jenis_trx;
-						$npwp_djp = djp_check_npwp($token->message, $npwp);
-						$kswp_djp = djp_check_kswp($token->message, $npwp);
+						$npwp_djp = djp_check_npwp($token->message, $data[4]);
+						$kswp_djp = djp_check_kswp($token->message, $data[4]);
 						$dataWp = $npwp_djp->message->datawp;
 						$status_kswp = '-';
 						if ($kswp_djp->status == 200) {
 							$status_kswp = $kswp_djp->message->status;
+
+							$rowData = array(
+								'ID' => ($latest_npwp->ID+1),
+								'NPWP' => ($dataWp->NPWP && is_numeric($dataWp->NPWP)) ? $dataWp->NPWP : '-',
+								'NAMA' => ($dataWp->NAMA) ? $dataWp->NAMA : '-',
+								'MERK_DAGANG' => ($dataWp->MERK_DAGANG) ? $dataWp->MERK_DAGANG : '-',
+								'ALAMAT' => ($dataWp->ALAMAT) ? $dataWp->ALAMAT : '-',
+								'KELURAHAN' => ($dataWp->KELURAHAN) ? $dataWp->KELURAHAN : '-',
+								'KECAMATAN' => ($dataWp->KECAMATAN) ? $dataWp->KECAMATAN : '-',
+								'KABKOT' => ($dataWp->KABKOT) ? $dataWp->KABKOT : '-',
+								'PROVINSI' => ($dataWp->PROVINSI) ? $dataWp->PROVINSI : '-',
+								'KODE_KLU' => ($dataWp->KODE_KLU) ? (int) $dataWp->KODE_KLU : 0,
+								'KLU' => ($dataWp->KLU) ? $dataWp->KLU : '-',
+								'TELP' => ($dataWp->TELP) ? $dataWp->TELP : '-',
+								'EMAIL' => ($dataWp->EMAIL) ? $dataWp->EMAIL : '-',
+								'JENIS_WP' => ($dataWp->JENIS_WP) ? $dataWp->JENIS_WP : '-',
+								'BADAN_HUKUM' => ($dataWp->BADAN_HUKUM) ? $dataWp->BADAN_HUKUM : '-',
+								'STATUS_KSWP' => $status_kswp,
+								'RESPONSE_MSG_NPWP' => json_encode($npwp_djp->message),
+								'RESPONSE_MSG_KSWP' => json_encode($kswp_djp->message),
+								'RESPONSE_STATUS_CODE_NPWP' => ($npwp_djp->status) ? (int) $npwp_djp->status : 0,
+								'RESPONSE_STATUS_CODE_KSWP' => ($kswp_djp->status) ? (int) $kswp_djp->status : 0,
+								'USER_TYPE' => $type,
+								'NPWP_SIMTAX' => $data[4],
+								'LAST_UPDATE' => date('Y-m-d H:i:s'),
+							);
+							$doInsert = $this->db->insert('SIMTAX_MASTER_NPWP', $rowData);
 						}
-						$rowData = array(
-							'ID' => ($latest_npwp->ID+1),
-							'NPWP' => ($dataWp->NPWP && is_numeric($dataWp->NPWP)) ? $dataWp->NPWP : '-',
-							'NAMA' => ($dataWp->NAMA) ? $dataWp->NAMA : '-',
-							'MERK_DAGANG' => ($dataWp->MERK_DAGANG) ? $dataWp->MERK_DAGANG : '-',
-							'ALAMAT' => ($dataWp->ALAMAT) ? $dataWp->ALAMAT : '-',
-							'KELURAHAN' => ($dataWp->KELURAHAN) ? $dataWp->KELURAHAN : '-',
-							'KECAMATAN' => ($dataWp->KECAMATAN) ? $dataWp->KECAMATAN : '-',
-							'KABKOT' => ($dataWp->KABKOT) ? $dataWp->KABKOT : '-',
-							'PROVINSI' => ($dataWp->PROVINSI) ? $dataWp->PROVINSI : '-',
-							'KODE_KLU' => ($dataWp->KODE_KLU) ? (int) $dataWp->KODE_KLU : 0,
-							'KLU' => ($dataWp->KLU) ? $dataWp->KLU : '-',
-							'TELP' => ($dataWp->TELP) ? $dataWp->TELP : '-',
-							'EMAIL' => ($dataWp->EMAIL) ? $dataWp->EMAIL : '-',
-							'JENIS_WP' => ($dataWp->JENIS_WP) ? $dataWp->JENIS_WP : '-',
-							'BADAN_HUKUM' => ($dataWp->BADAN_HUKUM) ? $dataWp->BADAN_HUKUM : '-',
-							'STATUS_KSWP' => $status_kswp,
-							'RESPONSE_MSG_NPWP' => json_encode($npwp_djp->message),
-							'RESPONSE_MSG_KSWP' => json_encode($kswp_djp->message),
-							'RESPONSE_STATUS_CODE_NPWP' => ($npwp_djp->status) ? (int) $npwp_djp->status : 0,
-							'RESPONSE_STATUS_CODE_KSWP' => ($kswp_djp->status) ? (int) $kswp_djp->status : 0,
-							'USER_TYPE' => $type,
-							'NPWP_SIMTAX' => $data[4],
-							'LAST_UPDATE' => date('Y-m-d H:i:s'),
-						);
-						$doInsert = $this->db->insert('SIMTAX_MASTER_NPWP', $rowData);
 					} else {
 						$isCustomer = $this->db->from('SIMTAX_MASTER_PELANGGAN')->where('NPWP', $data[4])->limit(1)->get()->row();
 						$type = 'CUSTOMER';
 
 						$npwp_simtax = $this->db->from('SIMTAX_MASTER_NPWP')->where('NPWP_SIMTAX', $data[4])->get()->row();
-						$npwp_djp = djp_check_npwp($token->message, $npwp);
-						$kswp_djp = djp_check_kswp($token->message, $npwp);
+						$npwp_djp = djp_check_npwp($token->message, $data[4]);
+						$kswp_djp = djp_check_kswp($token->message, $data[4]);
 						$dataWp = $npwp_djp->message->datawp;
 						$status_kswp = '-';
 						if ($kswp_djp->status == 200) {
 							$status_kswp = $kswp_djp->message->status;
+
+							$rowData = array(
+								'NPWP' => ($dataWp->NPWP && is_numeric($dataWp->NPWP)) ? $dataWp->NPWP : '-',
+								'NAMA' => ($dataWp->NAMA) ? $dataWp->NAMA : '-',
+								'MERK_DAGANG' => ($dataWp->MERK_DAGANG) ? $dataWp->MERK_DAGANG : '-',
+								'ALAMAT' => ($dataWp->ALAMAT) ? $dataWp->ALAMAT : '-',
+								'KELURAHAN' => ($dataWp->KELURAHAN) ? $dataWp->KELURAHAN : '-',
+								'KECAMATAN' => ($dataWp->KECAMATAN) ? $dataWp->KECAMATAN : '-',
+								'KABKOT' => ($dataWp->KABKOT) ? $dataWp->KABKOT : '-',
+								'PROVINSI' => ($dataWp->PROVINSI) ? $dataWp->PROVINSI : '-',
+								'KODE_KLU' => ($dataWp->KODE_KLU) ? (int) $dataWp->KODE_KLU : 0,
+								'KLU' => ($dataWp->KLU) ? $dataWp->KLU : '-',
+								'TELP' => ($dataWp->TELP) ? $dataWp->TELP : '-',
+								'EMAIL' => ($dataWp->EMAIL) ? $dataWp->EMAIL : '-',
+								'JENIS_WP' => ($dataWp->JENIS_WP) ? $dataWp->JENIS_WP : '-',
+								'BADAN_HUKUM' => ($dataWp->BADAN_HUKUM) ? $dataWp->BADAN_HUKUM : '-',
+								'STATUS_KSWP' => $status_kswp,
+								'RESPONSE_MSG_NPWP' => json_encode($npwp_djp->message),
+								'RESPONSE_MSG_KSWP' => json_encode($kswp_djp->message),
+								'RESPONSE_STATUS_CODE_NPWP' => ($npwp_djp->status) ? (int) $npwp_djp->status : 0,
+								'RESPONSE_STATUS_CODE_KSWP' => ($kswp_djp->status) ? (int) $kswp_djp->status : 0,
+								'USER_TYPE' => $type,
+								'NPWP_SIMTAX' => $data[4],
+								'LAST_UPDATE' => date('Y-m-d H:i:s'),
+							);
+							$doUpdate = $this->db->where('ID', $npwp_simtax->ID)->update('SIMTAX_MASTER_NPWP', $rowData);
 						}
-						$rowData = array(
-							'NPWP' => ($dataWp->NPWP && is_numeric($dataWp->NPWP)) ? $dataWp->NPWP : '-',
-							'NAMA' => ($dataWp->NAMA) ? $dataWp->NAMA : '-',
-							'MERK_DAGANG' => ($dataWp->MERK_DAGANG) ? $dataWp->MERK_DAGANG : '-',
-							'ALAMAT' => ($dataWp->ALAMAT) ? $dataWp->ALAMAT : '-',
-							'KELURAHAN' => ($dataWp->KELURAHAN) ? $dataWp->KELURAHAN : '-',
-							'KECAMATAN' => ($dataWp->KECAMATAN) ? $dataWp->KECAMATAN : '-',
-							'KABKOT' => ($dataWp->KABKOT) ? $dataWp->KABKOT : '-',
-							'PROVINSI' => ($dataWp->PROVINSI) ? $dataWp->PROVINSI : '-',
-							'KODE_KLU' => ($dataWp->KODE_KLU) ? (int) $dataWp->KODE_KLU : 0,
-							'KLU' => ($dataWp->KLU) ? $dataWp->KLU : '-',
-							'TELP' => ($dataWp->TELP) ? $dataWp->TELP : '-',
-							'EMAIL' => ($dataWp->EMAIL) ? $dataWp->EMAIL : '-',
-							'JENIS_WP' => ($dataWp->JENIS_WP) ? $dataWp->JENIS_WP : '-',
-							'BADAN_HUKUM' => ($dataWp->BADAN_HUKUM) ? $dataWp->BADAN_HUKUM : '-',
-							'STATUS_KSWP' => $status_kswp,
-							'RESPONSE_MSG_NPWP' => json_encode($npwp_djp->message),
-							'RESPONSE_MSG_KSWP' => json_encode($kswp_djp->message),
-							'RESPONSE_STATUS_CODE_NPWP' => ($npwp_djp->status) ? (int) $npwp_djp->status : 0,
-							'RESPONSE_STATUS_CODE_KSWP' => ($kswp_djp->status) ? (int) $kswp_djp->status : 0,
-							'USER_TYPE' => $type,
-							'NPWP_SIMTAX' => $data[4],
-							'LAST_UPDATE' => date('Y-m-d H:i:s'),
-						);
-						$doUpdate = $this->db->where('ID', $npwp_simtax->ID)->update('SIMTAX_MASTER_NPWP', $rowData);
 					}
 					
 					$sql	="MERGE INTO simtax_master_pelanggan smp
@@ -1330,6 +1332,15 @@ class Sync_data_ebs_mdl extends CI_Model {
 		
 		if ($jenis_trx == "SUPPLIER") 
 		{
+
+			$userdjp = get_value_param("USERNAME_DJP");
+			$passdjp = get_value_param("PASSWORD_DJP");
+			$token 	 = djp_get_token($userdjp, $passdjp);
+			
+			if(empty($token)){
+				return false;
+			}
+
 			while (($data = fgetcsv($handle, 0, ";","'","\\")) !== FALSE) {
 
 				if($row >= 0){
@@ -1344,76 +1355,79 @@ class Sync_data_ebs_mdl extends CI_Model {
 					if ($check_npwp < 1) {
 						$isCustomer = $this->db->from('SIMTAX_MASTER_SUPPLIER')->where('NPWP', $data[4])->limit(1)->get()->row();
 						$type = $jenis_trx;
-						$npwp_djp = djp_check_npwp($token->message, $npwp);
-						$kswp_djp = djp_check_kswp($token->message, $npwp);
+						$npwp_djp = djp_check_npwp($token->message, $data[4]);
+						$kswp_djp = djp_check_kswp($token->message, $data[4]);
 						$dataWp = $npwp_djp->message->datawp;
 						$status_kswp = '-';
 						if ($kswp_djp->status == 200) {
 							$status_kswp = $kswp_djp->message->status;
+
+							$rowData = array(
+								'ID' => ($latest_npwp->ID+1),
+								'NPWP' => ($dataWp->NPWP && is_numeric($dataWp->NPWP)) ? $dataWp->NPWP : '-',
+								'NAMA' => ($dataWp->NAMA) ? $dataWp->NAMA : '-',
+								'MERK_DAGANG' => ($dataWp->MERK_DAGANG) ? $dataWp->MERK_DAGANG : '-',
+								'ALAMAT' => ($dataWp->ALAMAT) ? $dataWp->ALAMAT : '-',
+								'KELURAHAN' => ($dataWp->KELURAHAN) ? $dataWp->KELURAHAN : '-',
+								'KECAMATAN' => ($dataWp->KECAMATAN) ? $dataWp->KECAMATAN : '-',
+								'KABKOT' => ($dataWp->KABKOT) ? $dataWp->KABKOT : '-',
+								'PROVINSI' => ($dataWp->PROVINSI) ? $dataWp->PROVINSI : '-',
+								'KODE_KLU' => ($dataWp->KODE_KLU) ? (int) $dataWp->KODE_KLU : 0,
+								'KLU' => ($dataWp->KLU) ? $dataWp->KLU : '-',
+								'TELP' => ($dataWp->TELP) ? $dataWp->TELP : '-',
+								'EMAIL' => ($dataWp->EMAIL) ? $dataWp->EMAIL : '-',
+								'JENIS_WP' => ($dataWp->JENIS_WP) ? $dataWp->JENIS_WP : '-',
+								'BADAN_HUKUM' => ($dataWp->BADAN_HUKUM) ? $dataWp->BADAN_HUKUM : '-',
+								'STATUS_KSWP' => $status_kswp,
+								'RESPONSE_MSG_NPWP' => json_encode($npwp_djp->message),
+								'RESPONSE_MSG_KSWP' => json_encode($kswp_djp->message),
+								'RESPONSE_STATUS_CODE_NPWP' => ($npwp_djp->status) ? (int) $npwp_djp->status : 0,
+								'RESPONSE_STATUS_CODE_KSWP' => ($kswp_djp->status) ? (int) $kswp_djp->status : 0,
+								'USER_TYPE' => $type,
+								'NPWP_SIMTAX' => $data[4],
+								'LAST_UPDATE' => date('Y-m-d H:i:s'),
+							);
+							$doInsert = $this->db->insert('SIMTAX_MASTER_NPWP', $rowData);
 						}
-						$rowData = array(
-							'ID' => ($latest_npwp->ID+1),
-							'NPWP' => ($dataWp->NPWP && is_numeric($dataWp->NPWP)) ? $dataWp->NPWP : '-',
-							'NAMA' => ($dataWp->NAMA) ? $dataWp->NAMA : '-',
-							'MERK_DAGANG' => ($dataWp->MERK_DAGANG) ? $dataWp->MERK_DAGANG : '-',
-							'ALAMAT' => ($dataWp->ALAMAT) ? $dataWp->ALAMAT : '-',
-							'KELURAHAN' => ($dataWp->KELURAHAN) ? $dataWp->KELURAHAN : '-',
-							'KECAMATAN' => ($dataWp->KECAMATAN) ? $dataWp->KECAMATAN : '-',
-							'KABKOT' => ($dataWp->KABKOT) ? $dataWp->KABKOT : '-',
-							'PROVINSI' => ($dataWp->PROVINSI) ? $dataWp->PROVINSI : '-',
-							'KODE_KLU' => ($dataWp->KODE_KLU) ? (int) $dataWp->KODE_KLU : 0,
-							'KLU' => ($dataWp->KLU) ? $dataWp->KLU : '-',
-							'TELP' => ($dataWp->TELP) ? $dataWp->TELP : '-',
-							'EMAIL' => ($dataWp->EMAIL) ? $dataWp->EMAIL : '-',
-							'JENIS_WP' => ($dataWp->JENIS_WP) ? $dataWp->JENIS_WP : '-',
-							'BADAN_HUKUM' => ($dataWp->BADAN_HUKUM) ? $dataWp->BADAN_HUKUM : '-',
-							'STATUS_KSWP' => $status_kswp,
-							'RESPONSE_MSG_NPWP' => json_encode($npwp_djp->message),
-							'RESPONSE_MSG_KSWP' => json_encode($kswp_djp->message),
-							'RESPONSE_STATUS_CODE_NPWP' => ($npwp_djp->status) ? (int) $npwp_djp->status : 0,
-							'RESPONSE_STATUS_CODE_KSWP' => ($kswp_djp->status) ? (int) $kswp_djp->status : 0,
-							'USER_TYPE' => $type,
-							'NPWP_SIMTAX' => $data[4],
-							'LAST_UPDATE' => date('Y-m-d H:i:s'),
-						);
-						$doInsert = $this->db->insert('SIMTAX_MASTER_NPWP', $rowData);
+						
 					} else {
 						$isCustomer = $this->db->from('SIMTAX_MASTER_SUPPLIER')->where('NPWP', $data[4])->limit(1)->get()->row();
 						$type = $jenis_trx;
 
 						$npwp_simtax = $this->db->from('SIMTAX_MASTER_NPWP')->where('NPWP_SIMTAX', $data[4])->get()->row();
-						$npwp_djp = djp_check_npwp($token->message, $npwp);
-						$kswp_djp = djp_check_kswp($token->message, $npwp);
+						$npwp_djp = djp_check_npwp($token->message, $data[4]);
+						$kswp_djp = djp_check_kswp($token->message, $data[4]);
 						$dataWp = $npwp_djp->message->datawp;
 						$status_kswp = '-';
 						if ($kswp_djp->status == 200) {
 							$status_kswp = $kswp_djp->message->status;
+
+							$rowData = array(
+								'NPWP' => ($dataWp->NPWP && is_numeric($dataWp->NPWP)) ? $dataWp->NPWP : '-',
+								'NAMA' => ($dataWp->NAMA) ? $dataWp->NAMA : '-',
+								'MERK_DAGANG' => ($dataWp->MERK_DAGANG) ? $dataWp->MERK_DAGANG : '-',
+								'ALAMAT' => ($dataWp->ALAMAT) ? $dataWp->ALAMAT : '-',
+								'KELURAHAN' => ($dataWp->KELURAHAN) ? $dataWp->KELURAHAN : '-',
+								'KECAMATAN' => ($dataWp->KECAMATAN) ? $dataWp->KECAMATAN : '-',
+								'KABKOT' => ($dataWp->KABKOT) ? $dataWp->KABKOT : '-',
+								'PROVINSI' => ($dataWp->PROVINSI) ? $dataWp->PROVINSI : '-',
+								'KODE_KLU' => ($dataWp->KODE_KLU) ? (int) $dataWp->KODE_KLU : 0,
+								'KLU' => ($dataWp->KLU) ? $dataWp->KLU : '-',
+								'TELP' => ($dataWp->TELP) ? $dataWp->TELP : '-',
+								'EMAIL' => ($dataWp->EMAIL) ? $dataWp->EMAIL : '-',
+								'JENIS_WP' => ($dataWp->JENIS_WP) ? $dataWp->JENIS_WP : '-',
+								'BADAN_HUKUM' => ($dataWp->BADAN_HUKUM) ? $dataWp->BADAN_HUKUM : '-',
+								'STATUS_KSWP' => $status_kswp,
+								'RESPONSE_MSG_NPWP' => json_encode($npwp_djp->message),
+								'RESPONSE_MSG_KSWP' => json_encode($kswp_djp->message),
+								'RESPONSE_STATUS_CODE_NPWP' => ($npwp_djp->status) ? (int) $npwp_djp->status : 0,
+								'RESPONSE_STATUS_CODE_KSWP' => ($kswp_djp->status) ? (int) $kswp_djp->status : 0,
+								'USER_TYPE' => $type,
+								'NPWP_SIMTAX' => $data[4],
+								'LAST_UPDATE' => date('Y-m-d H:i:s'),
+							);
+							$doUpdate = $this->db->where('ID', $npwp_simtax->ID)->update('SIMTAX_MASTER_NPWP', $rowData);
 						}
-						$rowData = array(
-							'NPWP' => ($dataWp->NPWP && is_numeric($dataWp->NPWP)) ? $dataWp->NPWP : '-',
-							'NAMA' => ($dataWp->NAMA) ? $dataWp->NAMA : '-',
-							'MERK_DAGANG' => ($dataWp->MERK_DAGANG) ? $dataWp->MERK_DAGANG : '-',
-							'ALAMAT' => ($dataWp->ALAMAT) ? $dataWp->ALAMAT : '-',
-							'KELURAHAN' => ($dataWp->KELURAHAN) ? $dataWp->KELURAHAN : '-',
-							'KECAMATAN' => ($dataWp->KECAMATAN) ? $dataWp->KECAMATAN : '-',
-							'KABKOT' => ($dataWp->KABKOT) ? $dataWp->KABKOT : '-',
-							'PROVINSI' => ($dataWp->PROVINSI) ? $dataWp->PROVINSI : '-',
-							'KODE_KLU' => ($dataWp->KODE_KLU) ? (int) $dataWp->KODE_KLU : 0,
-							'KLU' => ($dataWp->KLU) ? $dataWp->KLU : '-',
-							'TELP' => ($dataWp->TELP) ? $dataWp->TELP : '-',
-							'EMAIL' => ($dataWp->EMAIL) ? $dataWp->EMAIL : '-',
-							'JENIS_WP' => ($dataWp->JENIS_WP) ? $dataWp->JENIS_WP : '-',
-							'BADAN_HUKUM' => ($dataWp->BADAN_HUKUM) ? $dataWp->BADAN_HUKUM : '-',
-							'STATUS_KSWP' => $status_kswp,
-							'RESPONSE_MSG_NPWP' => json_encode($npwp_djp->message),
-							'RESPONSE_MSG_KSWP' => json_encode($kswp_djp->message),
-							'RESPONSE_STATUS_CODE_NPWP' => ($npwp_djp->status) ? (int) $npwp_djp->status : 0,
-							'RESPONSE_STATUS_CODE_KSWP' => ($kswp_djp->status) ? (int) $kswp_djp->status : 0,
-							'USER_TYPE' => $type,
-							'NPWP_SIMTAX' => $data[4],
-							'LAST_UPDATE' => date('Y-m-d H:i:s'),
-						);
-						$doUpdate = $this->db->where('ID', $npwp_simtax->ID)->update('SIMTAX_MASTER_NPWP', $rowData);
 					}
 	 
 					$sql	="MERGE INTO simtax_master_supplier sms
