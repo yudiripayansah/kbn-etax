@@ -144,6 +144,7 @@ class Npwp_mdl extends CI_Model
                 $this->db->where('USER_TYPE', $user_type);
             }
         }
+        $this->db->order_by('NAMA ASC');
         $query = $this->db->get();
         return $query->result();
     }
