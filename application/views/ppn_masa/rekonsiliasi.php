@@ -1036,13 +1036,18 @@
 	async function checkDjp(npwp){
     resKswp = null
     resNpwp = null
+<<<<<<< HEAD
+		let scrollTo = counter * 117
+=======
 		let scrollTo = counter * 57
+>>>>>>> c640e3a139459e79b29e4226132dac2cb9cdb330
 		$('#daftarValidasi').animate({
         scrollTop: scrollTo
     }, 500);
 		$(`#daftar-validasi-${counter} .djp-statusKswp`).text('Loading...')
-    let aNpwp = npwp.shift()
-      if(aNpwp){
+    let listNpwp = npwp.shift()
+      if(listNpwp){
+				let aNpwp = listNpwp.NPWP1
     		$('.djp-counter').html(counter+1)
         theNpwp = aNpwp.replace(/\D/g, "")
         let fKswp = null
@@ -1063,9 +1068,6 @@
           if(fToken){
             fKswp = await checkKswp(fToken.message,theNpwp,aNpwp)
             fNpwp = await checkNpwp(fToken.message,theNpwp,aNpwp)
-            if(fKswp.message == 'Token tidak valid'){
-              
-            }
           }
         }
         if(fKswp){
@@ -1076,12 +1078,42 @@
 						if(fKswp.message.status){
 							status_kswp = `Status KSWP [${fKswp.message.status}]`	
 							message_status = fKswp.message.status
+<<<<<<< HEAD
+						}
+					}
+					let dataWp = {
+						NPWP: '-',
+						NAMA: '-',
+						ALAMAT: '-',
+						// PROVINSI: '-',
+						// KABKOT: '-',
+					}
+					if(fNpwp.message && fNpwp.message.found == 1){
+						let theWp = fNpwp.message.datawp
+						dataWp = {
+							NPWP: `[${theWp.NPWP.replace(/,/g, ' ')}]`,
+							NAMA: theWp.NAMA.replace(/,/g, ' '),
+							ALAMAT: theWp.ALAMAT.replace(/,/g, ' '),
+							// PROVINSI: theWp.PROVINSI.replace(/,/g, ' '),
+							// KABKOT: theWp.KABKOT.replace(/,/g, ' '),
+=======
+>>>>>>> c640e3a139459e79b29e4226132dac2cb9cdb330
 						}
 					}
 					let data_hasil_validasi = {
 						no: counter+1,
+<<<<<<< HEAD
+						status_kswp: message_status,
+						npwpSimtax: aNpwp,
+						namaSimtax: listNpwp.VENDOR_NAME.replace(/,/g, ' '),
+						alamatSimtax: (listNpwp.ADDRESS_LINE1) ? listNpwp.ADDRESS_LINE1.replace(/,/g, ' ') : '-',
+						// provinsiSimtax: (listNpwp.PROVINCE) ? listNpwp.PROVINCE : '-',
+						// kabkotSimtax: (listNpwp.CITY) ? listNpwp.CITY : '-',
+						...dataWp
+=======
 						npwp : aNpwp,
 						status_kswp : message_status
+>>>>>>> c640e3a139459e79b29e4226132dac2cb9cdb330
 					}
 					hasil_validasi.push(data_hasil_validasi)
 					$(`#daftar-validasi-${counter} .djp-statusKswp`).text(`Success, dengan respon KSWP = ${status_kswp}`)
@@ -1251,16 +1283,79 @@
 					}
 			}
 	}
+<<<<<<< HEAD
+	function getNpwpForValidate() {
+		let url = '<?php echo base_url('/djp/getRekon'); ?>'
+		let bulan = $('#bulan').val()
+		let tahun = $('#tahun').val()
+		let jenisPajak = $('#jenisPajak').val()
+		let pembetulan = $("#pembetulanKe").val()
+		let payload = {
+			bulan: bulan,
+			tahun: tahun,
+			jenisPajak: jenisPajak,
+			pembetulan: pembetulan
+		}
+		$('#btn-tutupValidasi').addClass('hidden')
+		$('#btn-cetakHasilKswp').addClass('hidden')
+		$('#btn-mulaiValidasi').addClass('hidden')
+		$('#djp-msgProses').html(`Mengambil data mohon menunggu...`)
+		$('#daftarValidasi').html('')
+		return $.ajax({
+				url: url,
+				data: payload,
+				type: 'POST',
+				dataType: 'json',
+				success: (res)=> {
+					if(res){
+						$('#btn-mulaiValidasi').removeClass('hidden')
+						$('#djp-msgProses').html(`Memproses <span class="djp-counter">0</span> data dari total <span class="djp-total">${res.dataNpwp.length}</span> data`)
+					} else {
+						$('#djp-msgProses').html(`Terjadi kesalahan saat mengambil data untuk validasi, mohon muat ulang halaman`)
+					}
+				},
+				error: ()=> {
+						$('#djp-msgProses').html(`Terjadi kesalahan saat mengambil data untuk validasi, mohon muat ulang halaman`)
+				}
+			})
+	}
+	$('#btn-cetakHasilKswp').click(()=>{
+		let headers = {
+				no: 'No',
+				status_kswp: 'Status Kswp',
+				npwpSimtax: 'NPWP Simtax',
+				namaSimtax: 'NAMA Simtax',
+				alamatSimtax: 'Alamat Simtax',
+				// provinsiSimtax: 'Provinsi Simtax',
+				// kabkotSimtax: 'Kabupaten/ Kota Simtax',
+				NPWP: 'NPWP DJP',
+				NAMA: 'Nama DJP',
+				ALAMAT: 'Alamat DJP',
+				// PROVINSI: 'Provinsi DJP',
+				// KABKOT: 'Kabupaten/ Kota DJP',
+=======
 	$('#btn-cetakHasilKswp').click(()=>{
 		let headers = {
 				no: 'No',
 				npwp: 'NPWP'.replace(/,/g, ''), // remove commas to avoid errors
 				status_kswp: 'Status KSWP'.replace(/,/g, ''),
+>>>>>>> c640e3a139459e79b29e4226132dac2cb9cdb330
 		};
 		let today = new Date()
 		let items = hasil_validasi
 		let filename = 'Hasil Kswp '+today.toLocaleDateString("en-US")
 		exportCSVFile(headers, items, filename)
+<<<<<<< HEAD
+	})
+	$('body').delegate('#dpp','keyup',function(){
+		let dpp = Number($(this).val())
+		let ppn = dpp * 10 /100
+		if(ppn < 1){
+			ppn = 0
+		}
+		$('#jumlahpotong').val(ppn)
+	})
+=======
 	})
 	$('body').delegate('#dpp','keydown',function(){
 		let dpp = Number($(this).val())
@@ -1270,6 +1365,7 @@
 		}
 		$('#jumlahpotong').val(ppn)
 	})
+>>>>>>> c640e3a139459e79b29e4226132dac2cb9cdb330
 	$(document).ready(function() {
 		var table1                 = "",
 		table2                     = "",
@@ -1336,6 +1432,21 @@
 		terutang_tidak_terutang    = 0,
 		z_percent                  = 0,
 		npwpValidasi 							 = [];
+<<<<<<< HEAD
+		$('#btnValidasi').click(async () => {
+			let dataNpwp = await getNpwpForValidate()
+			npwpValidasi = dataNpwp.dataNpwp
+			let listTemplate = ''
+			npwpValidasi.map((x,i) => {
+				listTemplate += `<div class="alert alert-info mb-0 list-validasi-kswp" style="margin-bottom:5px;display:flex;justify-content:space-between;align-items;flex-start" id="daftar-validasi-${i}">
+													<span style="margin-right:10px;">${i+1}.</span>
+													<div style="width:100%">
+														<span>Npwp : <b class="djp-noNpwp">${x.NPWP1}</b></span><br>
+														<span>Nama : <b class="djp-noNpwp">${x.VENDOR_NAME}</b></span><br>
+														<span>Alamat : <b class="djp-noNpwp">${x.ADDRESS_LINE1}</b></span><br>
+														<span>Status KSWP : <b class="djp-statusKswp">-</b></span>
+													</div>
+=======
 		$('#btnValidasi').click(() => {
 			$('#btn-tutupValidasi').addClass('hidden')
 			$('#btn-cetakHasilKswp').addClass('hidden')
@@ -1347,6 +1458,7 @@
 				listTemplate += `<div class="alert alert-info mb-0" style="margin-bottom:5px" id="daftar-validasi-${i}">
 													<span>${i+1}. Npwp : <b class="djp-noNpwp">${x}</b></span>
 													<span>Status KSWP : <b class="djp-statusKswp">-</b></span>
+>>>>>>> c640e3a139459e79b29e4226132dac2cb9cdb330
 												</div>`
 			})
 			$('#daftarValidasi').html(listTemplate)
@@ -1386,16 +1498,16 @@
 																																							d._category         = 'faktur_standar';
 																																							d._orderby          = orderby1;
 																																						},
-																							"dataSrc" : function(res) {
-																								if(res.allNpwp){
-																									res.allNpwp.map((x) => {
-																										if(x && x != 'null' && x!=null && x != '-'){
-																											npwpValidasi.push(x)
-																										}
-																									})
-																								}
-																								return res.data
-																							}
+																							// "dataSrc" : function(res) {
+																							// 	if(res.allNpwp){
+																							// 		res.allNpwp.map((x) => {
+																							// 			if(x && x != 'null' && x!=null && x != '-'){
+																							// 				npwpValidasi.push(x)
+																							// 			}
+																							// 		})
+																							// 	}
+																							// 	return res.data
+																							// }
 																		},
 																		"language"		: {
 																											"emptyTable"	: "<span class='label label-danger'>Data Tidak Ditemukan!</span>",
@@ -1599,6 +1711,10 @@
 				val_ppn_asal             = d.ppn_asal;
 				val_ntpn                 = d.ntpn;
 				val_keterangan_gl        = d.keterangan_gl;
+<<<<<<< HEAD
+				val_dl_fs = 'faktur_standar'
+=======
+>>>>>>> c640e3a139459e79b29e4226132dac2cb9cdb330
 			valueGrid();
 			showHide();
 			$("#btnEdit1").removeAttr('disabled');
@@ -1625,6 +1741,18 @@
 										d._category         = 'dokumen_lain';
 										d._orderby          = orderby2;
 									},
+<<<<<<< HEAD
+									// "dataSrc" : function(res) {
+									// 																if(res.allNpwp){
+									// 																	res.allNpwp.map((x) => {
+									// 																		if(x && x != 'null' && x!=null && x != '-'){
+									// 																			npwpValidasi.push(x)
+									// 																		}
+									// 																	})
+									// 																}
+									// 																return res.data
+									// 															}
+=======
 									"dataSrc" : function(res) {
 																									if(res.allNpwp){
 																										res.allNpwp.map((x) => {
@@ -1635,6 +1763,7 @@
 																									}
 																									return res.data
 																								}
+>>>>>>> c640e3a139459e79b29e4226132dac2cb9cdb330
 								},
 
 					"language"		: {
@@ -1838,7 +1967,8 @@
 			val_ppn_asal              = d.ppn_asal;
 			val_keterangan_gl         = d.keterangan_gl;
 			val_ntpn                  = d.ntpn;
-
+			
+			val_dl_fs = 'dokumen_lain'
 			valueGrid();
 			showHide();
 
@@ -2091,6 +2221,7 @@
 			} else {
 				$('#table-z-percent').DataTable().ajax.reload();
 			}
+<<<<<<< HEAD
 
 
 			$.ajax({
@@ -2138,6 +2269,55 @@
 		$("#tahun_z_percent_lov").on("change", function(){
 			$('#table-z-percent').DataTable().ajax.reload();
 
+=======
+
+
+			$.ajax({
+				url		: baseURL + 'ppn_masa/load_total_detail_summary',
+				type	: "POST",
+				dataType:"json", 
+				data	: ({ _searchBulan : $('#bulan').val(), _searchTahun : $('#tahun').val(), _searchPpn : $('#jenisPajak').val(), _searchPembetulan : $('#pembetulanKe').val(), _category : "Rekonsiliasi" }),
+				success	: function(result){			
+						$("#jmlTidakDilaporkan").html(number_format(result.jml_tidak_dilaporkan,2,'.',','));
+					}
+			});
+
+			$.ajax({
+				url		: baseURL + 'ppn_masa/load_total_pmk',
+				type	: "POST",
+				dataType:"json", 
+				data	: ({ _searchBulan : $('#bulan').val(), _searchTahun : $('#tahun').val(), _searchPpn : $('#jenisPajak').val(), _searchPembetulan : $('#pembetulanKe').val()}),
+				success	: function(result){
+						$("#tot_dpp").html(number_format(result.tot_dpp,2,'.',','));
+						$("#tot_ppn").html(number_format(result.tot_ppn,2,'.',','));
+						$("#tot_z_percent").html(result.tot_z_percent);
+						$("#tot_spt").html(number_format(result.tot_spt,2,'.',','));
+						$("#tot_koreksi").html(result.tot_koreksi);
+						$("#pmk").html(number_format(result.tot_koreksi,2,'.',','));
+					}
+			});
+
+			$.ajax({
+				url		: baseURL + 'ppn_masa/load_z_percent',
+				type	: "POST",
+				dataType:"json", 
+				data	: ({ _searchBulan : $('#bulan').val(), _searchTahun : $('#tahun').val()}),
+				success	: function(result){
+						val_z_bulan        = $('#bulan').val();
+						val_z_tahun        = $('#tahun').val();
+						val_z_percent      = result.z_percent;
+						val_terutang_ppn   = result.terutang_ppn;
+						val_tidak_terutang = result.tidak_terutang;
+					}
+			});
+
+			/* Akhir detail Summary */
+		}
+
+		$("#tahun_z_percent_lov").on("change", function(){
+			$('#table-z-percent').DataTable().ajax.reload();
+
+>>>>>>> c640e3a139459e79b29e4226132dac2cb9cdb330
 			tahun_z_percent   = $("#tahun_z_percent_lov").val();
 
 			$(".tahun_z_percent").html(tahun_z_percent);
@@ -2497,9 +2677,15 @@
 				});
 		});
 			
+<<<<<<< HEAD
 
 		$("#btnSubmit").click(function(){
 
+=======
+
+		$("#btnSubmit").click(function(){
+
+>>>>>>> c640e3a139459e79b29e4226132dac2cb9cdb330
 			if (table1.data().any() || table2.data().any()){
 					if(table1.data().any()){
 					data  = table1.row(0).data();
