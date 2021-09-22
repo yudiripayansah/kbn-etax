@@ -51,8 +51,8 @@
               <table class="table table-bordered table-hover table-striped table-datatable">
                 <thead>
                   <tr>
+                    <th>#</th>
                     <th>No</th>
-                    <th>Action</th>
                     <th>Status KSWP</th>
                     <th>NPWP Simtax</th>
                     <th>NPWP DJP</th>
@@ -111,6 +111,7 @@
     user_type : null,
     status_kswp : null,
   }
+  let listDataNpwp = []
   $(document).ready(function(){
     // get data with ajax
     let dataTable = $('.table-datatable').DataTable( {
@@ -127,10 +128,14 @@
               d.user_type = $('#filter-tipe-user').val()
               d.status_kswp = $('#filter-status-kswp').val()
             },
+            "dataSrc" : function(res) {
+              listDataNpwp = res.data
+              return res.data
+            }
         },
         "columnDefs": [
           { 
-              "targets": [ 0, 1 ], //first column / numbering column
+              "targets": [ 0,1 ], //first column / numbering column
               "orderable": false, //set not orderable
           },
         ],
@@ -140,65 +145,60 @@
 					"emptyTable"	: "No Data Found!",	
 					"infoEmpty"		: "Empty Data",
 					"processing"	:' <img src="<?php echo base_url('assets/vendor/simtax/css/images/loading2.gif'); ?>">',
-					"search"		: "_INPUT_"
+					"search"		: "Search: "
 				},
-        // "columns": [
-				// 	{ "name": "NO", "class":"text-center" },
-				// 	{ "name": "ACTION", "class":"text-center" },
-				// 	{ "name": "STATUS_KSWP", "class":"" },
-				// 	{ "name": "NPWP_SIMTAX", "class":"" },
-				// 	{ "name": "NPWP", "class":"" },
-				// 	{ "name": "NAMA", "class":"" },
-				// 	{ "name": "MERK_DAGANG", "class":"" },
-				// 	{ "name": "ALAMAT", "class":"" },
-				// 	{ "name": "KELURAHAN", "class":"" },
-				// 	{ "name": "KECAMATAN", "class":"" },
-				// 	{ "name": "KABKOT", "class":"" },
-				// 	{ "name": "PROVINSI", "class":"" },
-				// 	{ "name": "KODE_KLU", "class":"" },
-				// 	{ "name": "KLU", "class":"" },
-				// 	{ "name": "TELP", "class":"" },
-				// 	{ "name": "EMAIL", "class":"" },
-				// 	{ "name": "JENIS_WP", "class":"" },
-				// 	{ "name": "BADAN_HUKUM", "class":"" },
-				// 	{ "name": "USER_TYPE", "class":"" },
-				// ],
     } );
-    $('#btnValidasi').click(() => {
+    $('#btnValidasi').click(async () => {
+      let notChecked = true
       counter = 0;
       npwpValidasi = []
+      let listDataToCheck = []
       $('#btn-tutupValidasi').addClass('hidden')
       $('#daftarValidasi').html('')
       $('#djp-msgProses').html('Mengambil data mohon menunggu...')
-          $('#btn-mulaiValidasi').addClass('hidden')
-      $.ajax({
-        url: '<?php echo base_url('/djp/get_npwp_validasi'); ?>',
-        data: {
-          user_type: $('#filter-tipe-user').val(),
-          status_kswp: $('#filter-status-kswp').val()
-        },
-        dataType: 'json',
-        type: 'POST',
-        success: (res) => {
-          res.data.map((x)=>{
-            npwpValidasi.push(x.NPWP_SIMTAX)
-          })
-          $('#btn-mulaiValidasi').removeClass('hidden')
-          $('#djp-msgProses').html('Memproses <span class="djp-counter">0</span> data dari total <span class="djp-total">0</span> data')
-          $('.djp-total').text(npwpValidasi.length)
-          let listTemplate = ''
-          npwpValidasi.map((x,i) => {
-            listTemplate += `<div class="alert alert-info mb-0" style="margin-bottom:5px" id="daftar-validasi-${i}">
-                              <span>${i+1}. Npwp : <b class="djp-noNpwp">${x}</b></span>
-                              <span>Status KSWP : <b class="djp-statusKswp">-</b></span>
-                            </div>`
-          })
-          $('#daftarValidasi').html(listTemplate)
-        },
-        error: () => {
-
+      $('#btn-mulaiValidasi').addClass('hidden')
+      $('.checkbox-npwp').each((x)=>{
+        if($(`input[data-row-no="${x}"]`).is(':checked')){
+          let listChecked = {
+            NPWP_SIMTAX: listDataNpwp[x][3],
+            NAMA: listDataNpwp[x][5],
+            ALAMAT: listDataNpwp[x][7]
+          }
+          listDataToCheck.push(listChecked)
+          notChecked = false
         }
       })
+      if(notChecked){
+        let getNpwpValidasi = await $.ajax({
+          url: '<?php echo base_url('/djp/get_npwp_validasi'); ?>',
+          data: {
+            user_type: $('#filter-tipe-user').val(),
+            status_kswp: $('#filter-status-kswp').val()
+          },
+          dataType: 'json',
+          type: 'POST',
+        })
+        listDataToCheck = getNpwpValidasi.data
+      }
+      listDataToCheck.map((x)=>{
+        npwpValidasi.push(x)
+      })
+      $('#btn-mulaiValidasi').removeClass('hidden')
+      $('#djp-msgProses').html('Memproses <span class="djp-counter">0</span> data dari total <span class="djp-total">0</span> data')
+      $('.djp-total').text(npwpValidasi.length)
+      let listTemplate = ''
+      npwpValidasi.map((x,i) => {
+        listTemplate += `<div class="alert alert-info mb-0 list-validasi-kswp" style="margin-bottom:5px;display:flex;justify-content:space-between;align-items;flex-start" id="daftar-validasi-${i}">
+                          <span style="margin-right:10px;">${i+1}.</span>
+                          <div style="width:100%">
+                            <span>Npwp : <b class="djp-noNpwp">${x.NPWP_SIMTAX}</b></span><br>
+                            <span>Nama : <b class="djp-noNpwp">${x.NAMA}</b></span><br>
+                            <span>Alamat : <b class="djp-noNpwp">${x.ALAMAT}</b></span><br>
+                            <span>Status KSWP : <b class="djp-statusKswp">-</b></span>
+                          </div>
+                        </div>`
+      })
+      $('#daftarValidasi').html(listTemplate)
     })
     $('#btn-mulaiValidasi').click(() => {
       $('#btn-mulaiValidasi').addClass('hidden')
@@ -212,13 +212,14 @@
     resKswp = null
     resNpwp = null
     console.log(counter)
-		let scrollTo = counter * 57
+		let scrollTo = counter * 117
 		$('#daftarValidasi').animate({
         scrollTop: scrollTo
     }, 500);
 		$(`#daftar-validasi-${counter} .djp-statusKswp`).text('Loading...')
-    let aNpwp = npwp.shift()
-      if(aNpwp){
+    let listNpwp = npwp.shift()
+      if(listNpwp){
+        let aNpwp = listNpwp.NPWP_SIMTAX
     		$('.djp-counter').html(counter+1)
         theNpwp = aNpwp.replace(/\D/g, "")
         let fKswp = null
@@ -230,7 +231,6 @@
             fNpwp = await checkNpwp(token,theNpwp,aNpwp)
             if(fKswp.message == 'Token tidak valid'){
               fToken = await getToken()
-              console.log(fToken,aNpwp,token,'Token ini tidak valid')
               if(fToken){
                 fKswp = await checkKswp(fToken.message,theNpwp,aNpwp)
                 fNpwp = await checkNpwp(fToken.message,theNpwp,aNpwp)
@@ -239,12 +239,8 @@
           } else {
             fToken = await getToken()
             if(fToken){
-              console.log(fToken,aNpwp,'membuat token baru')
               fKswp = await checkKswp(fToken.message,theNpwp,aNpwp)
               fNpwp = await checkNpwp(fToken.message,theNpwp,aNpwp)
-              if(fKswp.message == 'Token tidak valid'){
-                
-              }
             }
           }
         }
@@ -371,3 +367,8 @@
     })
   }
 </script>
+<style>
+  #DataTables_Table_0_filter label input {
+    border : 1px solid rgba(0,0,0,.2);
+  }
+</style>
