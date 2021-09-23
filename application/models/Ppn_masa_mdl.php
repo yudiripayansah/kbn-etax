@@ -409,7 +409,7 @@ class Ppn_masa_mdl extends CI_Model
 					  INNER JOIN SIMTAX_MASTER_PERIOD SMP 
 					          ON SPH.PERIOD_ID = SMP.PERIOD_ID
                         LEFT JOIN SIMTAX_MASTER_NPWP SMN
-                                ON SMN.NPWP_SIMTAX = SPL.NPWP
+                                ON SMN.NPWP_SIMTAX = NVL(".$alias.".NPWP,SPL.NPWP)
 					 WHERE SPL.PAJAK_HEADER_ID = '".$pajak_header_id."'
 					 ".$whereCategory."
 					 ORDER BY INVOICE_NUM DESC";

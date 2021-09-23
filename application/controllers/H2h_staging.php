@@ -494,7 +494,7 @@ class H2h_staging extends CI_Controller {
                                                 "namaPembeli" => $row['VENDOR_NAME'],
                                                 "alamatPembeli" => $alamatNya,
                                                 "jumlahDpp" => $row['DPP'],
-                                                "jumlahPpn" => $row['JUMLAH_POTONG_PPN'],
+                                                "jumlahPpn" => ($row['JUMLAH_POTONG_PPN'] != "") ? $row['JUMLAH_POTONG_PPN'] : 0,
                                                 "jumlahPpnbm" => ($row['JUMLAH_PPNBM'] != "") ? $row['JUMLAH_PPNBM'] : 0,
                                                 "referensi" => $row['REFERENSI'],
                                                 "nikPembeli" => null,
@@ -527,7 +527,7 @@ class H2h_staging extends CI_Controller {
                                                 "namaPembeli" => $row['VENDOR_NAME'],
                                                 "alamatPembeli" => $alamatNya,
                                                 "jumlahDpp" => $row['DPP'],
-                                                "jumlahPpn" => $row['JUMLAH_POTONG_PPN'],
+                                                "jumlahPpn" => ($row['JUMLAH_POTONG_PPN'] != "") ? $row['JUMLAH_POTONG_PPN'] : 0,
                                                 "jumlahPpnbm" => ($row['JUMLAH_PPNBM'] != "") ? $row['JUMLAH_PPNBM'] : 0,
                                                 "referensi" => $row['REFERENSI'],
                                                 "nikPembeli" => null,
@@ -563,7 +563,7 @@ class H2h_staging extends CI_Controller {
                                                    "namaPembeli" => $row['VENDOR_NAME'],
                                                    "alamatPembeli" => $alamatNya,
                                                    "jumlahDpp" => $row['DPP'],
-                                                   "jumlahPpn" => $row['JUMLAH_POTONG_PPN'],
+                                                   "jumlahPpn" => ($row['JUMLAH_POTONG_PPN'] != "") ? $row['JUMLAH_POTONG_PPN'] : 0,
                                                    "jumlahPpnbm" => ($row['JUMLAH_PPNBM'] != "") ? $row['JUMLAH_PPNBM'] : 0,
                                                    "referensi" => $row['REFERENSI'],
                                                    "nikPembeli" => null,
@@ -979,6 +979,7 @@ class H2h_staging extends CI_Controller {
         function send_to_staging_djt($username,$password,$path,$base_url,$params,$bulan_pajak,$tahun_pajak,$pajak,$nama_pajak,$kode_cabang,$pembetulan_ke,$category,$creditable)
         {
                 ini_set('memory_limit', '-1');
+                ini_set('MAX_EXECUTION_TIME', '-1');
                 $this->load->helper('csv_helper');
                 $url = $base_url.'pajak/login';
                 $params_string = json_encode($params);
@@ -1034,8 +1035,7 @@ class H2h_staging extends CI_Controller {
                       
                         $masa_pajak = strtoupper(get_masa_pajak($bulan_pajak));
                         $add_push_element = array();
-                           
-                        $cntarr = count($element_data_str);     
+                        $cntarr = count($element_data_str);  
                         for($i=0;$i<=($cntarr-1);$i++){  
                                 $resjt = $this->jurnal_transaksi($apidjt, $element_data_str[$i], $token_type, $utoken);
                                 $row_temp['element_data'] = $element_data_str[$i];
@@ -1050,7 +1050,7 @@ class H2h_staging extends CI_Controller {
                                 $row_temp['total_baris_kirim'] =  $cntarr;
                                 $add_push_element[] = $row_temp;
                         }
-                     
+                        
                           //curl_close($ch);
                            $ins_log = $this->h2h->insertLogJt($add_push_element);
                            if($ins_log){
@@ -2550,5 +2550,23 @@ class H2h_staging extends CI_Controller {
                 }
 
         }
+
+        public function getprogress()
+	{
+		//if (strlen(session_id()) === 0) {
+		//	session_start();
+		//}
+		if ($this->session->userdata('progress') != "") {
+			//echo $this->session->userdata('progress');
+                        $result['sess'] = $this->session->userdata('progress');
+                        echo json_encode($result);
+			if ($this->session->userdata('progress') == 100) {
+                                $this->session->unset_userdata('progress');
+			}
+		} else {
+			$result['sess'] = 0;
+                        echo json_encode($result);
+		}
+	}
 		
 }

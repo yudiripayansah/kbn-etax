@@ -132,6 +132,18 @@
 		</div>
 		</form>
 	 </div>
+
+	 <div class="row">
+			<div class="col-md-50">
+				<div class="form-group"> 
+					<div class="progress" style="margin-top:100px">
+						<div class="progress-bar active" id="progressbar" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 0%; background-color: #399;">
+							<span class="sr-only" style='color:#fcfbf7;' >0% Completed</span>
+						</div>
+					</div>	
+				</div>
+			</div>			
+		</div>
     
     <div class="row" id="faktur_masukan">
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">	
@@ -451,14 +463,17 @@
 	});
 
 	function send_to_staging()
-	{
+	{	
+		//getProgress();	
+	  	
       $.ajax({
 			url		: "<?php echo site_url('h2h_staging/send_to_staging') ?>",
 			type	: "POST",
 			data	: $('#form-wp').serialize(),
+			async: true, //IMPORTANT!
 			beforeSend	: function(){
-									$("body").addClass("loading2")
-									$("#message").html('Sedang Proses Kirim Data...');
+				$("body").addClass("loading2")
+				$("#message").html('Sedang Proses Kirim Data...');
 			},							
 			success	: function(result){
 				if (result==111 || result==11 || result==1 ) {
@@ -515,7 +530,30 @@
 				}
 			}
 		});	
+		
 	}
+
+	function getProgress() {
+		console.log('getProgress');
+		$.ajax({
+			url: baseURL + "h2h_staging/getprogress",
+			type: "GET",
+			contentType: false,
+			processData: false,
+			dataType: "json",
+			async: true,
+			success: function (result) {
+				console.log(result.sess);
+				$('#progressbar').css('width', result.sess+'%').children('.sr-only').html("<span style='color:#fcfbf7;'>"+result.sess+"% Completed</span>");
+				if(result.sess!=='100'){
+					setTimeout(getProgress(), 1000);
+				}
+				if(result.sess==='100'){
+					$('#progressbar').css('width', result.sess+'%').children('.sr-only').html("<span style='color:#fcfbf7;'>"+result.sess+"% Completed</span>");
+				}
+			}
+		});
+	 }
 
 	var dengan_akun = "";
 	$("#btnDownload").on("click", function(){
