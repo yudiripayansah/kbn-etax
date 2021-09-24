@@ -93,6 +93,7 @@
 	                        <thead>
 	                            <tr>
 	                            	<th>LEDGER ID</th>
+									<th>TRADING PARTNER ID</th>
 	                            	<th>PERIODE</th>
 	                            	<th>JE SOURCE</th>
 	                            	<th>DOC. NUMBER</th>
@@ -488,6 +489,7 @@
 				},
 			   "columns": [
 					{ "data": "ledger_id" },
+					{ "data": "trading_partner_id" },
 					{ "data": "period_name", "class":"text-left", "width" : "60px" },
 					{ "data": "user_je_source_name" },
 					{ "data": "docnumber" },
@@ -519,7 +521,7 @@
 				],
 			"columnDefs": [
 				{
-					"targets": [ 5 ],
+					"targets": [ 6 ],
 					"visible": false
 				}
 			],
