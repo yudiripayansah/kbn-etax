@@ -1128,7 +1128,7 @@ class Sync_data_ebs_mdl extends CI_Model {
 					'".$data[26]."',
 					'DRAFT',
 					 ".$invoice_id.",
-					 '".$data[28]."',
+					 ".$data[28]."
 					)";
 			}
         }
