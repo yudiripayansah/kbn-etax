@@ -227,6 +227,7 @@ class H2h_staging_mdl extends CI_Model {
 							a.ponumber,
 							a.tanggalpo,
 							a.currency,
+							a.trading_partner_id,
 							b.docnumber, 
 							b.pajak, 
 							b.bulan_pajak, 
@@ -583,6 +584,7 @@ class H2h_staging_mdl extends CI_Model {
 			$tanggalPo = ($element_data->tanggalPo) ? date("d-M-y", strtotime($element_data->tanggalPo)) : '';
 			$company_id = $element_data->company_id;
 			$company_name = $element_data->company_name;
+			$tradingPartnerId = $element_data->tradingPartnerId;
 			$status_message = $row_data['statusMessage']; //sukses atau error
 			$status = $row_data['status']; // S atau E
 			$pembetulan_ke = $row_data['pembetulan_ke'];
@@ -617,7 +619,8 @@ class H2h_staging_mdl extends CI_Model {
 					COMPANY_NAME,
 					STATUS_KIRIM,
 					KETERANGAN,
-					JENIS_PAJAK
+					JENIS_PAJAK,
+					TRADING_PARTNER_ID
 					) 
 					 values (
 						 '".$docNumber."',
@@ -646,7 +649,8 @@ class H2h_staging_mdl extends CI_Model {
 						 '".$company_name."',
 						 '".$status."',
 						 '".$status_message."',
-						 '".$jenispajak."'
+						 '".$jenispajak."',
+						 ".$tradingPartnerId."
 					)";
 				}
 			
@@ -1049,7 +1053,8 @@ class H2h_staging_mdl extends CI_Model {
 						PONUMBER,
 						TANGGALPO,
 						KODE_CABANG,
-						INVOICE_ID
+						INVOICE_ID,
+						TRADING_PARTNER_ID
 					FROM  
 					SIMTAX_DETAIL_JURNAL_TRANSAKSI
 					WHERE 1=1 and (amount is not null or amount > 0)
