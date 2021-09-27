@@ -1095,7 +1095,8 @@ class Sync_data_ebs_mdl extends CI_Model {
 					NOMORINVOICE,
 					TANGGALINVOICE,
 					STATUSDOKUMEN,
-					INVOICE_ID
+					INVOICE_ID,
+					TRADING_PARTNER_ID
 					)
 					values 
 					(
@@ -1127,7 +1128,8 @@ class Sync_data_ebs_mdl extends CI_Model {
 					'".$data[25]."',
 					'".$data[26]."',
 					'DRAFT',
-					 ".$invoice_id."
+					 ".$invoice_id.",
+					 ".$data[28]."
 					)";
 			}
         }

@@ -130,7 +130,8 @@ class Ppnmasa_detail_jurnal_transaksi extends CI_Controller {
 						'nomorinvoice'      	=> $row['NOMORINVOICE'],
 						'tanggalinvoice'      	=> $tgl_invoice,
 						'statusdokumen'      	=> $row['STATUSDOKUMEN'],
-						'invoice_id'      		=> $row['INVOICE_ID']
+						'invoice_id'      		=> $row['INVOICE_ID'],
+						'trading_partner_id'    => $row['TRADING_PARTNER_ID']
                         );   
 				if($row['STATUSDOKUMEN'] != 'SUBMIT'){
 					$isDokSubmit = false;

@@ -79,7 +79,8 @@ class Ppnmasa_detail_jurnal_mdl extends CI_Model {
 							NOMORINVOICE,
 							TANGGALINVOICE,
 							STATUSDOKUMEN,
-							INVOICE_ID
+							INVOICE_ID,
+							TRADING_PARTNER_ID
                             FROM SIMTAX_DETAIL_JURNAL_TRANSAKSI
 					        WHERE 1=1
 						".$where.$qnama_pajak.$whereCabang.$whereBulan.$whereTahun;
