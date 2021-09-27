@@ -294,6 +294,7 @@ class H2h_staging extends CI_Controller {
                                 'ponumber'		        => $row['PONUMBER'],
                                 'tanggalpo'		        => $row['TANGGALPO'],
                                 'currency'		        => $row['CURRENCY'],
+                                'trading_partner_id'		        => $row['TRADING_PARTNER_ID'],
                            );
                            
                         }
@@ -355,6 +356,8 @@ class H2h_staging extends CI_Controller {
         function send_to_staging_fk($username,$password,$base_url,$params,$bulan_pajak,$tahun_pajak,$pajak,$nama_pajak,$kode_cabang,$pembetulan_ke,$category,$creditable)
         {
                 ini_set('memory_limit', '-1');
+                ini_set('MAX_EXECUTION_TIME', '-1');
+                set_time_limit(0);
                 $this->load->helper('csv_helper');
 
                 $url = $base_url.'pajak/login';
@@ -370,7 +373,8 @@ class H2h_staging extends CI_Controller {
                         $utoken = $el_request->token_jwt;
                         $comp_id = $el_request->company_id;
                         $comp_name = $el_request->company_name;
-                        $apifk = $base_url."pajak/faktur-keluaran"; 
+                        $apifk = $base_url."pajak/faktur-keluaran";
+                        $add_push_element = array(); 
                         
                         //Create data
                         $date           = date("Ymdhis", time());
@@ -511,6 +515,21 @@ class H2h_staging extends CI_Controller {
                                                 "company_id" => $comp_id,
                                                 "company_name" => $comp_name
                                              );
+
+                                        $resfk = $this->import_faktur_keluaran($apifk, json_encode($element_data), $token_type, $utoken);
+                                   
+                                        $row_temp['element_data'] = json_encode($element_data);
+                                        $row_temp['docNumber'] = $date;
+                                        $statusmessage = str_replace("'", '', $resfk["statusMessage"]);
+                                        $row_temp['statusMessage'] = $statusmessage;
+                                        $row_temp['status'] = $resfk["status"];
+                                        $row_temp['pajak_header_id'] = $pajak_header_id;
+                                        $row_temp['creditable'] = 'not_creditable';
+                                        $row_temp['pembetulan_ke'] = $pembetulan_ke;
+                                        $row_temp['kode_cabang'] =  $kode_cabang;
+                                        $row_temp['total_baris_kirim'] = count($data->result_array());
+                                        $add_push_element[] = $row_temp;     
+
                                         $element_data_str_dk[] = json_encode($element_data);
                                 }
                                 
@@ -544,7 +563,22 @@ class H2h_staging extends CI_Controller {
                                                 "company_id" => $comp_id,
                                                 "company_name" => $comp_name
                                              );
-                                        $element_data_str[] = json_encode($element_data);
+
+                                          $resfk = $this->import_faktur_keluaran($apifk, json_encode($element_data), $token_type, $utoken);
+                                         
+                                           $row_temp['element_data'] = json_encode($element_data);
+                                           $row_temp['docNumber'] = $date;
+                                           $statusmessage = str_replace("'", '', $resfk["statusMessage"]);
+                                           $row_temp['statusMessage'] = $statusmessage;
+                                           $row_temp['status'] = $resfk["status"];
+                                           $row_temp['pajak_header_id'] = $pajak_header_id;
+                                           $row_temp['creditable'] = 'not_creditable';
+                                           $row_temp['pembetulan_ke'] = $pembetulan_ke;
+                                           $row_temp['kode_cabang'] =  $kode_cabang;
+                                           $row_temp['total_baris_kirim'] = count($data->result_array());
+                                           $add_push_element[] = $row_temp;
+
+                                           $element_data_str[] = json_encode($element_data);
                                    }
                                    else {
                                            $adaEfaktur = true;
@@ -580,6 +614,21 @@ class H2h_staging extends CI_Controller {
                                                    "company_id" => $comp_id,
                                                    "company_name" => $comp_name
                                                 );
+
+                                                $resfk = $this->import_faktur_keluaran($apifk, json_encode($element_data1), $token_type, $utoken);
+                                           
+                                                $row_temp['element_data'] = json_encode($element_data1);
+                                                $row_temp['docNumber'] = $date;
+                                                $statusmessage = str_replace("'", '', $resfk["statusMessage"]);
+                                                $row_temp['statusMessage'] = $statusmessage;
+                                                $row_temp['status'] = $resfk["status"];
+                                                $row_temp['pajak_header_id'] = $pajak_header_id;
+                                                $row_temp['creditable'] = 'not_creditable';
+                                                $row_temp['pembetulan_ke'] = $pembetulan_ke;
+                                                $row_temp['kode_cabang'] =  $kode_cabang;
+                                                $row_temp['total_baris_kirim'] = count($data->result_array());
+                                                $add_push_element[] = $row_temp;
+
                                                 $element_data_str1[] = json_encode($element_data1);
                                            }
                                      }
@@ -587,68 +636,7 @@ class H2h_staging extends CI_Controller {
                            }
                           
                            $masa_pajak = strtoupper(get_masa_pajak($bulan_pajak));
-                           $add_push_element = array();
-
-                           if($category == "dokumen_lain"){
-                                // data dokumen lain   
-                                $cntarr = count($element_data_str_dk);   
-                                for($i=0;$i<=($cntarr-1);$i++){     
-                                   $row_temp = array();  
-                                   $resfk = $this->import_faktur_keluaran($apifk, $element_data_str_dk[$i], $token_type, $utoken);
-                                   
-                                   $row_temp['element_data'] = $element_data_str_dk[$i];
-                                   $row_temp['docNumber'] = $date;
-                                   $statusmessage = str_replace("'", '', $resfk["statusMessage"]);
-                                   $row_temp['statusMessage'] = $statusmessage;
-                                   $row_temp['status'] = $resfk["status"];
-                                   $row_temp['pajak_header_id'] = $pajak_header_id;
-                                   $row_temp['creditable'] = 'not_creditable';
-                                   $row_temp['pembetulan_ke'] = $pembetulan_ke;
-                                   $row_temp['kode_cabang'] =  $kode_cabang;
-                                   $row_temp['total_baris_kirim'] =  $cntarr;
-                                   $add_push_element[] = $row_temp;
-                                } 
-                           } else {
-                                // data Faktur      
-                                if ($adaEfaktur == true){
-                                        $cntarr = count($element_data_str1);   
-                                        for($i=0;$i<=($cntarr-1);$i++){
-                                           $row_temp = array();  
-                                           $resfk = $this->import_faktur_keluaran($apifk, $element_data_str1[$i], $token_type, $utoken);
-                                           
-                                           $row_temp['element_data'] = $element_data_str1[$i];
-                                           $row_temp['docNumber'] = $date;
-                                           $statusmessage = str_replace("'", '', $resfk["statusMessage"]);
-                                           $row_temp['statusMessage'] = $statusmessage;
-                                           $row_temp['status'] = $resfk["status"];
-                                           $row_temp['pajak_header_id'] = $pajak_header_id;
-                                           $row_temp['creditable'] = 'not_creditable';
-                                           $row_temp['pembetulan_ke'] = $pembetulan_ke;
-                                           $row_temp['kode_cabang'] =  $kode_cabang;
-                                           $row_temp['total_baris_kirim'] =  $cntarr;
-                                           $add_push_element[] = $row_temp;
-                                        } 
-                                        
-                                   } else {
-                                        $cntarr = count($element_data_str);   
-                                        for($i=0;$i<=($cntarr-1);$i++){
-                                           $resfk = $this->import_faktur_keluaran($apifk, $element_data_str[$i], $token_type, $utoken);
-                                         
-                                           $row_temp['element_data'] = $element_data_str[$i];
-                                           $row_temp['docNumber'] = $date;
-                                           $statusmessage = str_replace("'", '', $resfk["statusMessage"]);
-                                           $row_temp['statusMessage'] = $statusmessage;
-                                           $row_temp['status'] = $resfk["status"];
-                                           $row_temp['pajak_header_id'] = $pajak_header_id;
-                                           $row_temp['creditable'] = 'not_creditable';
-                                           $row_temp['pembetulan_ke'] = $pembetulan_ke;
-                                           $row_temp['kode_cabang'] =  $kode_cabang;
-                                           $row_temp['total_baris_kirim'] =  $cntarr;
-                                           $add_push_element[] = $row_temp;
-                                        } 
-                                   }
-                           }
-
+ 
                            //curl_close($ch);
                            $ins_log = $this->h2h->insertLog($add_push_element);
                            if($ins_log){
@@ -718,6 +706,8 @@ class H2h_staging extends CI_Controller {
         function send_to_staging_fm($username,$password,$base_url,$params,$bulan_pajak,$tahun_pajak,$pajak,$nama_pajak,$kode_cabang,$pembetulan_ke,$category,$creditable,$withAkun)
         {
                 ini_set('memory_limit', '-1');
+                ini_set('MAX_EXECUTION_TIME', '-1');
+                set_time_limit(0);
                 $this->load->helper('csv_helper');
                 $url = $base_url.'pajak/login';
                 $params_string = json_encode($params);
@@ -740,6 +730,7 @@ class H2h_staging extends CI_Controller {
                    $comp_id = $el_request->company_id;
                    $comp_name = $el_request->company_name;
                    $apifm = $base_url."pajak/faktur-masukan"; 
+                   $add_push_element = array();
                         
                    $get_pajak_header_id = $this->h2h->get_pajak_header_id_tara($kode_cabang, $nama_pajak, $bulan_pajak, $tahun_pajak, $pembetulan_ke);
                    $pajak_header_id     = ($get_pajak_header_id) ? $get_pajak_header_id->PAJAK_HEADER_ID : 0;
@@ -835,6 +826,23 @@ class H2h_staging extends CI_Controller {
                                                 "company_id" => $comp_id,
                                                 "company_name" => $comp_name
                                            );
+
+                                           $resfm = $this->import_faktur_masukan($apifm, json_encode($element_data_dm), $token_type, $utoken);
+                                           $row_temp['element_data'] = json_encode($element_data_dm);
+                                           $row_temp['docNumber'] = $date;
+                                           $statusmessage = str_replace("'", '', $resfm["statusMessage"]);
+                                           $row_temp['statusMessage'] = $statusmessage;
+                                           $row_temp['status'] = $resfm["status"];
+                                           $row_temp['pajak_header_id'] = $pajak_header_id;
+                                           if($creditable == "xx"){
+                                                $creditable = "not_creditable";
+                                           }
+                                           $row_temp['creditable'] = $creditable;
+                                           $row_temp['pembetulan_ke'] = $pembetulan_ke;
+                                           $row_temp['kode_cabang'] = $kode_cabang;
+                                           $row_temp['total_baris_kirim'] = count($data->result_array());
+                                           $add_push_element[] = $row_temp;
+
                                            $element_data_str_dm[] = json_encode($element_data_dm);
                                    } else {
                                            $element_data = array(
@@ -861,53 +869,26 @@ class H2h_staging extends CI_Controller {
                                                 "company_id" => $comp_id,
                                                 "company_name" => $comp_name
                                            );
+
+                                           $resfm = $this->import_faktur_masukan($apifm, json_encode($element_data), $token_type, $utoken);
+                                           $row_temp['element_data'] = json_encode($element_data);
+                                           $row_temp['docNumber'] = $date;
+                                           $statusmessage = str_replace("'", '', $resfm["statusMessage"]);
+                                           $row_temp['statusMessage'] = $statusmessage;
+                                           $row_temp['status'] = $resfm["status"];
+                                           $row_temp['pajak_header_id'] = $pajak_header_id;
+                                           $row_temp['creditable'] = $creditable;
+                                           $row_temp['pembetulan_ke'] = $pembetulan_ke;
+                                           $row_temp['kode_cabang'] =  $kode_cabang;
+                                           $row_temp['total_baris_kirim'] =  $cntarr;
+                                           $add_push_element[] = $row_temp;
+
                                            $element_data_str[] = json_encode($element_data);
                                    }     
                                 }
                            }
                            
                            $masa_pajak = strtoupper(get_masa_pajak($bulan_pajak));
-                           $add_push_element = array();
-                           
-                           if($nama_pajak == "PPN MASUKAN"){
-                              if($category == "dokumen_lain"){
-                                  $cntarr = count($element_data_str_dm);     
-                                  for($i=0;$i<=($cntarr-1);$i++){      
-                                     $resfm = $this->import_faktur_masukan($apifm, $element_data_str_dm[$i], $token_type, $utoken);
-                                     $row_temp['element_data'] = $element_data_str_dm[$i];
-                                     $row_temp['docNumber'] = $date;
-                                     $statusmessage = str_replace("'", '', $resfm["statusMessage"]);
-                                     $row_temp['statusMessage'] = $statusmessage;
-                                     $row_temp['status'] = $resfm["status"];
-                                     $row_temp['pajak_header_id'] = $pajak_header_id;
-                                     if($creditable == "xx"){
-                                        $creditable = "not_creditable";
-                                     }
-                                     $row_temp['creditable'] = $creditable;
-                                     $row_temp['pembetulan_ke'] = $pembetulan_ke;
-                                     $row_temp['kode_cabang'] =  $kode_cabang;
-                                     $row_temp['total_baris_kirim'] =  $cntarr;
-                                     $add_push_element[] = $row_temp;
-                                  }
-                              }
-                              else {   
-                                  $cntarr = count($element_data_str);     
-                                  for($i=0;$i<=($cntarr-1);$i++){  
-                                       $resfm = $this->import_faktur_masukan($apifm, $element_data_str[$i], $token_type, $utoken);
-                                       $row_temp['element_data'] = $element_data_str[$i];
-                                       $row_temp['docNumber'] = $date;
-                                       $statusmessage = str_replace("'", '', $resfm["statusMessage"]);
-                                       $row_temp['statusMessage'] = $statusmessage;
-                                       $row_temp['status'] = $resfm["status"];
-                                       $row_temp['pajak_header_id'] = $pajak_header_id;
-                                       $row_temp['creditable'] = $creditable;
-                                       $row_temp['pembetulan_ke'] = $pembetulan_ke;
-                                       $row_temp['kode_cabang'] =  $kode_cabang;
-                                       $row_temp['total_baris_kirim'] =  $cntarr;
-                                       $add_push_element[] = $row_temp;
-                                  }
-                              }
-                          }
                            
                            //curl_close($ch);
                            $ins_log = $this->h2h->insertLog($add_push_element);
@@ -980,6 +961,7 @@ class H2h_staging extends CI_Controller {
         {
                 ini_set('memory_limit', '-1');
                 ini_set('MAX_EXECUTION_TIME', '-1');
+                set_time_limit(0);
                 $this->load->helper('csv_helper');
                 $url = $base_url.'pajak/login';
                 $params_string = json_encode($params);
@@ -995,7 +977,8 @@ class H2h_staging extends CI_Controller {
                    $utoken = $el_request->token_jwt;
                    $comp_id = $el_request->company_id;
                    $comp_name = $el_request->company_name;
-                   $apidjt = $base_url."pajak/jurnal-akuntansi"; 
+                   $apidjt = $base_url."pajak/jurnal-akuntansi";
+                   $add_push_element = array(); 
                         
                    $data = $this->h2h->get_data_detail_jurnal($kode_cabang, $nama_pajak, $bulan_pajak, $tahun_pajak, $pembetulan_ke);
                       
@@ -1027,12 +1010,27 @@ class H2h_staging extends CI_Controller {
                                     "poNumber" => $row['PONUMBER'],
                                     "tanggalPo" => $tanggal_po,
                                     "company_id" => $comp_id,
-                                    "company_name" => $comp_name
+                                    "company_name" => $comp_name,
+                                    "tradingPartnerId" => $row['TRADING_PARTNER_ID']
                                 );
+
+                                $resjt = $this->jurnal_transaksi($apidjt, json_encode($element_data), $token_type, $utoken);
+                                $row_temp['element_data'] = json_encode($element_data);
+                                $row_temp['docNumber'] = $date;
+                                $statusmessage = str_replace("'", '', $resjt["statusMessage"]);
+                                $row_temp['statusMessage'] = $statusmessage;
+                                $row_temp['status'] = $resjt["status"];
+                                $row_temp['pajak_header_id'] = "";
+                                $row_temp['creditable'] = "";
+                                $row_temp['pembetulan_ke'] = $pembetulan_ke;
+                                $row_temp['kode_cabang'] =  $kode_cabang;
+                                $row_temp['total_baris_kirim'] =  count($data->result_array());
+
+                                $add_push_element[] = $row_temp;
                                 $element_data_str[] = json_encode($element_data);
-  
                         }
                       
+                        /*
                         $masa_pajak = strtoupper(get_masa_pajak($bulan_pajak));
                         $add_push_element = array();
                         $cntarr = count($element_data_str);  
@@ -1050,7 +1048,7 @@ class H2h_staging extends CI_Controller {
                                 $row_temp['total_baris_kirim'] =  $cntarr;
                                 $add_push_element[] = $row_temp;
                         }
-                        
+                        */
                           //curl_close($ch);
                            $ins_log = $this->h2h->insertLogJt($add_push_element);
                            if($ins_log){
@@ -1149,6 +1147,8 @@ class H2h_staging extends CI_Controller {
                    CURLOPT_RETURNTRANSFER => true,
                    CURLOPT_CUSTOMREQUEST => 'POST',
                    CURLOPT_POSTFIELDS =>$element_data_str,
+                   CURLOPT_CONNECTTIMEOUT  => 0,
+                   CURLOPT_TIMEOUT  => 500,
                    CURLOPT_HTTPHEADER => array(
                       'Authorization: ' .$token_type.$utoken,
                       'Content-Type: application/json'
@@ -1169,6 +1169,8 @@ class H2h_staging extends CI_Controller {
                    CURLOPT_RETURNTRANSFER => true,
                    CURLOPT_CUSTOMREQUEST => 'POST',
                    CURLOPT_POSTFIELDS =>$element_data_str,
+                   CURLOPT_CONNECTTIMEOUT  => 0,
+                   CURLOPT_TIMEOUT  => 500,
                    CURLOPT_HTTPHEADER => array(
                       'Authorization: ' .$token_type.$utoken,
                       'Content-Type: application/json'
@@ -1189,6 +1191,8 @@ class H2h_staging extends CI_Controller {
                    CURLOPT_RETURNTRANSFER => true,
                    CURLOPT_CUSTOMREQUEST => 'POST',
                    CURLOPT_POSTFIELDS =>$element_data_str,
+                   CURLOPT_CONNECTTIMEOUT  => 0,
+                   CURLOPT_TIMEOUT  => 500,
                    CURLOPT_HTTPHEADER => array(
                       'Authorization: ' .$token_type.$utoken,
                       'Content-Type: application/json'
@@ -2407,6 +2411,9 @@ class H2h_staging extends CI_Controller {
 
         function validation_staging($pajak, $nama_pajak, $bulan_pajak, $tahun_pajak, $kode_cabang, $pembetulan_ke)
 	{
+                ini_set('memory_limit', '-1');
+                ini_set('MAX_EXECUTION_TIME', '-1');
+                set_time_limit(0);
                 $creditable = "xx";
                 $withAkun = "";
                 $masihKosong = true;
