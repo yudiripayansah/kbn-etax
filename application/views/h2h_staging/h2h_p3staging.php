@@ -137,6 +137,9 @@
 									<thead>
 										<tr>
 											<th>SENDER ID</th>
+											<?php if($nama_pajak == "DETAIL JURNAL"){ ?>
+											<th>TRADING PARTNER ID</th>
+											<?php  } ?>
 											<th>DOC. NUMBER</th>
 											<th>TAHUN BUKU</th>
 											<?php if($nama_pajak == "PPN MASA"){ ?>
@@ -236,6 +239,9 @@
 							},
 			"columns"		: [
 								{ "data": "docnumber" },
+								<?php if($nama_pajak == "DETAIL JURNAL"){ ?>
+								{ "data": "trading_partner_id" },
+								<?php } ?>
 								{ "data": "journalnumber" },
 								{ "data": "tahun_buku", "class":"text-center" },
 								<?php if ($nama_pajak == "PPN MASA") { ?>
