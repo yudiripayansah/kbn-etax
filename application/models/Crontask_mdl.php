@@ -330,6 +330,8 @@ class Crontask_mdl extends CI_Model {
 							'USER_TYPE' => $type,
 							'NPWP_SIMTAX' => $data[4],
 							'LAST_UPDATE' => date('Y-m-d H:i:s'),
+							'NAMA_SIMTAX' => $data[1],
+							'ALAMAT_SIMTAX' => $data[8],
 						);
 						$doInsert = $this->db->insert('SIMTAX_MASTER_NPWP', $rowData);
 					} else {
@@ -367,6 +369,8 @@ class Crontask_mdl extends CI_Model {
 							'USER_TYPE' => $type,
 							'NPWP_SIMTAX' => $data[4],
 							'LAST_UPDATE' => date('Y-m-d H:i:s'),
+							'NAMA_SIMTAX' => $data[1],
+							'ALAMAT_SIMTAX' => $data[8],
 						);
 						$doUpdate = $this->db->where('ID', $npwp_simtax->ID)->update('SIMTAX_MASTER_NPWP', $rowData);
 					}
