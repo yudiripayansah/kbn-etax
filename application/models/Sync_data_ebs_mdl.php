@@ -1269,11 +1269,13 @@ class Sync_data_ebs_mdl extends CI_Model {
 											'".$data[13]."' as PROVINCE,
 											'".$data[14]."' as COUNTRY,
 											'".$data[15]."' as ZIP,
-											'".$data[16]."' as ORGANIZATION_ID
+											'".$data[16]."' as ORGANIZATION_ID,
+											'".$data[17]."' as CUST_ACCT_SITE_ID
 									 FROM dual) b
 							  ON (smp.CUSTOMER_ID = b.CUSTOMER_ID 
 							      and smp.CUSTOMER_SITE_ID = b.CUSTOMER_SITE_ID
-								  and smp.ORGANIZATION_ID = b.ORGANIZATION_ID)
+								  and smp.ORGANIZATION_ID = b.ORGANIZATION_ID
+								  and smp.CUST_ACCT_SITE_ID = b.CUST_ACCT_SITE_ID)
 							  WHEN MATCHED THEN
 								UPDATE SET
 									 CUSTOMER_NAME          = b.CUSTOMER_NAME
@@ -1308,6 +1310,7 @@ class Sync_data_ebs_mdl extends CI_Model {
 										,COUNTRY
 										,ZIP
 										,ORGANIZATION_ID
+										,CUST_ACCT_SITE_ID
 										)
 								VALUES (b.CUSTOMER_ID
 										,b.CUSTOMER_NAME
@@ -1326,6 +1329,7 @@ class Sync_data_ebs_mdl extends CI_Model {
 										,b.COUNTRY
 										,b.ZIP
 										,b.ORGANIZATION_ID
+										,b.CUST_ACCT_SITE_ID
 										)";		 
 					$query 		= $this->db->query($sql);	
 					if (!$query) {
