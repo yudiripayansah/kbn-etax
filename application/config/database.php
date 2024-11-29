@@ -1,5 +1,5 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
 /*
 | -------------------------------------------------------------------
@@ -71,8 +71,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | the query builder class.
 */
 $active_group = 'default';
-$query_builder = TRUE;
+$query_builder = true;
 
+//$tnsname = '(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=localhost)(PORT=9501))(CONNECT_DATA=(SID=XE)))';
+//$tnsname="(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=localhost)(PORT=9501))(CONNECT_DATA=(SID=XE)))";
 $tnsname="(DESCRIPTION =
 (ADDRESS = (PROTOCOL = TCP)(HOST = localhost)(PORT = 9501))
 (CONNECT_DATA =
@@ -80,59 +82,99 @@ $tnsname="(DESCRIPTION =
 (SERVICE_NAME = XE)
 )
 )";
+
 $db['default'] = array(
-	'dsn'	=> '',
-	'hostname' => $tnsname,
-	'username' => 'simtax',
-	'password' => 'simtax',
-	'database' => 'simtax',
-	'dbdriver' => 'oci8',
-	'dbprefix' => '',
-	'pconnect' => FALSE,
-	'db_debug' => (ENVIRONMENT !== 'development'),
-	'cache_on' => FALSE,
-	'cachedir' => '',
-	'char_set' => 'utf8',
-	'dbcollat' => 'utf8_general_ci',
-	'swap_pre' => '',
-	'encrypt' => FALSE,
-	'compress' => FALSE,
-	'stricton' => FALSE,
-	'failover' => array(),
-	'save_queries' => TRUE
+    'dsn'	=> '',
+    'hostname' => $tnsname,
+    'username' => 'simtax',
+    'password' => 'simtax',
+    'database' => 'simtax',
+    'dbdriver' => 'oci8',
+    'dbprefix' => '',
+    'pconnect' => false,
+    'db_debug' => (ENVIRONMENT !== 'development'),
+    'cache_on' => false,
+    'cachedir' => '',
+    'char_set' => 'utf8',
+    'dbcollat' => 'utf8_general_ci',
+    'swap_pre' => '',
+    'encrypt' => false,
+    'compress' => false,
+    'stricton' => false,
+    'failover' => array(),
+    'save_queries' => true
 );
 
-// kbn-erp ?
- $tnsname_xpi = '(DESCRIPTION = 
-    (ADDRESS = 
-      (PROTOCOL = TCP)
-      (HOST = db.kbn.co.id)
-      (PORT = 1521)
-    )
-    (CONNECT_DATA = 
-      (SERVICE_NAME = PROD)
-    )
-  )';
-$db['devnew'] = array(
-	'dsn'	=> '',
-	'hostname' => $tnsname_xpi,
-	'username' => 'xpi2',
-	'password' => 'welcome1$',
-	'database' => 'APPS',
-	'dbdriver' => 'oci8',
-	'dbprefix' => '',
-	'pconnect' => FALSE,
-	'db_debug' => (ENVIRONMENT !== 'production'),
-	'cache_on' => FALSE,
-	'cachedir' => '',
-	'char_set' => 'utf8',
-	'dbcollat' => 'utf8_general_ci',
-	'swap_pre' => '',
-	'encrypt' => FALSE,
-	'compress' => FALSE,
-	'stricton' => FALSE,
-	'failover' => array(),
-	'save_queries' => TRUE
-); 
+//SIMKEU XPI2
+//$tnsname = '(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=10.10.30.24)(PORT=1521))(CONNECT_DATA=(SID=EBSDEV2)))';
+//$tnsname = '(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=10.10.40.30)(PORT=1533))(CONNECT_DATA=(SID=EBSDEV)))';
+//$tnsname = '(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=10.10.40.30)(PORT=1527))(CONNECT_DATA=(SID=QA2)))';
+/*$db['devnew'] = array(
+    'dsn'	=> '',
+    'hostname' => $tnsname,
+    'username' => 'apps',
+    'password' => 'apps',
+    'database' => 'APPS',
+    'dbdriver' => 'oci8',
+    'dbprefix' => '',
+    'pconnect' => false,
+    'db_debug' => (ENVIRONMENT !== 'production'),
+    'cache_on' => false,
+    'cachedir' => '',
+    'char_set' => 'utf8',
+    'dbcollat' => 'utf8_general_ci',
+    'swap_pre' => '',
+    'encrypt' => false,
+    'compress' => false,
+    'stricton' => false,
+    'failover' => array(),
+    'save_queries' => true
+);
+*/
+//DEV SIMTAX awal
+/* $tnsname = '(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=10.10.30.24)(PORT=1521))(CONNECT_DATA=(SID=EBSDEV2)))';
+$db['default'] = array(
+    'dsn'	=> '',
+    'hostname' => $tnsname,
+    'username' => 'apps',
+    'password' => 'apps',
+    'database' => 'APPS',
+    'dbdriver' => 'oci8',
+    'dbprefix' => '',
+    'pconnect' => FALSE,
+    'db_debug' => (ENVIRONMENT !== 'production'),
+    'cache_on' => FALSE,
+    'cachedir' => '',
+    'char_set' => 'utf8',
+    'dbcollat' => 'utf8_general_ci',
+    'swap_pre' => '',
+    'encrypt' => FALSE,
+    'compress' => FALSE,
+    'stricton' => FALSE,
+    'failover' => array(),
+    'save_queries' => TRUE
+); */
 
-
+//local oracle
+/*$tnsname = '(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=localhost)(PORT=1521))(CONNECT_DATA=(SID=xe)))';
+$db['default'] = array(
+    'dsn'	=> '',
+    'hostname' => $tnsname,
+    'username' => 'simtax',
+    'password' => 'simtax',
+    'database' => 'SIMTAX',
+    'dbdriver' => 'oci8',
+    'dbprefix' => '',
+    'pconnect' => FALSE,
+    'db_debug' => (ENVIRONMENT !== 'production'),
+    'cache_on' => FALSE,
+    'cachedir' => '',
+    'char_set' => 'utf8',
+    'dbcollat' => 'utf8_general_ci',
+    'swap_pre' => '',
+    'encrypt' => FALSE,
+    'compress' => FALSE,
+    'stricton' => FALSE,
+    'failover' => array(),
+    'save_queries' => TRUE
+); */
