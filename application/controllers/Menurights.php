@@ -114,11 +114,13 @@ class Menurights extends CI_Controller {
 			if($rowCount > 0){
 
 				$previousID = null;
+				$result = [];
 				foreach($query->result_array() as $row)	{
 
 					$parent    = ($row['PARENT_NAME'] != NULL) ? $row['PARENT_NAME'] : "XXX";
 					$showorder = "<a href='javascript:void(0)' class='showorder' data-productid='".$row['SHOWORDER']."' data-order='".$row['SHOWORDER']."' data-parent='". strtolower(str_replace(' ', '_', $parent)) ."' style='color:#ff6436'><i class='fa fa-retweet' aria-hidden='true'></i></a>";
 
+					
 					$result['data'][] = array(
 								'no'              => $row['RNUM'],
 								'id'              => $row['ID'],
