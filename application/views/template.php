@@ -38,7 +38,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <!-- color CSS you can use different color css from css/colors folder -->
     <!-- We have chosen the skin-blue (blue.css) for this starter
           page. However, you can choose any other skin from folder css / colors .-->
-    <link href="<?php echo base_url(); ?>assets/css/colors/orange.css" id="theme" rel="stylesheet">
+    <link href="<?php echo base_url(); ?>assets/css/colors/green.css" id="theme" rel="stylesheet">
 	
 	<!-- awal tambahan ganti css==============================-->
     <!-- DataTables Responsive CSS -->
@@ -224,7 +224,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
             <!-- .right-sidebar -->
             <?php // $this->load->view('sidebar-right');?>
             <!-- /.right-sidebar -->
-            <footer class="footer text-center"><?php echo date('Y') ?> &copy; SIMTAX </footer>
+            <footer class="footer text-center"><?php echo date('Y') ?> &copy; E-TAX </footer>
         </div>
         <!-- Page Wrapper end-->
     </div>

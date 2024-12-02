@@ -35,7 +35,7 @@
     <div class="white-box" style="background-color:transparent !important">
       <!-- <?php echo form_open_multipart("", array("id" => "loginform", "class" => "form-horizontal form-material", "data-toggle" => "validator"));?> -->
       <form role="form" id="loginform" class="form-horizontal form-material" data-toggle="validator">
-        <h3 class="box-title m-b-20 text-center">SIMTAX LOGIN</h3>
+        <h3 class="box-title m-b-20 text-center">E-TAX LOGIN</h3>
         <p id="errorPlace" class="bold text-center p-0" style="color:red;font-weight: 400; display: none"></p>
         <div class="form-group ">
           <div class="col-xs-12">

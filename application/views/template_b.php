@@ -38,7 +38,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <!-- color CSS you can use different color css from css/colors folder -->
     <!-- We have chosen the skin-blue (blue.css) for this starter
           page. However, you can choose any other skin from folder css / colors .-->
-    <link href="<?php echo base_url(); ?>assets/css/colors/orange.css" id="theme" rel="stylesheet">
+    <link href="<?php echo base_url(); ?>assets/css/colors/green.css" id="theme" rel="stylesheet">
 	
 	<!-- awal tambahan ganti css==============================-->
     <!-- DataTables Responsive CSS -->
